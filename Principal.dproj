@@ -65,6 +65,8 @@
 			<DCC_RemoteDebug>true</DCC_RemoteDebug>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
+			<DCC_ExeOutput>C:\Tiago\Desenvolvimento\Delphi\LixoDelphi\</DCC_ExeOutput>
+			<DCC_DcuOutput>C:\Tiago\Desenvolvimento\Delphi\LixoDelphi\</DCC_DcuOutput>
 			<VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
 			<DCC_UnitSearchPath>C:\Tiago\Desenvolvimento\Delphi\Componentes\Cnpack\cnwizards\dcu;C:\Tiago\Desenvolvimento\Delphi\Componentes\Cnpack\cnvcl\Source\NonVisual;C:\Tiago\Desenvolvimento\Delphi\Componentes\Cnpack\cnwizards\Source;C:\Tiago\Desenvolvimento\Delphi\Componentes\Cnpack\cnvcl\Source\NetComm;C:\Tiago\Desenvolvimento\Delphi\Componentes\Cnpack\cnvcl\Source\Graphics;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
 			<VerInfo_Locale>1033</VerInfo_Locale>
@@ -242,9 +244,9 @@
 							<Operation>1</Operation>
 						</Platform>
 					</DeployClass>
+					<ProjectRoot Name="$(PROJECTNAME)" Platform="Win32"/>
 					<ProjectRoot Name="$(PROJECTNAME).app" Platform="OSX32"/>
 					<ProjectRoot Name="$(PROJECTNAME)" Platform="Win64"/>
-					<ProjectRoot Name="$(PROJECTNAME)" Platform="Win32"/>
 				</Deployment>
 				<Platforms>
 					<Platform value="Win64">False</Platform>
