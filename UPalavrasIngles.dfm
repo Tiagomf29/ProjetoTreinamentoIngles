@@ -49,8 +49,6 @@ object frmPrincipal: TfrmPrincipal
       item
         Width = 50
       end>
-    ExplicitTop = 252
-    ExplicitWidth = 695
   end
   object mmo: TMemo
     Left = 8

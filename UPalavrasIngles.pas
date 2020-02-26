@@ -360,6 +360,13 @@ begin
     // Verifica se a palavra foi traduzida corretamente
     if palavraEdit = ReplaceStr(Trim(AnsiUpperCase(lPalavraConcatenadaTemp)),',','') then
     begin
+
+       for j := 0 to Length(listaPalavrasConcatenadas)-1 do
+       begin         
+         palavrasTemp.setObject(listaPalavrasConcatenadas[j]);
+         palavrasTemp.atualizaStatusExibicaoPalavras(listaPalavrasConcatenadas[j],palavrasTemp.qtdeSeqAcertos+1);
+       end;
+             
       for j := 0 to listaPalavrasTemp.Count -1 do
       begin
         // Verifica se todas as palavras já foram acertadas ou não
@@ -424,7 +431,14 @@ begin
       lPalavraConcatenadaTemp:= lPalavraConcatenadaTemp +#13+ lPalavrasErradas[j];
     end;
       
-    // Se chegou aqui é poruqe a palavra não foi traduzida corretamente.  
+    // Se chegou aqui é poruqe a palavra não foi traduzida corretamente. 
+
+     for j := 0 to Length(listaPalavrasConcatenadas)-1 do
+     begin         
+       palavrasTemp.setObject(listaPalavrasConcatenadas[j]);
+       palavrasTemp.atualizaStatusExibicaoPalavras(listaPalavrasConcatenadas[j],0);
+     end;
+     
     MessageDlg(contagemPontos('Você errou!')+#13+#13+'Tradução:'+#13+ lPalavraConcatenadaTemp,mtInformation,[mbOK],0);
     lPalavraConcatenadaTemp := '';
     mmo.Text:= '';

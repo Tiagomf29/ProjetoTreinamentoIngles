@@ -2,7 +2,7 @@ unit UPalavras;
 
 interface
 uses
-  ZDataSet, UDM, System.SysUtils, System.Generics.Collections;
+  ZDataSet, UDM, System.SysUtils, System.Generics.Collections,FMX.Dialogs;
 
 type
 
@@ -13,6 +13,9 @@ type
     FPalavraIngles : String;
     FPalavraPortugues : String;
     FAtivo : String;
+    FFrase : string;
+    FQtdeSeqAcertos :SmallInt;
+    FDataSeqAcertos : TDate;
     FQry : TZQuery;
     Flista : TObjectList<TPalavras>;
     function getAtivo: Boolean;
@@ -23,11 +26,17 @@ type
     procedure setPalavrasPortuguess(const Value: String);
     function getId: Integer;
     procedure setId(const Value: Integer);
+    function getFrase: Boolean;
+    procedure setFrase(const Value: Boolean);
+    function getQtdeSeqAcertos: SmallInt;
+    procedure setQtdeSeqAcertos(const Value: SmallInt);
   public
     property id : Integer read getId write setId;
     property palavraIngles : String read getPalavraIngles write setPalavrasIngles;
     property palavraPortugues : String read getPalavraPortugues write setPalavrasPortuguess;
     property ativo : Boolean read getAtivo write setAtivo;
+    property frase : Boolean read getFrase write setFrase;
+    property qtdeSeqAcertos : SmallInt read getQtdeSeqAcertos write setQtdeSeqAcertos;
 
     function listaPalavrasIngles(AParam1,AParam2 : SmallInt): TObjectList<TPalavras>;
 
@@ -35,6 +44,7 @@ type
     procedure recordObjectInsercao();
     procedure recordObjectAtualizacao();
     procedure recordObjectDelete();
+    procedure atualizaStatusExibicaoPalavras(palavra : String; qtde : smallint);
 
     constructor Create();
     destructor Destroy; override;
@@ -44,6 +54,47 @@ type
 implementation
 
 { TPalavras }
+
+procedure TPalavras.atualizaStatusExibicaoPalavras(palavra : String; qtde : smallint);
+var
+  qry : TZQuery;
+  dia,mes,ano : String;
+  
+begin
+
+  dia := Copy(DateToStr(Now+3),1,2);
+  mes := Copy(DateToStr(Now+3),4,2);
+  ano := Copy(DateToStr(Now+3),7,4);
+
+  qry := TZQuery.Create(nil);
+  qry.Connection := DM.conexao;
+  try
+    qry.close;
+    qry.SQL.Add('update palavras set ');
+
+    if qtde < 10 then
+      qry.SQL.Add('qtdeseqacertos =:qtde')
+    else
+      qry.SQL.Add('qtdeseqacertos =0,data_seq_acertos = '+QuotedStr(mes+'/'+dia+'/'+ano));
+      
+    qry.SQL.Add(' where palavraIngles =:palavra');
+    
+    qry.ParamByName('palavra').AsString := palavra;
+    
+    if qtde < 10 then
+      qry.ParamByName('qtde').AsInteger := qtde;
+    
+    try
+      qry.ExecSQL;
+    except on e: Exception do
+      begin
+        ShowMessage(e.Message);
+      end;
+    end;
+  finally
+    FreeAndNil(qry);
+  end; 
+end;
 
 constructor TPalavras.Create;
 begin
@@ -69,6 +120,16 @@ begin
  
 end;
 
+function TPalavras.getFrase: Boolean;
+begin
+
+  if FFrase = 'T' then
+    Result := True
+  else 
+    Result := False;   
+  
+end;
+
 function TPalavras.getId: Integer;
 begin
   Result := FId;
@@ -84,14 +145,25 @@ begin
   Result := FPalavraPortugues;
 end;
 
+function TPalavras.getQtdeSeqAcertos: SmallInt;
+begin
+  Result := FQtdeSeqAcertos;
+end;
+
 function TPalavras.listaPalavrasIngles(AParam1,AParam2 : SmallInt): TObjectList<TPalavras>;
 var  
   palavraIngles : TPalavras;
+  dia,mes,ano : string;
 begin
+
+  dia := Copy(DateToStr(Now),1,2);
+  mes := Copy(DateToStr(Now),4,2);
+  ano := Copy(DateToStr(Now),7,4);
 
   FQry.Close;
   FQry.SQL.Clear;
   FQry.SQL.Add('select * from palavras where frase = '+QuotedStr('F'));
+  FQry.SQL.Add('and data_seq_acertos <='+QuotedStr(mes+'/'+dia+'/'+ano));
   if AParam1 > 0 then
   begin
     FQry.SQL.Add(' and id between '+IntToStr(AParam1)+' and '+IntToStr(AParam2));
@@ -193,6 +265,14 @@ begin
   
 end;
 
+procedure TPalavras.setFrase(const Value: Boolean);
+begin
+  if Value then
+    FFrase := 'T'                         
+  else
+    FFrase := 'F';  
+end;
+
 procedure TPalavras.setId(const Value: Integer);
 begin
   FId := Value;
@@ -210,6 +290,9 @@ begin
   FID := FQry.FieldByName('id').AsInteger;
   FPalavraIngles := FQry.FieldByName('palavraingles').AsString;
   FPalavraPortugues := FQry.FieldByName('palavraPortugues').AsString;
+  FFrase := FQry.FieldByName('frase').AsString;
+  FQtdeSeqAcertos := FQry.FieldByName('qtdeSeqAcertos').AsInteger;
+  FDataSeqAcertos := FQry.FieldByName('data_seq_acertos').AsDateTime;
 end;
 
 procedure TPalavras.setPalavrasIngles(const Value: String);
@@ -220,6 +303,11 @@ end;
 procedure TPalavras.setPalavrasPortuguess(const Value: String);
 begin
   FPalavraPortugues := Value;
+end;
+
+procedure TPalavras.setQtdeSeqAcertos(const Value: SmallInt);
+begin
+  FQtdeSeqAcertos := Value;
 end;
 
 end.
