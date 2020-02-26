@@ -45,6 +45,7 @@ type
     procedure recordObjectAtualizacao();
     procedure recordObjectDelete();
     procedure atualizaStatusExibicaoPalavras(palavra : String; qtde : smallint);
+    procedure atualizaQtdePalavrasFecharTela();
 
     constructor Create();
     destructor Destroy; override;
@@ -54,6 +55,24 @@ type
 implementation
 
 { TPalavras }
+
+procedure TPalavras.atualizaQtdePalavrasFecharTela;
+var
+  qry : TZQuery;
+begin
+  qry := TZQuery.Create(nil);
+  qry.Connection := DM.conexao;
+  try
+    qry.close;
+    qry.SQL.Add('update palavras set ');
+    qry.SQL.Add('qtdeseqacertos = 0 ');
+    qry.SQL.Add('where data_seq_acertos > current_date');
+
+    qry.ExecSQL;
+  finally
+    FreeAndNil(qry);
+  end;
+end;
 
 procedure TPalavras.atualizaStatusExibicaoPalavras(palavra : String; qtde : smallint);
 var

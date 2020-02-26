@@ -28,6 +28,7 @@ type
     procedure Parmetros1Click(Sender: TObject);
     procedure Palavrasrestantes1Click(Sender: TObject);
     procedure btnValidarClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     procedure exibePalavrasInglesBanco();
     procedure traducaoInglesPortugues();
@@ -210,6 +211,20 @@ begin
     FreeAndNil(palavrasSorteadas);
   end;
   
+end;
+
+procedure TfrmPrincipal.FormClose(Sender: TObject; var Action: TCloseAction);
+var
+  palavras : TPalavras;
+begin
+
+  palavras := TPalavras.Create;
+  try
+    palavras.atualizaQtdePalavrasFecharTela();
+  finally
+    FreeAndNil(palavras);
+  end;
+
 end;
 
 procedure TfrmPrincipal.FormShow(Sender: TObject);
