@@ -132,6 +132,19 @@ object frmPrincipal: TfrmPrincipal
     TabOrder = 2
     OnClick = btnValidarClick
   end
+  object mp1: TMediaPlayer
+    Left = 8
+    Top = 311
+    Width = 29
+    Height = 30
+    VisibleButtons = [btPlay]
+    DoubleBuffered = False
+    ParentDoubleBuffered = False
+    ParentShowHint = False
+    ShowHint = False
+    TabOrder = 3
+    TabStop = False
+  end
   object MainMenu1: TMainMenu
     Left = 524
     Top = 16
@@ -151,6 +164,12 @@ object frmPrincipal: TfrmPrincipal
       object Palavrasrestantes1: TMenuItem
         Caption = 'Palavras restantes'
         OnClick = Palavrasrestantes1Click
+      end
+    end
+    object sOBRE1: TMenuItem
+      Caption = 'Sobre'
+      object ProgramafeitoporTiagoMartinsFerreira1: TMenuItem
+        Caption = 'Programa feito por: Tiago Martins Ferreira ... 88602'
       end
     end
   end

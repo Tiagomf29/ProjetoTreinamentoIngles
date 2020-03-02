@@ -3,11 +3,12 @@ unit UPalavrasIngles;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
-  System.Classes, Vcl.Graphics,System.Types,UParametros,
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,parametros,
+  System.Classes, Vcl.Graphics,System.Types,UParametros,UPalavras,System.Generics.Collections,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, StrUtils, CnClasses,
   CnTimer, CnRS232Dialog, Vcl.Tabs, CnTabSet, frxClass, frxExportPDF, RpDefine,
-  RpCon, RpConDS, Vcl.ExtCtrls, Vcl.Buttons, Vcl.Menus, RDprint, Vcl.ComCtrls;
+  RpCon, RpConDS, Vcl.ExtCtrls, Vcl.Buttons, Vcl.Menus, RDprint, Vcl.ComCtrls,
+  Vcl.MPlayer;
 
 type
 
@@ -23,12 +24,16 @@ type
     StatusBar1: TStatusBar;
     mmo: TMemo;
     btnValidar: TBitBtn;
+    mp1: TMediaPlayer;
+    sOBRE1: TMenuItem;
+    ProgramafeitoporTiagoMartinsFerreira1: TMenuItem;
     procedure FormShow(Sender: TObject);
     procedure Palavras1Click(Sender: TObject);
     procedure Parmetros1Click(Sender: TObject);
     procedure Palavrasrestantes1Click(Sender: TObject);
     procedure btnValidarClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure btn1Click(Sender: TObject);
   private
     procedure exibePalavrasInglesBanco();
     procedure traducaoInglesPortugues();
@@ -36,6 +41,10 @@ type
     function contagemPontos(AMsg: String): String;
     function palavraConcatenada(Apalavra1, APalavra2 : String; AQtdePalavras,AContador: Integer): String;
     function removerEspacosNoMeio( palavra : String):String;
+    var
+      lista: TObjectList<TPalavras>;
+      palavras: TPalavras;
+      par :  TParametros;
     
     var
     listaPalavrasConcatenadas, listaPalavrasAcertadas : array of string;
@@ -51,7 +60,7 @@ var
 implementation
 
 uses
-  UPalavras,UCadastroPalavras, System.Generics.Collections,parametros;
+  UCadastroPalavras;
 
 {$R *.dfm}
 
@@ -62,11 +71,18 @@ begin
   StatusBar1.Panels.Items[3].Text:= 'Erros: '+ IntToStr(Erros);
 end;
 
+procedure TfrmPrincipal.btn1Click(Sender: TObject);
+begin
+       mp1.FileName := Trim('C:\Ingles\Mp3\'+Label1.Caption+'.mp3');
+       mp1.Open;
+       mp1.Play;
+end;
+
 procedure TfrmPrincipal.btnValidarClick(Sender: TObject);
 var
   qtdePalavrasEdt, qtdePalavrasAleatorias : TStringDynArray;
 begin
-
+  
   if Label1.Caption = 'Parabêns voce acertou todas as palavras!!'+#13+'Feche o programa para começar novamente.' then  
     abort;  
     
@@ -99,6 +115,8 @@ begin
 
 end;
 
+
+
 function TfrmPrincipal.contagemPontos(AMsg: String): String;
 begin
   if AMsg = 'Você acertou!' then
@@ -115,7 +133,6 @@ end;
 procedure TfrmPrincipal.exibePalavrasInglesBanco;
 var
   palavrasTemp: TPalavras;
-  listaTemp: TObjectList<TPalavras>;
   i,j,l,validador,divisaoPalavras, lNumeroAleatorio : Integer;
   lQtdePalavras : Integer;
   lPalavrasConcatenadas : String;
@@ -131,9 +148,8 @@ begin
   par.setObject(); 
   palavrasTemp := TPalavras.Create;
   palavrasSorteadas := TList<String>.Create;
-  listaTemp := palavrasTemp.listaPalavrasIngles(par.filtroInicial,par.filtroFinal);
   
-  StatusBar1.Panels.Items[0].Text:= 'Qtde Palavras: '+  IntToStr(listaTemp.Count);
+  StatusBar1.Panels.Items[0].Text:= 'Qtde Palavras: '+  IntToStr(lista.Count);
   atualizaStatusBar();
   
   try
@@ -145,6 +161,7 @@ begin
       Label1.Font.Size := 36;
       mmo.Font.Size := 24;
       SetLength(listaPalavrasConcatenadas,1);
+      mp1.Enabled:=True;
     end
     else
     if (par.apresentacaoPalavras = 4) or (par.apresentacaoPalavras = 8) or (par.apresentacaoPalavras = 12) then
@@ -152,6 +169,7 @@ begin
       Label1.Top:=11;
       Label1.Font.Size := 17;
       mmo.Font.Size := 10;
+      mp1.Enabled := False;
     end;
  
     if par.apresentacaoPalavras = 4 then   
@@ -175,7 +193,7 @@ begin
     for j := 1 to lQtdePalavras do
     begin 
       divisaoPalavras := (lQtdePalavras div 2);
-      lNumeroAleatorio := Random(listaTemp.Count);
+      lNumeroAleatorio := Random(lista.Count);
       
       if not par.repetirPalavras then
       begin
@@ -183,27 +201,41 @@ begin
         while l < length(listaPalavrasAcertadas)-1 do
         begin
           validador :=0;
-          if listaPalavrasAcertadas[l] = IfThen(par.inglesToPortugues,listaTemp.Items[lNumeroAleatorio].palavraIngles,listaTemp.Items[lNumeroAleatorio].palavraPortugues)  then
+          if listaPalavrasAcertadas[l] = IfThen(par.inglesToPortugues,lista.Items[lNumeroAleatorio].palavraIngles,lista.Items[lNumeroAleatorio].palavraPortugues)  then
           begin
             l:=0;
             validador:=100;
-            lNumeroAleatorio := Random(listaTemp.Count);
+            lNumeroAleatorio := Random(lista.Count);
           end;
           if validador <> 100 then
             l:=l+1
         end;      
       end;      
             
-      listaPalavrasConcatenadas[j-1]:= IfThen(par.inglesToPortugues,listaTemp.Items[lNumeroAleatorio].palavraIngles,listaTemp.Items[lNumeroAleatorio].palavraPortugues);
+      listaPalavrasConcatenadas[j-1]:= IfThen(par.inglesToPortugues,lista.Items[lNumeroAleatorio].palavraIngles,lista.Items[lNumeroAleatorio].palavraPortugues);
       
       if (divisaoPalavras <> j) OR (lQtdePalavras<8) then      
-        lPalavrasConcatenadas := palavraConcatenada(lPalavrasConcatenadas,IfThen(par.inglesToPortugues,listaTemp.Items[lNumeroAleatorio].palavraIngles,listaTemp.Items[lNumeroAleatorio].palavraPortugues),lQtdePalavras,j)
+        lPalavrasConcatenadas := palavraConcatenada(lPalavrasConcatenadas,IfThen(par.inglesToPortugues,lista.Items[lNumeroAleatorio].palavraIngles,lista.Items[lNumeroAleatorio].palavraPortugues),lQtdePalavras,j)
       else
         if (divisaoPalavras = j)and (lQtdePalavras>=8)then
-          lPalavrasConcatenadas :=  palavraConcatenada(lPalavrasConcatenadas,IfThen(par.inglesToPortugues,listaTemp.Items[lNumeroAleatorio].palavraIngles,listaTemp.Items[lNumeroAleatorio].palavraPortugues),lQtdePalavras,j)+#13;  
+          lPalavrasConcatenadas :=  palavraConcatenada(lPalavrasConcatenadas,IfThen(par.inglesToPortugues,lista.Items[lNumeroAleatorio].palavraIngles,lista.Items[lNumeroAleatorio].palavraPortugues),lQtdePalavras,j)+#13;  
     end;
    
-   Label1.Caption := IfThen(par.tpLetras = 1,UpperCase(lPalavrasConcatenadas),LowerCase(lPalavrasConcatenadas)) ;
+   Label1.Caption := IfThen(par.tpLetras = 1,UpperCase(lPalavrasConcatenadas),LowerCase(lPalavrasConcatenadas));  
+   
+   if par.apresentacaoPalavras = 1 then
+   begin
+     try
+       mp1.FileName := 'C:\Ingles\Mp3\'+Label1.Caption+'.mp3';
+       mp1.Open;
+       mp1.Play;
+     except on e: Exception do
+       begin
+         MessageDlg('Não existe som configurado para esta palavra.',mtInformation,[mbOK],0);
+         Abort;
+       end;
+     end  
+   end;
    
   finally
     FreeAndNil(palavrasTemp);
@@ -215,20 +247,40 @@ end;
 
 procedure TfrmPrincipal.FormClose(Sender: TObject; var Action: TCloseAction);
 var
-  palavras : TPalavras;
+  palavras2 : TPalavras;
 begin
 
-  palavras := TPalavras.Create;
+  palavras2 := TPalavras.Create;
   try
-    palavras.atualizaQtdePalavrasFecharTela();
+    palavras2.atualizaQtdePalavrasFecharTela();
   finally
-    FreeAndNil(palavras);
+    FreeAndNil(palavras2);
   end;
+
+
+  FreeAndNil(par);
+  FreeAndNil(palavras);
+
 
 end;
 
 procedure TfrmPrincipal.FormShow(Sender: TObject);
-begin
+begin 
+  // TIRA O SOM PADRÃO DO WINDOWS AO CLICAR NOS BOTÕES
+  SystemParametersInfo(SPI_SETBEEP, 0, nil, SPIF_SENDWININICHANGE);
+
+  par := TParametros.Create(); 
+  par.setObject(); 
+  palavras := TPalavras.Create;
+  lista := palavras.listaPalavrasIngles(par.filtroInicial,par.filtroFinal);
+
+  if lista.Count = 0 then
+  begin
+    MessageDlg('Nenhum registro a ser exibido.',mtInformation,[mbOK],0);
+    Label1.Caption := 'Sem palavras para ser exibido!';
+    Abort;
+  end;
+
   exibePalavrasInglesBanco();
 end;
 
@@ -343,24 +395,17 @@ end;
 
 procedure TfrmPrincipal.traducaoInglesPortugues;
 var
-  listaPalavrasTemp       : TObjectList<TPalavras>; 
   palavrasTemp            : TPalavras;
   j,l                     : Integer; 
   lPalavraConcatenadaTemp,palavraEdit : String;
-  lPalavrasErradas        : TStringDynArray;
-  par                     : TParametros;  
+  lPalavrasErradas        : TStringDynArray; 
   palavrasSorteadas       : TList<string>;
   
 begin
 
-  par := TParametros.Create();   
   palavrasTemp := TPalavras.Create;
-
+   
   try
-  
-    par.setObject();
-  
-    listaPalavrasTemp := palavrasTemp.listaPalavrasIngles(par.filtroInicial,par.filtroFinal);
     
     for j := 1 to Length(listaPalavrasConcatenadas) do
     begin
@@ -368,7 +413,7 @@ begin
       lPalavraConcatenadaTemp := palavraConcatenada(lPalavraConcatenadaTemp,palavrasTemp.palavraPortugues,Length(listaPalavrasConcatenadas),j);                                  
     end;
       
-    SetLength(listaPalavrasAcertadas, listaPalavrasTemp.Count);
+    SetLength(listaPalavrasAcertadas, lista.Count);
 
     palavraEdit := removerEspacosNoMeio(Trim(AnsiUpperCase(mmo.Text)));
          
@@ -382,10 +427,10 @@ begin
          palavrasTemp.atualizaStatusExibicaoPalavras(listaPalavrasConcatenadas[j],palavrasTemp.qtdeSeqAcertos+1);
        end;
              
-      for j := 0 to listaPalavrasTemp.Count -1 do
+      for j := 0 to lista.Count -1 do
       begin
         // Verifica se todas as palavras já foram acertadas ou não
-        if listaPalavrasAcertadas[listaPalavrasTemp.Count-1]<> '' then
+        if listaPalavrasAcertadas[lista.Count-1]<> '' then
         begin
           Label1.Caption:='Parabêns voce acertou todas as palavras!!'+#13+'Feche o programa para começar novamente.'; 
           raise Exception.Create('Error Message');                      
@@ -393,7 +438,7 @@ begin
       end;
 
       // Verifica se a palavra acertada já foi acertada anteriomente e não contabiliza ponto de acerto
-      for l := 0 to listaPalavrasTemp.Count-1 do
+      for l := 0 to lista.Count-1 do
       begin
         for j := 0 to Length(listaPalavrasConcatenadas)-1 do                              
           if UpperCase(listaPalavrasConcatenadas[j]) = listaPalavrasAcertadas[l] then
@@ -423,7 +468,7 @@ begin
       end;              
 
       // Verifica se todas as palavras já foram acertadas ou não
-      if listaPalavrasAcertadas[listaPalavrasTemp.Count-1]<> '' then
+      if listaPalavrasAcertadas[lista.Count-1]<> '' then
       begin
         Label1.Caption:='Parabêns voce acertou todas as palavras!!'+#13+'Feche o programa para começar novamente.'; 
         raise Exception.Create('Error Message');        
@@ -460,8 +505,7 @@ begin
     mmo.SetFocus;
     
   finally           
-    FreeAndNil(palavrasTemp);
-    FreeAndNil(par);         
+    FreeAndNil(palavrasTemp);        
   end;
 end;
 

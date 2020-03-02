@@ -6,7 +6,7 @@ object DM: TDM
     ControlsCodePage = cCP_UTF16
     Connected = True
     Port = 0
-    Database = 'C:\Tiago\Banco\BANCO.FDB'
+    Database = 'C:\Ingles\Banco\BANCO.FDB'
     User = 'sysdba'
     Password = 'masterkey'
     Protocol = 'firebird-3.0'

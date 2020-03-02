@@ -2,7 +2,7 @@ unit UPalavras;
 
 interface
 uses
-  ZDataSet, UDM, System.SysUtils, System.Generics.Collections,FMX.Dialogs;
+  ZDataSet, UDM, System.SysUtils, System.Generics.Collections,FMX.Dialogs,System.Classes,DB;
 
 type
 
@@ -16,6 +16,7 @@ type
     FFrase : string;
     FQtdeSeqAcertos :SmallInt;
     FDataSeqAcertos : TDate;
+    FMp3 : TBlobData;
     FQry : TZQuery;
     Flista : TObjectList<TPalavras>;
     function getAtivo: Boolean;
@@ -30,6 +31,8 @@ type
     procedure setFrase(const Value: Boolean);
     function getQtdeSeqAcertos: SmallInt;
     procedure setQtdeSeqAcertos(const Value: SmallInt);
+    function getMp3: TBlobData;
+    procedure setMp3(const Value: TBlobData);
   public
     property id : Integer read getId write setId;
     property palavraIngles : String read getPalavraIngles write setPalavrasIngles;
@@ -37,6 +40,7 @@ type
     property ativo : Boolean read getAtivo write setAtivo;
     property frase : Boolean read getFrase write setFrase;
     property qtdeSeqAcertos : SmallInt read getQtdeSeqAcertos write setQtdeSeqAcertos;
+    property mp3 : TBlobData read getMp3 write setMp3;
 
     function listaPalavrasIngles(AParam1,AParam2 : SmallInt): TObjectList<TPalavras>;
 
@@ -46,6 +50,7 @@ type
     procedure recordObjectDelete();
     procedure atualizaStatusExibicaoPalavras(palavra : String; qtde : smallint);
     procedure atualizaQtdePalavrasFecharTela();
+    procedure atualizaAudio(id : Integer; mp3 : TBlobData);
 
     constructor Create();
     destructor Destroy; override;
@@ -55,6 +60,27 @@ type
 implementation
 
 { TPalavras }
+
+procedure TPalavras.atualizaAudio(id : Integer; mp3 : TBlobData);
+var
+  qry : TZQuery;
+begin
+  qry := TZQuery.Create(nil);
+  qry.Connection := DM.conexao;
+  try
+    qry.close;
+    qry.SQL.Add('update palavras set ');
+    qry.SQL.Add('mp3 =:mp3 ');
+    qry.SQL.Add('where id =:id');
+
+    qry.ParamByName('mp3').AsBlob := mp3;
+    qry.ParamByName('id').AsInteger := id;
+
+    qry.ExecSQL;
+  finally
+    FreeAndNil(qry);
+  end;
+end;
 
 procedure TPalavras.atualizaQtdePalavrasFecharTela;
 var
@@ -154,6 +180,11 @@ begin
   Result := FId;
 end;
 
+function TPalavras.getMp3: TBlobData;
+begin
+  Result := mp3;
+end;
+
 function TPalavras.getPalavraIngles: String;
 begin
   Result := FPalavraIngles;
@@ -182,6 +213,7 @@ begin
   FQry.Close;
   FQry.SQL.Clear;
   FQry.SQL.Add('select * from palavras where frase = '+QuotedStr('F'));
+  FQry.SQL.Add('and ativo = ''T''');
   FQry.SQL.Add('and data_seq_acertos <='+QuotedStr(mes+'/'+dia+'/'+ano));
   if AParam1 > 0 then
   begin
@@ -260,13 +292,16 @@ begin
   try
     qry.close;
     qry.SQL.Add('insert into palavras');
-    qry.SQL.Add('(id,palavraingles,palavraportugues,ativo)');
+    qry.SQL.Add('(id,palavraingles,palavraportugues,ativo,frase,qtdeseqacertos,data_seq_acertos)');
     qry.SQL.Add('values');
-    qry.SQL.Add('(:id,:ingles,:portugues,:ativo)');
+    qry.SQL.Add('(:id,:ingles,:portugues,:ativo,:frase,:qtdeAcertos,:dataAcertos)');
     qry.ParamByName('id').AsInteger :=FId;
     qry.ParamByName('ingles').AsString:= FPalavraIngles;
     qry.ParamByName('portugues').AsString := FPalavraPortugues;
     qry.ParamByName('ativo').AsString := FAtivo;
+    qry.ParamByName('frase').AsString := 'F';
+    qry.ParamByName('qtdeAcertos').AsInteger := 0;
+    qry.ParamByName('dataAcertos').AsDate := StrToDate('30/12/1899');
 
     qry.ExecSQL;
   finally
@@ -295,6 +330,11 @@ end;
 procedure TPalavras.setId(const Value: Integer);
 begin
   FId := Value;
+end;
+
+procedure TPalavras.setMp3(const Value: TBlobData);
+begin
+  FMp3 := Value;
 end;
 
 procedure TPalavras.setObject(APalavraIngles: String);

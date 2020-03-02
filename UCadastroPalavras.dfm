@@ -24,7 +24,6 @@ object frmCadastroPalavras: TfrmCadastroPalavras
     Height = 169
     Align = alTop
     TabOrder = 0
-    ExplicitWidth = 568
     object lblPalavraIngles: TLabel
       Left = 8
       Top = 16

@@ -6,7 +6,8 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.Grids,System.StrUtils,
   Vcl.DBGrids, Vcl.ExtCtrls, UDM, Data.DB, ZAbstractRODataset, ZAbstractDataset,
-  ZDataset, Vcl.DBCtrls, Vcl.Mask, Datasnap.Provider, Datasnap.DBClient;
+  ZDataset, Vcl.DBCtrls, Vcl.Mask, Datasnap.Provider, Datasnap.DBClient,
+  Vcl.MPlayer;
 
 type
   TfrmCadastroPalavras = class(TForm)
@@ -172,7 +173,10 @@ begin
   else
     cbbAtivo.ItemIndex := 1;
 
-  statusBotaoNaoInserir();  
+  statusBotaoNaoInserir(); 
+
+  edtPalavraIngles.Enabled := True;
+  edtPalavraIngles.SetFocus; 
 end;
 
 procedure TfrmCadastroPalavras.FormShow(Sender: TObject);
