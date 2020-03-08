@@ -132,13 +132,10 @@ end;
 
 procedure TfrmPrincipal.exibePalavrasInglesBanco;
 var
-  palavrasTemp: TPalavras;
-  i,j,l,validador,divisaoPalavras, lNumeroAleatorio : Integer;
-  lQtdePalavras : Integer;
-  lPalavrasConcatenadas : String;
-  par :  TParametros;
-  palavrasSorteadas : TList<string>;
-  
+  palavrasTemp                                                 : TPalavras;
+  par                                                          : TParametros;
+  j,l,validador,divisaoPalavras,lNumeroAleatorio,lQtdePalavras : Integer;
+  lPalavrasConcatenadas                                        : String;
 begin
 
   if Label1.Caption = 'Parabêns voce acertou todas as palavras!!'+#13+'Feche o programa para começar novamente.' then
@@ -147,7 +144,6 @@ begin
   par := TParametros.Create(); 
   par.setObject(); 
   palavrasTemp := TPalavras.Create;
-  palavrasSorteadas := TList<String>.Create;
   
   StatusBar1.Panels.Items[0].Text:= 'Qtde Palavras: '+  IntToStr(lista.Count);
   atualizaStatusBar();
@@ -240,7 +236,6 @@ begin
   finally
     FreeAndNil(palavrasTemp);
     FreeAndNil(par);
-    FreeAndNil(palavrasSorteadas);
   end;
   
 end;
@@ -395,12 +390,10 @@ end;
 
 procedure TfrmPrincipal.traducaoInglesPortugues;
 var
-  palavrasTemp            : TPalavras;
-  j,l                     : Integer; 
+  palavrasTemp                        : TPalavras;
+  j,l                                 : Integer; 
   lPalavraConcatenadaTemp,palavraEdit : String;
-  lPalavrasErradas        : TStringDynArray; 
-  palavrasSorteadas       : TList<string>;
-  
+  lPalavrasErradas                    : TStringDynArray;   
 begin
 
   palavrasTemp := TPalavras.Create;
@@ -421,11 +414,11 @@ begin
     if palavraEdit = ReplaceStr(Trim(AnsiUpperCase(lPalavraConcatenadaTemp)),',','') then
     begin
 
-       for j := 0 to Length(listaPalavrasConcatenadas)-1 do
-       begin         
-         palavrasTemp.setObject(listaPalavrasConcatenadas[j]);
-         palavrasTemp.atualizaStatusExibicaoPalavras(listaPalavrasConcatenadas[j],palavrasTemp.qtdeSeqAcertos+1);
-       end;
+      for j := 0 to Length(listaPalavrasConcatenadas)-1 do
+      begin         
+        palavrasTemp.setObject(listaPalavrasConcatenadas[j]);
+        palavrasTemp.atualizaStatusExibicaoPalavras(listaPalavrasConcatenadas[j],palavrasTemp.qtdeSeqAcertos+1);
+      end;
              
       for j := 0 to lista.Count -1 do
       begin
@@ -493,11 +486,11 @@ begin
       
     // Se chegou aqui é poruqe a palavra não foi traduzida corretamente. 
 
-     for j := 0 to Length(listaPalavrasConcatenadas)-1 do
-     begin         
-       palavrasTemp.setObject(listaPalavrasConcatenadas[j]);
-       palavrasTemp.atualizaStatusExibicaoPalavras(listaPalavrasConcatenadas[j],0);
-     end;
+    for j := 0 to Length(listaPalavrasConcatenadas)-1 do
+    begin         
+      palavrasTemp.setObject(listaPalavrasConcatenadas[j]);
+      palavrasTemp.atualizaStatusExibicaoPalavras(listaPalavrasConcatenadas[j],0);
+    end;
      
     MessageDlg(contagemPontos('Você errou!')+#13+#13+'Tradução:'+#13+ lPalavraConcatenadaTemp,mtInformation,[mbOK],0);
     lPalavraConcatenadaTemp := '';

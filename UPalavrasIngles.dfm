@@ -268,6 +268,6 @@ object frmPrincipal: TfrmPrincipal
     FonteEstiloPadrao = []
     Orientacao = poPortrait
     Left = 580
-    Top = 24
+    Top = 16
   end
 end

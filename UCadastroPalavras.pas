@@ -6,13 +6,12 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.Grids,System.StrUtils,
   Vcl.DBGrids, Vcl.ExtCtrls, UDM, Data.DB, ZAbstractRODataset, ZAbstractDataset,
-  ZDataset, Vcl.DBCtrls, Vcl.Mask, Datasnap.Provider, Datasnap.DBClient,
-  Vcl.MPlayer;
+  ZDataset, Vcl.DBCtrls, Vcl.Mask, Datasnap.Provider, Datasnap.DBClient, System.Generics.Collections,
+  Vcl.MPlayer, Xml.xmldom, Xml.XMLIntf, Xml.Win.msxmldom, Xml.XMLDoc;
 
 type
   TfrmCadastroPalavras = class(TForm)
     Panel1: TPanel;
-    DBGrid1: TDBGrid;
     lblPalavraIngles: TLabel;
     lblPalavraPortugues: TLabel;
     QRY: TZQuery;
@@ -38,6 +37,15 @@ type
     CDSPALAVRAINGLES: TWideStringField;
     CDSPALAVRAPORTUGUES: TWideStringField;
     CDSATIVO: TWideStringField;
+    gbPesquisa: TGroupBox;
+    Nome: TLabel;
+    edtPesquisa: TEdit;
+    btnExportar: TBitBtn;
+    dlgSave: TSaveDialog;
+    DBGrid1: TDBGrid;
+    btnImportar: TBitBtn;
+    dlgOpen: TOpenDialog;
+    documento: TXMLDocument;
     procedure FormShow(Sender: TObject);
     procedure btnInserirClick(Sender: TObject);
     procedure btnSalvarClick(Sender: TObject);
@@ -46,11 +54,15 @@ type
     procedure btnExcluirClick(Sender: TObject);
     procedure btnFecharClick(Sender: TObject);
     procedure CDSAfterScroll(DataSet: TDataSet);
+    procedure edtPesquisaChange(Sender: TObject);
+    procedure btnExportarClick(Sender: TObject);
+    procedure btnImportarClick(Sender: TObject);
   private
     procedure statusBotaoInserir();
     procedure statusBotaoNaoInserir();
     var
       statusInsercao : Boolean;
+      
   public
     { Public declarations }
   end;
@@ -105,9 +117,121 @@ begin
   end;
 end;
 
+procedure TfrmCadastroPalavras.btnExportarClick(Sender: TObject);
+var  
+  elementoPrincipal,ListaPalavras, palavra :IXMLNode;
+  i: Integer;
+  palavraTemp : TPalavras;
+  listaTemp : TObjectList<TPalavras>;
+begin
+   
+   palavraTemp := TPalavras.Create;
+
+   try
+     listaTemp := palavraTemp.listaTodasPalavras;
+   
+     elementoPrincipal := documento.AddChild('exportacaoDePalavras');
+     
+     for I := 0 to listaTemp.Count-1 do
+     begin 
+
+       palavra := elementoPrincipal.AddChild('palavra');
+     
+       palavra.AddChild('Sequencia').Text:= IntToStr(i+1);
+       palavra.AddChild('codigo').Text:= IntToStr(listaTemp.Items[i].id);
+       palavra.AddChild('palavraIngles').Text:= listaTemp.Items[i].palavraIngles;
+       palavra.AddChild('palavraPortugues').Text:= listaTemp.Items[i].palavraPortugues;
+       palavra.AddChild('ativo').Text := IfThen((listaTemp.Items[i].ativo),'true','false');
+       palavra.AddChild('frase').Text:= IfThen((listaTemp.Items[i].frase),'true','false');
+       palavra.AddChild('qtdeSeqAcertos').Text:= IntToStr(listaTemp.Items[i].qtdeSeqAcertos);     
+       palavra.AddChild('dataSeqAcertos').Text:= DateToStr(listaTemp.Items[i].dataSeqAcertos);
+        
+     end;
+     
+     dlgSave.Title:= 'Exportar dados em xml';
+     
+     try
+       dlgSave.Execute();
+       documento.SaveToFile(dlgSave.FileName);
+       MessageDlg('Exportação realizado com sucesso!',mtInformation,[mbOK],0);
+     except on e: Exception do
+       begin
+         if e.Message <> 'Parâmetro incorreto' then
+           ShowMessage(e.Message);  
+       end;
+     end;
+     
+   finally
+      FreeAndNil(palavraTemp);
+      documento:= nil;
+   end;
+  
+end;
+
 procedure TfrmCadastroPalavras.btnFecharClick(Sender: TObject);
 begin
   close;
+end;
+
+procedure TfrmCadastroPalavras.btnImportarClick(Sender: TObject);
+var
+  palavra : TPalavras;
+  nodePalavras : IXMLNode;
+  dia,mes,ano : string;
+begin
+
+  if dlgOpen.Execute then
+  begin
+    documento.LoadFromFile(dlgOpen.FileName);
+    documento.Active:=True;
+  end 
+  else
+    Exit;
+
+  nodePalavras := documento.DocumentElement.ChildNodes.FindNode('palavra');
+  nodePalavras.ChildNodes.First;   
+
+  repeat 
+
+    palavra := TPalavras.Create;    
+
+    try 
+    
+      palavra.setObject(nodePalavras.ChildValues['palavraIngles']);
+    
+      if palavra.palavraIngles = '' then      
+        palavra.palavraIngles := nodePalavras.ChildValues['palavraIngles']
+      else
+        begin
+          nodePalavras:= nodePalavras.NextSibling;
+          Continue;  
+        end;
+      
+      palavra.palavraPortugues := nodePalavras.ChildValues['palavraPortugues'];
+      palavra.ativo :=  nodePalavras.ChildValues['ativo'];
+      palavra.frase := nodePalavras.ChildValues['frase']; 
+      palavra.qtdeSeqAcertos := nodePalavras.ChildValues['qtdeSeqAcertos'];
+      
+      dia := copy(nodePalavras.ChildValues['dataSeqAcertos'],1,2);
+      mes := copy(nodePalavras.ChildValues['dataSeqAcertos'],4,2);
+      ano := copy(nodePalavras.ChildValues['dataSeqAcertos'],7,4);
+
+      palavra.dataSeqAcertos := StrToDate(dia+'/'+mes+'/'+ano);
+       
+      palavra.recordObjectInsercao();
+        
+      CDS.Refresh;
+    
+      nodePalavras:= nodePalavras.NextSibling;
+      
+    finally
+      FreeAndNil(palavra);
+    end;
+          
+  until nodePalavras = nil;
+
+  MessageDlg('Importação realizada com sucesso!',mtInformation,[mbOK],0);
+
 end;
 
 procedure TfrmCadastroPalavras.btnInserirClick(Sender: TObject);
@@ -166,8 +290,9 @@ end;
 
 procedure TfrmCadastroPalavras.CDSAfterScroll(DataSet: TDataSet);
 begin
-  edtPalavraIngles.Text := CDSPALAVRAINGLES.Value;
+  edtPalavraIngles.Text    := CDSPALAVRAINGLES.Value;
   edtPalavraPortugues.Text := CDSPALAVRAPORTUGUES.Value;
+  
   if CDSATIVO.Value = 'T' then  
     cbbAtivo.ItemIndex := 0
   else
@@ -175,8 +300,12 @@ begin
 
   statusBotaoNaoInserir(); 
 
-  edtPalavraIngles.Enabled := True;
-  edtPalavraIngles.SetFocus; 
+end;
+
+procedure TfrmCadastroPalavras.edtPesquisaChange(Sender: TObject);
+begin
+  cds.Filtered := True;
+  CDS.Filter := ' palavraingles like '+QuotedStr('%'+edtPesquisa.Text+'%');
 end;
 
 procedure TfrmCadastroPalavras.FormShow(Sender: TObject);
