@@ -165,6 +165,16 @@ object frmPrincipal: TfrmPrincipal
         Caption = 'Palavras restantes'
         OnClick = Palavrasrestantes1Click
       end
+      object N1: TMenuItem
+        Caption = '-'
+      end
+      object Estatisticasdepalavrasacertadas1: TMenuItem
+        Caption = 'Estatisticas de palavras '
+        OnClick = Estatisticasdepalavrasacertadas1Click
+      end
+      object N2: TMenuItem
+        Caption = '-'
+      end
     end
     object sOBRE1: TMenuItem
       Caption = 'Sobre'

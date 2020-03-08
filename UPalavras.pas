@@ -47,6 +47,7 @@ type
 
     function listaPalavrasIngles(AParam1,AParam2 : SmallInt): TObjectList<TPalavras>;
     function listaTodasPalavras(): TObjectList<TPalavras>;
+    function estatistica1 : TList<string>;
 
     procedure setObject(APalavraIngles : String);
     procedure recordObjectInsercao();
@@ -157,6 +158,28 @@ begin
   FreeAndNil(FQry);
   FreeAndNil(Flista);
   inherited;
+end;
+
+function TPalavras.estatistica1: TList<string>;
+var
+  lista : TList<string>;
+begin
+  FQry.Close;
+  FQry.SQL.Clear;
+  FQry.SQL.Add('select data_seq_acertos,count(*)as qtde from palavras group by data_seq_acertos');
+  FQry.Open;  
+
+  lista := TList<string>.Create;
+  
+  while not FQry.Eof do
+  begin
+      
+    lista.add(FQry.FieldByName('data_seq_acertos').AsString +'  ====================>  '+FQry.FieldByName('qtde').AsString);
+
+    FQry.Next;   
+  end;
+
+  Result := lista;  
 end;
 
 function TPalavras.getAtivo: Boolean;

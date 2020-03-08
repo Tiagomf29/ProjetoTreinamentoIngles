@@ -7,7 +7,8 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.Grids,System.StrUtils,
   Vcl.DBGrids, Vcl.ExtCtrls, UDM, Data.DB, ZAbstractRODataset, ZAbstractDataset,
   ZDataset, Vcl.DBCtrls, Vcl.Mask, Datasnap.Provider, Datasnap.DBClient, System.Generics.Collections,
-  Vcl.MPlayer, Xml.xmldom, Xml.XMLIntf, Xml.Win.msxmldom, Xml.XMLDoc;
+  Vcl.MPlayer, Xml.xmldom, Xml.XMLIntf, Xml.Win.msxmldom, Xml.XMLDoc,
+  Vcl.ComCtrls;
 
 type
   TfrmCadastroPalavras = class(TForm)
@@ -46,6 +47,7 @@ type
     btnImportar: TBitBtn;
     dlgOpen: TOpenDialog;
     documento: TXMLDocument;
+    pb: TProgressBar;
     procedure FormShow(Sender: TObject);
     procedure btnInserirClick(Sender: TObject);
     procedure btnSalvarClick(Sender: TObject);
@@ -119,16 +121,21 @@ end;
 
 procedure TfrmCadastroPalavras.btnExportarClick(Sender: TObject);
 var  
-  elementoPrincipal,ListaPalavras, palavra :IXMLNode;
-  i: Integer;
+  elementoPrincipal, palavra :IXMLNode;
+  i,contador: Integer;
   palavraTemp : TPalavras;
   listaTemp : TObjectList<TPalavras>;
 begin
-   
-   palavraTemp := TPalavras.Create;
 
+   contador := 0;
+   documento.Active := True;
+   palavraTemp := TPalavras.Create;
+   
    try
      listaTemp := palavraTemp.listaTodasPalavras;
+   
+     pb.Max := listaTemp.Count;
+     pb.Min := 1;
    
      elementoPrincipal := documento.AddChild('exportacaoDePalavras');
      
@@ -145,14 +152,16 @@ begin
        palavra.AddChild('frase').Text:= IfThen((listaTemp.Items[i].frase),'true','false');
        palavra.AddChild('qtdeSeqAcertos').Text:= IntToStr(listaTemp.Items[i].qtdeSeqAcertos);     
        palavra.AddChild('dataSeqAcertos').Text:= DateToStr(listaTemp.Items[i].dataSeqAcertos);
+
+       pb.Position := pb.Position + 1;
         
-     end;
+     end;     
      
      dlgSave.Title:= 'Exportar dados em xml';
      
      try
-       dlgSave.Execute();
-       documento.SaveToFile(dlgSave.FileName);
+       if dlgSave.Execute() then
+         documento.SaveToFile(dlgSave.FileName);  
        MessageDlg('Exportação realizado com sucesso!',mtInformation,[mbOK],0);
      except on e: Exception do
        begin
@@ -160,10 +169,13 @@ begin
            ShowMessage(e.Message);  
        end;
      end;
+
+     pb.Position := 0;
+
+     documento.XML.Clear;
      
    finally
       FreeAndNil(palavraTemp);
-      documento:= nil;
    end;
   
 end;
@@ -178,8 +190,10 @@ var
   palavra : TPalavras;
   nodePalavras : IXMLNode;
   dia,mes,ano : string;
+  contador : Integer;
 begin
-
+  contador := 0;
+  
   if dlgOpen.Execute then
   begin
     documento.LoadFromFile(dlgOpen.FileName);
@@ -189,8 +203,21 @@ begin
     Exit;
 
   nodePalavras := documento.DocumentElement.ChildNodes.FindNode('palavra');
-  nodePalavras.ChildNodes.First;   
+  nodePalavras.ChildNodes.First; 
 
+  repeat
+    contador:= contador +1; 
+    nodePalavras:= nodePalavras.NextSibling; 
+  until nodePalavras = nil;
+
+  pb.Min :=0;
+  pb.Max := contador;
+
+  documento.LoadFromFile(dlgOpen.FileName);
+  documento.Active:=True;
+  nodePalavras := documento.DocumentElement.ChildNodes.FindNode('palavra');
+  nodePalavras.ChildNodes.First;
+  
   repeat 
 
     palavra := TPalavras.Create;    
@@ -198,7 +225,9 @@ begin
     try 
     
       palavra.setObject(nodePalavras.ChildValues['palavraIngles']);
-    
+      
+      pb.Position:= pb.Position + 1;
+      
       if palavra.palavraIngles = '' then      
         palavra.palavraIngles := nodePalavras.ChildValues['palavraIngles']
       else
@@ -230,7 +259,11 @@ begin
           
   until nodePalavras = nil;
 
+  documento.XML.Clear;
+  
   MessageDlg('Importação realizada com sucesso!',mtInformation,[mbOK],0);
+
+  pb.Position:=0;
 
 end;
 

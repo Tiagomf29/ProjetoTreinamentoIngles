@@ -4,7 +4,7 @@ object frmCadastroPalavras: TfrmCadastroPalavras
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Cadastro de Palavras'
-  ClientHeight = 530
+  ClientHeight = 550
   ClientWidth = 732
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -421,6 +421,17 @@ object frmCadastroPalavras: TfrmCadastroPalavras
       00FFFF00FFFF00FF0A7D12FF00FFFF00FFFF00FFFF00FFFF00FF}
     TabOrder = 5
     OnClick = btnImportarClick
+  end
+  object pb: TProgressBar
+    Left = 0
+    Top = 533
+    Width = 732
+    Height = 17
+    Align = alBottom
+    TabOrder = 6
+    ExplicitLeft = 89
+    ExplicitTop = 525
+    ExplicitWidth = 150
   end
   object QRY: TZQuery
     Connection = DM.conexao

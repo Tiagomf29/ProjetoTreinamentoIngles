@@ -27,6 +27,9 @@ type
     mp1: TMediaPlayer;
     sOBRE1: TMenuItem;
     ProgramafeitoporTiagoMartinsFerreira1: TMenuItem;
+    N1: TMenuItem;
+    Estatisticasdepalavrasacertadas1: TMenuItem;
+    N2: TMenuItem;
     procedure FormShow(Sender: TObject);
     procedure Palavras1Click(Sender: TObject);
     procedure Parmetros1Click(Sender: TObject);
@@ -34,6 +37,7 @@ type
     procedure btnValidarClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure btn1Click(Sender: TObject);
+    procedure Estatisticasdepalavrasacertadas1Click(Sender: TObject);
   private
     procedure exibePalavrasInglesBanco();
     procedure traducaoInglesPortugues();
@@ -128,6 +132,51 @@ begin
     Erros := Erros + 1;
 
   Result := AMsg;
+end;
+
+procedure TfrmPrincipal.Estatisticasdepalavrasacertadas1Click(Sender: TObject);
+var
+  palavra : TPalavras;
+  i,linha : Integer;
+begin
+  palavra := TPalavras.Create;
+  
+  for i := 0 to palavra.estatistica1().Count-1 do
+  begin
+    
+  end;
+
+      RDP.CaptionSetup := 'Selecione uma impressora';
+      RDP.Impressora   := Grafico;
+      RDP.OpcoesPreview.CaptionPreview := 'Visualização do relatório';
+      RDP.OpcoesPreview.Preview := True;
+      RDP.UsaGerenciadorImpr    := True;
+      RDP.TamanhoQteLinhas      := 66;
+      RDP.TamanhoQteColunas     := 96;
+      RDP.Abrir;
+     
+      RDP.Impf(1,1,'------------------------------------------------------------------------------------------------',[negrito]);
+      
+      RDP.ImpF(3,25,'Estatística de palavras a serem treinadas por data',[negrito]);
+
+      RDP.Impf(5,1,'------------------------------------------------------------------------------------------------',[negrito]);
+
+      linha:=7;
+    
+      for i := 0 to palavra.estatistica1().Count-1 do
+      begin
+        RDP.Impf(linha,1,palavra.estatistica1.Items[i],[negrito]);
+        Inc(linha);
+        if linha = 65
+         then
+        begin
+          rdp.Novapagina;
+          linha:=2;
+        end;    
+      end;
+
+      rdp.Fechar;  
+
 end;
 
 procedure TfrmPrincipal.exibePalavrasInglesBanco;
@@ -341,8 +390,14 @@ begin
       RDP.TamanhoQteLinhas      := 66;
       RDP.TamanhoQteColunas     := 96;
       RDP.Abrir;
+     
+      RDP.Impf(1,1,'------------------------------------------------',[expandido, negrito]);
+      
+      RDP.ImpF(3,24,'Relatório de palavras restantes a serem sorteados',[negrito]);
 
-      linha:=2;
+      RDP.Impf(5,1,'------------------------------------------------',[expandido, negrito]);
+
+      linha:=7;
     
       for i := 0 to listaPalavrasRestanteTemp.Count -1 do
       begin
