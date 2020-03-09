@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.Grids,System.StrUtils,
-  Vcl.DBGrids, Vcl.ExtCtrls, UDM, Data.DB, ZAbstractRODataset, ZAbstractDataset,
+  Vcl.DBGrids, Vcl.ExtCtrls, UDM, Data.DB, ZAbstractRODataset, ZAbstractDataset,MidasLib,
   ZDataset, Vcl.DBCtrls, Vcl.Mask, Datasnap.Provider, Datasnap.DBClient, System.Generics.Collections,
   Vcl.MPlayer, Xml.xmldom, Xml.XMLIntf, Xml.Win.msxmldom, Xml.XMLDoc,
   Vcl.ComCtrls;

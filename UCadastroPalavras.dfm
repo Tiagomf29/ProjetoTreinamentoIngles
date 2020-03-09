@@ -429,9 +429,6 @@ object frmCadastroPalavras: TfrmCadastroPalavras
     Height = 17
     Align = alBottom
     TabOrder = 6
-    ExplicitLeft = 89
-    ExplicitTop = 525
-    ExplicitWidth = 150
   end
   object QRY: TZQuery
     Connection = DM.conexao
