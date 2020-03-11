@@ -41,10 +41,12 @@ type
   private
     procedure exibePalavrasInglesBanco();
     procedure traducaoInglesPortugues();
-    procedure atualizaStatusBar();
+    procedure atualizaStatusBar(); 
+    procedure propriedadeLabelPadrao();
     function contagemPontos(AMsg: String): String;
     function palavraConcatenada(Apalavra1, APalavra2 : String; AQtdePalavras,AContador: Integer): String;
     function removerEspacosNoMeio( palavra : String):String;
+    
     var
       lista: TObjectList<TPalavras>;
       palavras: TPalavras;
@@ -167,8 +169,7 @@ begin
       begin
         RDP.Impf(linha,1,palavra.estatistica1.Items[i],[negrito]);
         Inc(linha);
-        if linha = 65
-         then
+        if linha = 65 then
         begin
           rdp.Novapagina;
           linha:=2;
@@ -199,40 +200,34 @@ begin
   
   try
 
-    if par.apresentacaoPalavras = 1 then
-    begin
-      lQtdePalavras := 1;
-      Label1.Top:=11;
-      Label1.Font.Size := 36;
-      mmo.Font.Size := 24;
-      SetLength(listaPalavrasConcatenadas,1);
-      mp1.Enabled:=True;
-    end
-    else
-    if (par.apresentacaoPalavras = 4) or (par.apresentacaoPalavras = 8) or (par.apresentacaoPalavras = 12) then
-    begin
-      Label1.Top:=11;
-      Label1.Font.Size := 17;
-      mmo.Font.Size := 10;
-      mp1.Enabled := False;
-    end;
- 
-    if par.apresentacaoPalavras = 4 then   
-    begin
-      lQtdePalavras := 4;
-      SetLength(listaPalavrasConcatenadas,4);
-    end
-    else
-    if par.apresentacaoPalavras = 8 then
-    begin
-      lQtdePalavras := 8;
-      SetLength(listaPalavrasConcatenadas,8);
-    end
-    else
-    if par.apresentacaoPalavras = 12 then
-    begin
-      lQtdePalavras := 12;
-      SetLength(listaPalavrasConcatenadas,12);
+    case par.apresentacaoPalavras of
+    
+      1  : begin
+             lQtdePalavras := 1;
+             Label1.Top:=11;
+             Label1.Font.Size := 36;
+             mmo.Font.Size := 24;
+             SetLength(listaPalavrasConcatenadas,1);
+             mp1.Enabled:=True;
+           end;
+    
+      4  : begin
+             lQtdePalavras := 4;
+             SetLength(listaPalavrasConcatenadas,4);
+             propriedadeLabelPadrao();
+           end;
+
+      8  : begin    
+             lQtdePalavras := 8;
+             SetLength(listaPalavrasConcatenadas,8);
+             propriedadeLabelPadrao();
+           end;
+
+      12 : begin    
+             lQtdePalavras := 12;
+             SetLength(listaPalavrasConcatenadas,12);
+             propriedadeLabelPadrao();
+           end;      
     end;
 
     for j := 1 to lQtdePalavras do
@@ -253,7 +248,7 @@ begin
             lNumeroAleatorio := Random(lista.Count);
           end;
           if validador <> 100 then
-            l:=l+1
+            l:=l+1                                   
         end;      
       end;      
             
@@ -359,8 +354,8 @@ var
   i,j,linha : Integer;
   validacao : boolean;
   par :  TParametros;
+begin                                                                                 
   
-begin
   par := TParametros.Create(); 
   par.setObject(); 
   palavrasTemp := TPalavras.Create;
@@ -427,6 +422,14 @@ begin
   end;
 end;
 
+procedure TfrmPrincipal.propriedadeLabelPadrao;
+begin
+  Label1.Top:=11;
+  Label1.Font.Size := 17;
+  mmo.Font.Size := 10;
+  mp1.Enabled := False;
+end;
+
 function TfrmPrincipal.removerEspacosNoMeio( palavra: String): String;
 var
   lista : TStringDynArray; 
@@ -490,10 +493,7 @@ begin
       begin
         for j := 0 to Length(listaPalavrasConcatenadas)-1 do                              
           if UpperCase(listaPalavrasConcatenadas[j]) = listaPalavrasAcertadas[l] then
-          begin
-            AcertosTotal := AcertosTotal+1;
-            //raise Exception.Create('Você acertou! Mas palavra é repetida.');
-          end;
+            AcertosTotal := AcertosTotal+1
       end;          
 
       // Armazena em array as palavras acertadas para saber posteriormente se a palavra acertada é repetida ou não
@@ -502,9 +502,7 @@ begin
         for l := 0 to Length(listaPalavrasAcertadas)-1 do
         begin
           if listaPalavrasAcertadas[l] = listaPalavrasConcatenadas[j] then
-          begin
-            break;        
-          end
+            break
           else
             if listaPalavrasAcertadas[l]= '' then
             begin
@@ -535,9 +533,7 @@ begin
     lPalavraConcatenadaTemp := '';
     
     for j := 0 to Length(lPalavrasErradas)-1 do
-    begin
       lPalavraConcatenadaTemp:= lPalavraConcatenadaTemp +#13+ lPalavrasErradas[j];
-    end;
       
     // Se chegou aqui é poruqe a palavra não foi traduzida corretamente. 
 
