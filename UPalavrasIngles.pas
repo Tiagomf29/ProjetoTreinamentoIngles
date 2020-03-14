@@ -30,6 +30,7 @@ type
     N1: TMenuItem;
     Estatisticasdepalavrasacertadas1: TMenuItem;
     N2: TMenuItem;
+    Acertossequenciais1: TMenuItem;
     procedure FormShow(Sender: TObject);
     procedure Palavras1Click(Sender: TObject);
     procedure Parmetros1Click(Sender: TObject);
@@ -38,6 +39,7 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure btn1Click(Sender: TObject);
     procedure Estatisticasdepalavrasacertadas1Click(Sender: TObject);
+    procedure Acertossequenciais1Click(Sender: TObject);
   private
     procedure exibePalavrasInglesBanco();
     procedure traducaoInglesPortugues();
@@ -69,6 +71,45 @@ uses
   UCadastroPalavras;
 
 {$R *.dfm}
+
+procedure TfrmPrincipal.Acertossequenciais1Click(Sender: TObject);
+var
+  palavra : TPalavras;
+  i,linha : Integer;
+begin
+  palavra := TPalavras.Create;
+
+  RDP.CaptionSetup := 'Selecione uma impressora';
+  RDP.Impressora   := Grafico;
+  RDP.OpcoesPreview.CaptionPreview := 'Visualização do relatório';
+  RDP.OpcoesPreview.Preview := True;
+  RDP.UsaGerenciadorImpr    := True;
+  RDP.TamanhoQteLinhas      := 66;
+  RDP.TamanhoQteColunas     := 96;
+  RDP.Abrir;
+     
+  RDP.Impf(1,1,'------------------------------------------------------------------------------------------------',[negrito]);
+      
+  RDP.ImpF(3,17,'Estatística de acerto de palavras sequênciais por data corrente',[negrito]);
+
+  RDP.Impf(5,1,'------------------------------------------------------------------------------------------------',[negrito]);
+
+  linha:=7;
+    
+  for i := 0 to palavra.estatistica2().Count-1 do
+  begin
+    RDP.Impf(linha,1,palavra.estatistica2.Items[i],[negrito]);
+    Inc(linha);
+    if linha = 65 then
+    begin
+      rdp.Novapagina;
+      linha:=2;
+    end;    
+  end;
+
+  rdp.Fechar;  
+
+end;
 
 procedure TfrmPrincipal.atualizaStatusBar;
 begin
@@ -142,41 +183,36 @@ var
   i,linha : Integer;
 begin
   palavra := TPalavras.Create;
-  
+
+  RDP.CaptionSetup := 'Selecione uma impressora';
+  RDP.Impressora   := Grafico;
+  RDP.OpcoesPreview.CaptionPreview := 'Visualização do relatório';
+  RDP.OpcoesPreview.Preview := True;
+  RDP.UsaGerenciadorImpr    := True;
+  RDP.TamanhoQteLinhas      := 66;
+  RDP.TamanhoQteColunas     := 96;
+  RDP.Abrir;
+     
+  RDP.Impf(1,1,'------------------------------------------------------------------------------------------------',[negrito]);
+      
+  RDP.ImpF(3,25,'Estatística de palavras a serem treinadas por data',[negrito]);
+
+  RDP.Impf(5,1,'------------------------------------------------------------------------------------------------',[negrito]);
+
+  linha:=7;
+    
   for i := 0 to palavra.estatistica1().Count-1 do
   begin
-    
+    RDP.Impf(linha,1,palavra.estatistica1.Items[i],[negrito]);
+    Inc(linha);
+    if linha = 65 then
+    begin
+      rdp.Novapagina;
+      linha:=2;
+    end;    
   end;
 
-      RDP.CaptionSetup := 'Selecione uma impressora';
-      RDP.Impressora   := Grafico;
-      RDP.OpcoesPreview.CaptionPreview := 'Visualização do relatório';
-      RDP.OpcoesPreview.Preview := True;
-      RDP.UsaGerenciadorImpr    := True;
-      RDP.TamanhoQteLinhas      := 66;
-      RDP.TamanhoQteColunas     := 96;
-      RDP.Abrir;
-     
-      RDP.Impf(1,1,'------------------------------------------------------------------------------------------------',[negrito]);
-      
-      RDP.ImpF(3,25,'Estatística de palavras a serem treinadas por data',[negrito]);
-
-      RDP.Impf(5,1,'------------------------------------------------------------------------------------------------',[negrito]);
-
-      linha:=7;
-    
-      for i := 0 to palavra.estatistica1().Count-1 do
-      begin
-        RDP.Impf(linha,1,palavra.estatistica1.Items[i],[negrito]);
-        Inc(linha);
-        if linha = 65 then
-        begin
-          rdp.Novapagina;
-          linha:=2;
-        end;    
-      end;
-
-      rdp.Fechar;  
+  rdp.Fechar;  
 
 end;
 
@@ -311,7 +347,7 @@ begin
   par := TParametros.Create(); 
   par.setObject(); 
   palavras := TPalavras.Create;
-  lista := palavras.listaPalavrasIngles(par.filtroInicial,par.filtroFinal);
+  lista := palavras.listaPalavrasIngles(par.filtroInicial,par.filtroFinal,(par.ordenarPalavras),(par.dividePalavrasDia));
 
   if lista.Count = 0 then
   begin
@@ -359,7 +395,7 @@ begin
   par := TParametros.Create(); 
   par.setObject(); 
   palavrasTemp := TPalavras.Create;
-  listaTemp := palavrasTemp.listaPalavrasIngles(par.filtroInicial,par.filtroFinal); 
+  listaTemp := palavrasTemp.listaPalavrasIngles(par.filtroInicial,par.filtroFinal,par.ordenarPalavras,par.dividePalavrasDia); 
   listaPalavrasRestanteTemp := TObjectList<TPalavras>.Create;
   try
     for i := 0 to listaTemp.Count-1 do
@@ -457,7 +493,7 @@ begin
   palavrasTemp := TPalavras.Create;
    
   try
-    
+         
     for j := 1 to Length(listaPalavrasConcatenadas) do
     begin
       palavrasTemp.setObject(UpperCase(listaPalavrasConcatenadas[j-1]));  

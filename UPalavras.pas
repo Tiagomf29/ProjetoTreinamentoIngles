@@ -45,9 +45,10 @@ type
     property dataSeqAcertos : TDate read getdataSeqAcertos write setdataSeqAcertos;
     property mp3 : TBlobData read getMp3 write setMp3;
 
-    function listaPalavrasIngles(AParam1,AParam2 : SmallInt): TObjectList<TPalavras>;
+    function listaPalavrasIngles(AParam1,AParam2 : SmallInt; ordenarPalavra : Boolean = false; dividirPalavrasDia : Boolean = false): TObjectList<TPalavras>;
     function listaTodasPalavras(): TObjectList<TPalavras>;
     function estatistica1 : TList<string>;
+    function estatistica2 : TList<string>;
 
     procedure setObject(APalavraIngles : String);
     procedure recordObjectInsercao();
@@ -182,6 +183,28 @@ begin
   Result := lista;  
 end;
 
+function TPalavras.estatistica2: TList<string>;
+var
+  lista : TList<string>;
+begin
+  FQry.Close;
+  FQry.SQL.Clear;
+  FQry.SQL.Add('select b.palavraingles,b.qtdeseqacertos from palavras b where b.data_seq_acertos <= current_date order by 2 desc ');
+  FQry.Open;  
+
+  lista := TList<string>.Create;
+  
+  while not FQry.Eof do
+  begin
+      
+    lista.add(FQry.FieldByName('palavraingles').AsString +':'+FQry.FieldByName('qtdeseqacertos').AsString);
+
+    FQry.Next;   
+  end;
+
+  Result := lista;  
+end;
+
 function TPalavras.getAtivo: Boolean;
 begin
   
@@ -232,7 +255,7 @@ begin
   Result := FQtdeSeqAcertos;
 end;
 
-function TPalavras.listaPalavrasIngles(AParam1,AParam2 : SmallInt): TObjectList<TPalavras>;
+function TPalavras.listaPalavrasIngles(AParam1,AParam2 : SmallInt; ordenarPalavra : Boolean; dividirPalavrasDia : Boolean): TObjectList<TPalavras>;
 var  
   palavraIngles : TPalavras;
   dia,mes,ano : string;
@@ -246,14 +269,18 @@ begin
   FQry.SQL.Clear;
   FQry.SQL.Add('select * from palavras where frase = '+QuotedStr('F'));
   FQry.SQL.Add('and ativo = ''T''');
-  FQry.SQL.Add('and data_seq_acertos <='+QuotedStr(mes+'/'+dia+'/'+ano));
+  if dividirPalavrasDia then  
+    FQry.SQL.Add('and data_seq_acertos <='+QuotedStr(mes+'/'+dia+'/'+ano));
   if AParam1 > 0 then
   begin
     FQry.SQL.Add(' and id between '+IntToStr(AParam1)+' and '+IntToStr(AParam2));
     FQry.SQL.Add(' order by 1');
   end 
   else
-    FQry.SQL.Add(' order by 1');
+  if ordenarPalavra then
+    FQry.SQL.Add(' order by 2')
+  else
+    FQry.SQL.Add(' order by 1');      
   
    
   FQry.Open;  

@@ -97,4 +97,30 @@ object frmParametros: TfrmParametros
     Caption = 'Repetir palavras acertadas'
     TabOrder = 4
   end
+  object cbParMesclaPalavrasDia: TCheckBox
+    Left = 192
+    Top = 134
+    Width = 201
+    Height = 17
+    Caption = 'Divide Palavras por dia'
+    TabOrder = 6
+  end
+  object cbOrdenarPalavras: TCheckBox
+    Left = 192
+    Top = 157
+    Width = 201
+    Height = 17
+    Caption = 'Ordenar palavras alfabeticamente'
+    Enabled = False
+    TabOrder = 7
+  end
+  object cbPalavrasAleatorias: TCheckBox
+    Left = 192
+    Top = 111
+    Width = 201
+    Height = 17
+    Caption = 'Palavras sorteadas aleat'#243'riamente'
+    Enabled = False
+    TabOrder = 5
+  end
 end

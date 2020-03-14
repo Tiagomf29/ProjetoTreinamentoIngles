@@ -175,6 +175,10 @@ object frmPrincipal: TfrmPrincipal
       object N2: TMenuItem
         Caption = '-'
       end
+      object Acertossequenciais1: TMenuItem
+        Caption = 'Acertos sequenciais di'#225'rios'
+        OnClick = Acertossequenciais1Click
+      end
     end
     object sOBRE1: TMenuItem
       Caption = 'Sobre'
