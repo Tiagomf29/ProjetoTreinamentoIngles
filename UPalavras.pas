@@ -123,7 +123,7 @@ begin
     qry.close;
     qry.SQL.Add('update palavras set ');
 
-    if qtde < 10 then
+    if qtde < 5 then
       qry.SQL.Add('qtdeseqacertos =:qtde')
     else
       qry.SQL.Add('qtdeseqacertos =0,data_seq_acertos = '+QuotedStr(mes+'/'+dia+'/'+ano));
@@ -132,7 +132,7 @@ begin
     
     qry.ParamByName('palavra').AsString := palavra;
     
-    if qtde < 10 then
+    if qtde < 5 then
       qry.ParamByName('qtde').AsInteger := qtde;
     
     try
@@ -167,7 +167,7 @@ var
 begin
   FQry.Close;
   FQry.SQL.Clear;
-  FQry.SQL.Add('select data_seq_acertos,count(*)as qtde from palavras group by data_seq_acertos');
+  FQry.SQL.Add('select data_seq_acertos,count(*)as qtde from palavras where frase = '+QuotedStr('F') +' group by data_seq_acertos');
   FQry.Open;  
 
   lista := TList<string>.Create;
@@ -189,7 +189,7 @@ var
 begin
   FQry.Close;
   FQry.SQL.Clear;
-  FQry.SQL.Add('select b.palavraingles,b.qtdeseqacertos from palavras b where b.data_seq_acertos <= current_date order by 2 desc ');
+  FQry.SQL.Add('select b.palavraingles,b.qtdeseqacertos from palavras b where frase = '+QuotedStr('F')+' and b.data_seq_acertos <= current_date order by 2 desc ');
   FQry.Open;  
 
   lista := TList<string>.Create;
