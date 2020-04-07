@@ -4,6 +4,7 @@ object DM: TDM
   Width = 300
   object conexao: TZConnection
     ControlsCodePage = cCP_UTF16
+    Connected = True
     Port = 0
     Database = 'C:\Ingles\Banco\BANCO.FDB'
     User = 'sysdba'
