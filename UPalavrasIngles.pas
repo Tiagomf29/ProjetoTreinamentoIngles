@@ -31,6 +31,8 @@ type
     Estatisticasdepalavrasacertadas1: TMenuItem;
     N2: TMenuItem;
     Acertossequenciais1: TMenuItem;
+    lblTempo: TLabel;
+    timer: TTimer;
     procedure FormShow(Sender: TObject);
     procedure Palavras1Click(Sender: TObject);
     procedure Parmetros1Click(Sender: TObject);
@@ -40,6 +42,8 @@ type
     procedure btn1Click(Sender: TObject);
     procedure Estatisticasdepalavrasacertadas1Click(Sender: TObject);
     procedure Acertossequenciais1Click(Sender: TObject);
+    procedure timerTimer(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     procedure exibePalavrasInglesBanco();
     procedure traducaoInglesPortugues();
@@ -53,13 +57,12 @@ type
       lista: TObjectList<TPalavras>;
       palavras: TPalavras;
       par :  TParametros;
-    
-    var
-    listaPalavrasConcatenadas, listaPalavrasAcertadas : array of string;
-    Acertos,AcertosTotal, Erros: Integer;
+      tempoOld : TDateTime;
+      listaPalavrasConcatenadas, listaPalavrasAcertadas : array of string;
+      Acertos,AcertosTotal, Erros: Integer;
 
   public
-    { Public declarations }
+
   end;
 
 var
@@ -339,6 +342,12 @@ begin
 
 end;
 
+procedure TfrmPrincipal.FormCreate(Sender: TObject);
+begin
+   lblTempo.Caption := '00:00:00:000';
+  tempoOld := Now;
+end;
+
 procedure TfrmPrincipal.FormShow(Sender: TObject);
 begin 
   // TIRA O SOM PADRÃO DO WINDOWS AO CLICAR NOS BOTÕES
@@ -480,6 +489,11 @@ begin
   end;
     
   Result := linha;
+end;
+
+procedure TfrmPrincipal.timerTimer(Sender: TObject);
+begin
+  lblTempo.Caption := FormatDateTime('HH:MM:SS', tempoOld - NOW);
 end;
 
 procedure TfrmPrincipal.traducaoInglesPortugues;

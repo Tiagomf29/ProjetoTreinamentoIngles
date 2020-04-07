@@ -57,6 +57,7 @@ type
     procedure atualizaStatusExibicaoPalavras(palavra : String; qtde : smallint);
     procedure atualizaQtdePalavrasFecharTela();
     procedure atualizaAudio(id : Integer; mp3 : TBlobData);
+    procedure AlterarStatusTotasPalavras(AAtivar : Boolean);
 
     constructor Create();
     destructor Destroy; override;
@@ -66,6 +67,25 @@ type
 implementation
 
 { TPalavras }
+
+procedure TPalavras.AlterarStatusTotasPalavras(AAtivar: Boolean);
+var
+  qry : TZQuery;
+begin
+
+  qry := TZQuery.Create(nil);
+  qry.Connection := DM.conexao;
+  
+  try
+    qry.close;
+    qry.SQL.Add('update palavras set ');
+    qry.SQL.Add('ativo = '+QuotedStr(IfThen(AAtivar,'T','F')));
+
+    qry.ExecSQL;
+  finally
+    FreeAndNil(qry);
+  end;
+end;
 
 procedure TPalavras.atualizaAudio(id : Integer; mp3 : TBlobData);
 var

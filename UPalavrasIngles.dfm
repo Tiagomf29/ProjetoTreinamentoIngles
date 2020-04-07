@@ -16,6 +16,7 @@ object frmPrincipal: TfrmPrincipal
   OldCreateOrder = False
   Position = poScreenCenter
   OnClose = FormClose
+  OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
@@ -28,6 +29,19 @@ object frmPrincipal: TfrmPrincipal
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clBlack
     Font.Height = -48
+    Font.Name = 'Tahoma'
+    Font.Style = [fsBold]
+    ParentFont = False
+  end
+  object lblTempo: TLabel
+    Left = 640
+    Top = 328
+    Width = 13
+    Height = 25
+    Caption = '1'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clBlue
+    Font.Height = -21
     Font.Name = 'Tahoma'
     Font.Style = [fsBold]
     ParentFont = False
@@ -283,5 +297,11 @@ object frmPrincipal: TfrmPrincipal
     Orientacao = poPortrait
     Left = 580
     Top = 16
+  end
+  object timer: TTimer
+    Interval = 1
+    OnTimer = timerTimer
+    Left = 688
+    Top = 24
   end
 end

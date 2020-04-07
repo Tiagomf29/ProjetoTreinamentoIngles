@@ -48,6 +48,7 @@ type
     dlgOpen: TOpenDialog;
     documento: TXMLDocument;
     pb: TProgressBar;
+    btnStatusPalavras: TBitBtn;
     procedure FormShow(Sender: TObject);
     procedure btnInserirClick(Sender: TObject);
     procedure btnSalvarClick(Sender: TObject);
@@ -59,6 +60,7 @@ type
     procedure edtPesquisaChange(Sender: TObject);
     procedure btnExportarClick(Sender: TObject);
     procedure btnImportarClick(Sender: TObject);
+    procedure btnStatusPalavrasClick(Sender: TObject);
   private
     procedure statusBotaoInserir();
     procedure statusBotaoNaoInserir();
@@ -318,6 +320,34 @@ begin
 
   btnInserir.SetFocus;
   MessageDlg('Registro gravado com sucesso!',mtInformation,[mbOK],0);
+  
+end;
+
+procedure TfrmCadastroPalavras.btnStatusPalavrasClick(Sender: TObject);
+var
+  palavras : TPalavras;
+begin
+
+  palavras := TPalavras.Create;
+
+  try
+    if btnStatusPalavras.Caption = 'Ativar todas as palavras' then
+    begin        
+      palavras.AlterarStatusTotasPalavras(True);
+      btnStatusPalavras.Caption := 'Desativar todas as palavras';
+      CDS.Refresh;
+      MessageDlg('Status atualizados com sucesso!',mtInformation,[mbOK],0);
+    end
+    else
+      begin
+        palavras.AlterarStatusTotasPalavras(false);
+        btnStatusPalavras.Caption := 'Ativar todas as palavras';
+        CDS.Refresh;
+        MessageDlg('Status atualizados com sucesso!',mtInformation,[mbOK],0);
+      end;
+  finally
+    FreeAndNil(palavras);
+  end;  
   
 end;
 
