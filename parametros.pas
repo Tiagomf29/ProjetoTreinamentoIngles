@@ -18,6 +18,7 @@ type
     FPalavrasAleatorias : string;
     FDividePalavrasDia : string;
     FOrdenarPalavras : string;
+    FSomenteAudio : string;
     function getApresentacaoPalavras: SmallInt;
     function getId: Integer;
     function getTpLetras: SmallInt;
@@ -38,6 +39,8 @@ type
     procedure setDividePalavrasDia(const Value: Boolean);
     procedure setOrdenarPalavras(const Value: Boolean);
     procedure setPalavrasAleatorias(const Value: Boolean);
+    function getSomenteAudio: Boolean;
+    procedure setSomenteAudio(const Value: Boolean);
 
   public
     property id: Integer read getId write setId;
@@ -50,6 +53,7 @@ type
     property palavrasAleatorias : Boolean read getPalavrasAleatorias write setPalavrasAleatorias;
     property dividePalavrasDia :Boolean read getDividePalavrasDia write setDividePalavrasDia;
     property ordenarPalavras: Boolean read getOrdenarPalavras write setOrdenarPalavras;
+    property somenteAudio: Boolean read getSomenteAudio write setSomenteAudio;
     
 
     procedure setObject();
@@ -124,6 +128,14 @@ begin
     Result :=False;
 end;
 
+function TParametros.getSomenteAudio: Boolean;
+begin
+  if FSomenteAudio = 'T' then
+    Result := true
+  else
+    Result :=False;  
+end;
+
 function TParametros.getTpLetras: SmallInt;
 begin
   Result := FTpLetras;
@@ -144,7 +156,8 @@ begin
     qry.SQL.Clear;
     qry.SQL.Add('update parametros set tp_letras =:tp_letras, apresentacao_palavras =:apresentacao_palavras,'); 
     qry.SQL.Add('filtro_palavras_in =:filtroIN, filtro_palavras_fi =:filtroFI,');
-    qry.SQL.Add('repetir_palavra =:rp,ingles_to_portugues =:itp, palavras_aleatorias =:pa, divide_palavras_dia =:dpd, ordenar_palavras =:op');
+    qry.SQL.Add('repetir_palavra =:rp,ingles_to_portugues =:itp, palavras_aleatorias =:pa, divide_palavras_dia =:dpd, ordenar_palavras =:op,');
+    qry.SQL.Add('somenteAudio =:sa');
     
     qry.ParamByName('tp_letras').AsInteger              := FTpLetras;
     qry.ParamByName('apresentacao_palavras').AsInteger  := FApresentacaoPalavras;
@@ -155,6 +168,7 @@ begin
     qry.ParamByName('pa').AsString                      := FPalavrasAleatorias;
     qry.ParamByName('dpd').AsString                     := FDividePalavrasDia;
     qry.ParamByName('op').AsString                      := FOrdenarPalavras;
+    qry.ParamByName('sa').AsString                      := FSomenteAudio;
     
     qry.ExecSQL;
   finally
@@ -224,6 +238,7 @@ begin
     FPalavrasAleatorias   := qry.FieldByName('palavras_aleatorias').AsString;
     FDividePalavrasDia    := qry.FieldByName('divide_palavras_dia').AsString;
     FOrdenarPalavras      := qry.FieldByName('ordenar_palavras').AsString;
+    FSomenteAudio         := qry.FieldByName('somenteAudio').AsString;
     
   finally
     FreeAndNil(qry);
@@ -253,6 +268,14 @@ begin
     FRepetirPalavras := 'T'
   else
     FRepetirPalavras := 'F';  
+end;
+
+procedure TParametros.setSomenteAudio(const Value: Boolean);
+begin
+  if Value then
+    FSomenteAudio := 'T'
+  else
+    FSomenteAudio := 'F';
 end;
 
 procedure TParametros.setTpLetras(const Value: SmallInt);

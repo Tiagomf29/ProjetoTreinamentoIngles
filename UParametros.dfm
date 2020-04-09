@@ -123,4 +123,12 @@ object frmParametros: TfrmParametros
     Enabled = False
     TabOrder = 5
   end
+  object cbExibirSomenteAudio: TCheckBox
+    Left = 192
+    Top = 176
+    Width = 153
+    Height = 17
+    Caption = 'somente '#225'udio em ingl'#234's'
+    TabOrder = 8
+  end
 end

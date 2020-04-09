@@ -146,18 +146,13 @@ object frmPrincipal: TfrmPrincipal
     TabOrder = 2
     OnClick = btnValidarClick
   end
-  object mp1: TMediaPlayer
-    Left = 8
+  object BitBtn1: TBitBtn
+    Left = 93
     Top = 311
-    Width = 29
-    Height = 30
-    VisibleButtons = [btPlay]
-    DoubleBuffered = False
-    ParentDoubleBuffered = False
-    ParentShowHint = False
-    ShowHint = False
+    Width = 75
+    Height = 42
+    Caption = 'BitBtn1'
     TabOrder = 3
-    TabStop = False
   end
   object MainMenu1: TMainMenu
     Left = 524

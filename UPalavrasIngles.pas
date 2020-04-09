@@ -8,7 +8,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, StrUtils, CnClasses,
   CnTimer, CnRS232Dialog, Vcl.Tabs, CnTabSet, frxClass, frxExportPDF, RpDefine,
   RpCon, RpConDS, Vcl.ExtCtrls, Vcl.Buttons, Vcl.Menus, RDprint, Vcl.ComCtrls,
-  Vcl.MPlayer;
+  Vcl.MPlayer ;
 
 type
 
@@ -24,7 +24,6 @@ type
     StatusBar1: TStatusBar;
     mmo: TMemo;
     btnValidar: TBitBtn;
-    mp1: TMediaPlayer;
     sOBRE1: TMenuItem;
     ProgramafeitoporTiagoMartinsFerreira1: TMenuItem;
     N1: TMenuItem;
@@ -33,6 +32,7 @@ type
     Acertossequenciais1: TMenuItem;
     lblTempo: TLabel;
     timer: TTimer;
+    BitBtn1: TBitBtn;
     procedure FormShow(Sender: TObject);
     procedure Palavras1Click(Sender: TObject);
     procedure Parmetros1Click(Sender: TObject);
@@ -49,6 +49,7 @@ type
     procedure traducaoInglesPortugues();
     procedure atualizaStatusBar(); 
     procedure propriedadeLabelPadrao();
+    procedure reproduzSom();
     function contagemPontos(AMsg: String): String;
     function palavraConcatenada(Apalavra1, APalavra2 : String; AQtdePalavras,AContador: Integer): String;
     function removerEspacosNoMeio( palavra : String):String;
@@ -122,7 +123,11 @@ begin
 end;
 
 procedure TfrmPrincipal.btn1Click(Sender: TObject);
+var
+  mp1 : TMediaPlayer;
 begin
+
+  mp1 := TMediaPlayer.Create(nil);
        mp1.FileName := Trim('C:\Ingles\Mp3\'+Label1.Caption+'.mp3');
        mp1.Open;
        mp1.Play;
@@ -133,8 +138,11 @@ var
   qtdePalavrasEdt, qtdePalavrasAleatorias : TStringDynArray;
 begin
   
-  if Label1.Caption = 'Parabêns voce acertou todas as palavras!!'+#13+'Feche o programa para começar novamente.' then  
+  if Label1.Caption = 'Parabêns voce acertou todas as palavras!!'+#13+'Feche o programa para começar novamente.' then
+  begin  
+    timer.Enabled := False;
     abort;  
+  end;
     
   qtdePalavrasEdt := SplitString(mmo.Text,',');
   qtdePalavrasAleatorias := SplitString(Label1.Caption,',');
@@ -157,6 +165,7 @@ begin
       mmo.Font.Size := 10;
       mmo.Enabled:=false;
       atualizaStatusBar();
+      timer.Enabled := False;
       MessageDlg('Parabêns!! Você acertou todas as palavras',mtInformation,[mbOK],0);
       Abort;
     end;
@@ -247,7 +256,6 @@ begin
              Label1.Font.Size := 36;
              mmo.Font.Size := 24;
              SetLength(listaPalavrasConcatenadas,1);
-             mp1.Enabled:=True;
            end;
     
       4  : begin
@@ -299,7 +307,9 @@ begin
         if (divisaoPalavras = j)and (lQtdePalavras>=8)then
           lPalavrasConcatenadas :=  palavraConcatenada(lPalavrasConcatenadas,IfThen(par.inglesToPortugues,lista.Items[lNumeroAleatorio].palavraIngles,lista.Items[lNumeroAleatorio].palavraPortugues),lQtdePalavras,j)+#13;  
     end;
-   
+
+   Label1.Visible := not par.somenteAudio;  
+
    Label1.Caption := IfThen(par.tpLetras = 1,UpperCase(lPalavrasConcatenadas),LowerCase(lPalavrasConcatenadas));  
    
    if par.apresentacaoPalavras = 1 then
@@ -344,7 +354,7 @@ end;
 
 procedure TfrmPrincipal.FormCreate(Sender: TObject);
 begin
-   lblTempo.Caption := '00:00:00:000';
+  lblTempo.Caption := '00:00:00:000';
   tempoOld := Now;
 end;
 
@@ -491,6 +501,20 @@ begin
   Result := linha;
 end;
 
+procedure TfrmPrincipal.reproduzSom;
+var
+  mp1 : TMediaPlayer;
+begin
+  mp1 := TMediaPlayer.Create(nil);
+  try
+    mp1.FileName := 'C:\Ingles\Mp3\'+Label1.Caption+'.mp3';
+    mp1.Open;
+    mp1.Play;
+  finally
+    FreeAndNil(mp1);
+  end;
+end;
+
 procedure TfrmPrincipal.timerTimer(Sender: TObject);
 begin
   lblTempo.Caption := FormatDateTime('HH:MM:SS', tempoOld - NOW);
@@ -533,6 +557,7 @@ begin
         // Verifica se todas as palavras já foram acertadas ou não
         if listaPalavrasAcertadas[lista.Count-1]<> '' then
         begin
+          Label1.Visible := True;
           Label1.Caption:='Parabêns voce acertou todas as palavras!!'+#13+'Feche o programa para começar novamente.'; 
           raise Exception.Create('Error Message');                      
         end;                    
@@ -556,6 +581,7 @@ begin
           else
             if listaPalavrasAcertadas[l]= '' then
             begin
+               Label1.Visible := True;
                contagemPontos('Você acertou!')  ;
                listaPalavrasAcertadas[l]:= UpperCase(listaPalavrasConcatenadas[j]);
                break;
@@ -566,6 +592,7 @@ begin
       // Verifica se todas as palavras já foram acertadas ou não
       if listaPalavrasAcertadas[lista.Count-1]<> '' then
       begin
+        Label1.Visible := True;
         Label1.Caption:='Parabêns voce acertou todas as palavras!!'+#13+'Feche o programa para começar novamente.'; 
         raise Exception.Create('Error Message');        
       end;

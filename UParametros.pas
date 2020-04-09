@@ -22,6 +22,7 @@ type
     cbParMesclaPalavrasDia: TCheckBox;
     cbOrdenarPalavras: TCheckBox;
     cbPalavrasAleatorias: TCheckBox;
+    cbExibirSomenteAudio: TCheckBox;
     procedure FormShow(Sender: TObject);
     procedure btnGravarClick(Sender: TObject);
   private
@@ -66,6 +67,7 @@ begin
     par.palavrasAleatorias := cbPalavrasAleatorias.Checked;
     par.dividePalavrasDia  := cbParMesclaPalavrasDia.Checked;  
     par.ordenarPalavras    := cbOrdenarPalavras.Checked;
+    par.somenteAudio       := cbExibirSomenteAudio.Checked;
 
     par.recordObject;
 
@@ -94,6 +96,7 @@ begin
     cbParMesclaPalavrasDia.Checked := (par.dividePalavrasDia);
     cbOrdenarPalavras.Checked      := (par.ordenarPalavras);
     cbPalavrasAleatorias.Checked   := (par.palavrasAleatorias);
+    cbExibirSomenteAudio.Checked   := (par.somenteAudio);
 
     if par.tpLetras = 1 then
       RadioGroup1.ItemIndex := 0
