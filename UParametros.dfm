@@ -29,7 +29,7 @@ object frmParametros: TfrmParametros
     TabOrder = 0
   end
   object RadioGroup2: TRadioGroup
-    Left = 155
+    Left = 159
     Top = 0
     Width = 322
     Height = 73
@@ -41,6 +41,7 @@ object frmParametros: TfrmParametros
       '8 palavras por vez'
       '12 palavras por vez')
     TabOrder = 1
+    OnClick = RadioGroup2Click
   end
   object btnGravar: TBitBtn
     Left = 202
@@ -101,7 +102,7 @@ object frmParametros: TfrmParametros
     Left = 192
     Top = 134
     Width = 201
-    Height = 17
+    Height = 16
     Caption = 'Divide Palavras por dia'
     TabOrder = 6
   end
@@ -109,7 +110,7 @@ object frmParametros: TfrmParametros
     Left = 192
     Top = 157
     Width = 201
-    Height = 17
+    Height = 16
     Caption = 'Ordenar palavras alfabeticamente'
     Enabled = False
     TabOrder = 7
@@ -127,7 +128,7 @@ object frmParametros: TfrmParametros
     Left = 192
     Top = 176
     Width = 153
-    Height = 17
+    Height = 21
     Caption = 'somente '#225'udio em ingl'#234's'
     TabOrder = 8
   end

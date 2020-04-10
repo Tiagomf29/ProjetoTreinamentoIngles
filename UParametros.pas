@@ -25,6 +25,7 @@ type
     cbExibirSomenteAudio: TCheckBox;
     procedure FormShow(Sender: TObject);
     procedure btnGravarClick(Sender: TObject);
+    procedure RadioGroup2Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -119,6 +120,17 @@ begin
     FreeAndNil(par);
   end;
 
+end;
+
+procedure TfrmParametros.RadioGroup2Click(Sender: TObject);
+begin
+  if RadioGroup2.ItemIndex = 0 then
+    cbExibirSomenteAudio.Enabled := True
+  else
+  begin
+    cbExibirSomenteAudio.Enabled := False;  
+    cbExibirSomenteAudio.Checked := False;
+  end;
 end;
 
 end.
