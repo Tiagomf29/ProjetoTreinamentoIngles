@@ -17,8 +17,10 @@ begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
   TStyleManager.TrySetStyle('Aqua Graphite');
+
+  ReportMemoryLeaksOnShutdown := (DebugHook <> 0);
+  
   Application.CreateForm(TfrmPrincipal, frmPrincipal);
   Application.CreateForm(TDM, DM);
-  Application.CreateForm(TfrmParametros, frmParametros);
   Application.Run;
 end.

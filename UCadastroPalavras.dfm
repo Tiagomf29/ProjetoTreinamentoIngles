@@ -3,7 +3,7 @@ object frmCadastroPalavras: TfrmCadastroPalavras
   Top = 0
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
-  Caption = 'Cadastro de Palavras'
+  Caption = 'Cadastro de Palavras/Frases'
   ClientHeight = 550
   ClientWidth = 732
   Color = clBtnFace
@@ -27,23 +27,16 @@ object frmCadastroPalavras: TfrmCadastroPalavras
     object lblPalavraIngles: TLabel
       Left = 8
       Top = 16
-      Width = 68
+      Width = 29
       Height = 13
-      Caption = 'Palavra Ingl'#234's'
+      Caption = 'Ingl'#234's'
     end
     object lblPalavraPortugues: TLabel
       Left = 8
-      Top = 64
-      Width = 88
+      Top = 65
+      Width = 49
       Height = 13
-      Caption = 'Palavra Portugu'#234's'
-    end
-    object Label1: TLabel
-      Left = 8
-      Top = 113
-      Width = 25
-      Height = 13
-      Caption = 'Ativo'
+      Caption = 'Portugu'#234's'
     end
     object edtPalavraIngles: TEdit
       Left = 8
@@ -51,6 +44,7 @@ object frmCadastroPalavras: TfrmCadastroPalavras
       Width = 516
       Height = 21
       CharCase = ecUpperCase
+      MaxLength = 60
       TabOrder = 0
     end
     object edtPalavraPortugues: TEdit
@@ -59,18 +53,24 @@ object frmCadastroPalavras: TfrmCadastroPalavras
       Width = 516
       Height = 21
       CharCase = ecUpperCase
+      MaxLength = 60
       TabOrder = 1
     end
-    object cbbAtivo: TComboBox
+    object cbAtivo: TCheckBox
       Left = 8
-      Top = 130
-      Width = 145
-      Height = 22
-      Style = csOwnerDrawFixed
+      Top = 126
+      Width = 58
+      Height = 17
+      Caption = 'Ativo'
       TabOrder = 2
-      Items.Strings = (
-        'Sim'
-        'N'#227'o')
+    end
+    object cbFrase: TCheckBox
+      Left = 72
+      Top = 126
+      Width = 97
+      Height = 17
+      Caption = 'Frase'
+      TabOrder = 3
     end
   end
   object Panel2: TPanel
@@ -378,13 +378,44 @@ object frmCadastroPalavras: TfrmCadastroPalavras
     Height = 227
     Align = alTop
     DataSource = DTS
-    Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
+    Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgMultiSelect, dgTitleClick, dgTitleHotTrack]
     TabOrder = 4
     TitleFont.Charset = DEFAULT_CHARSET
     TitleFont.Color = clWindowText
     TitleFont.Height = -11
     TitleFont.Name = 'Tahoma'
     TitleFont.Style = []
+    OnCellClick = DBGrid1CellClick
+    OnDrawColumnCell = DBGrid1DrawColumnCell
+    Columns = <
+      item
+        Expanded = False
+        FieldName = 'ID'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'PALAVRAINGLES'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'PalavraPortugues'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'Ativo'
+        Width = 28
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'FRASE'
+        Title.Caption = 'Frase'
+        Width = 29
+        Visible = True
+      end>
   end
   object btnImportar: TBitBtn
     Left = 282
@@ -499,6 +530,19 @@ object frmCadastroPalavras: TfrmCadastroPalavras
       Required = True
       Size = 1
     end
+    object QRYFRASE: TWideStringField
+      FieldName = 'FRASE'
+      Size = 1
+    end
+    object QRYQTDESEQACERTOS: TSmallintField
+      FieldName = 'QTDESEQACERTOS'
+    end
+    object QRYDATA_SEQ_ACERTOS: TDateField
+      FieldName = 'DATA_SEQ_ACERTOS'
+    end
+    object QRYMP3: TBlobField
+      FieldName = 'MP3'
+    end
   end
   object DTS: TDataSource
     AutoEdit = False
@@ -537,6 +581,10 @@ object frmCadastroPalavras: TfrmCadastroPalavras
     object CDSATIVO: TWideStringField
       FieldName = 'Ativo'
       Required = True
+      Size = 1
+    end
+    object CDSFRASE: TWideStringField
+      FieldName = 'FRASE'
       Size = 1
     end
   end

@@ -3,15 +3,11 @@ unit UPalavrasIngles;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,parametros,
-  System.Classes, Vcl.Graphics,System.Types,UParametros,UPalavras,System.Generics.Collections,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, StrUtils, CnClasses,
-  CnTimer, CnRS232Dialog, Vcl.Tabs, CnTabSet, frxClass, frxExportPDF, RpDefine,
-  RpCon, RpConDS, Vcl.ExtCtrls, Vcl.Buttons, Vcl.Menus, RDprint, Vcl.ComCtrls,
+  Winapi.Windows,System.SysUtils,parametros,System.Types,UParametros,UPalavras,
+  System.Generics.Collections,Vcl.Forms, Vcl.Dialogs,StrUtils,RDprint,Vcl.ExtCtrls,
+  Vcl.Buttons, System.Classes, Vcl.Controls,Vcl.StdCtrls, Vcl.Menus, Vcl.ComCtrls, 
   Vcl.MPlayer ;
-
 type
-
   TfrmPrincipal = class(TForm)
     Label1: TLabel;
     MainMenu1: TMainMenu;
@@ -355,7 +351,6 @@ begin
   par.setObject(); 
   palavras := TPalavras.Create;
   lista := palavras.listaPalavrasIngles(par.filtroInicial,par.filtroFinal,(par.ordenarPalavras),(par.dividePalavrasDia));
-
   if lista.Count = 0 then
   begin
     MessageDlg('Nenhum registro a ser exibido.',mtInformation,[mbOK],0);

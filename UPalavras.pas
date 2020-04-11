@@ -308,8 +308,8 @@ begin
 
   FQry.Close;
   FQry.SQL.Clear;
-  FQry.SQL.Add('select * from palavras where frase = '+QuotedStr('F'));
-  FQry.SQL.Add('and ativo = ''T''');
+  FQry.SQL.Add('select * from palavras ');
+  FQry.SQL.Add('where ativo = ''T''');
   if dividirPalavrasDia then  
     FQry.SQL.Add('and data_seq_acertos <='+QuotedStr(mes+'/'+dia+'/'+ano));
   if (AParam1 > 0) or (AParam2 > 0) then
@@ -348,7 +348,7 @@ function TPalavras.listaTodasPalavras: TObjectList<TPalavras>;
 var  
   palavra : TPalavras;
 begin
-
+ 
   FQry.Close;
   FQry.SQL.Clear;
   FQry.SQL.Add('select * from palavras order by 1');
@@ -371,7 +371,7 @@ begin
 
     FQry.Next;   
   end;
-
+      
   Result := Flista;    
 
 end;
@@ -390,12 +390,13 @@ begin
   
     qryTemp.close;
     qryTemp.SQL.Add('update palavras set');
-    qryTemp.SQL.Add('palavraingles =:ingles,palavraportugues =:portugues,ativo =:ativo ');
+    qryTemp.SQL.Add('palavraingles =:ingles,palavraportugues =:portugues,ativo =:ativo, frase =:frase ');
     qryTemp.SQL.Add('where id =:id');
     qryTemp.ParamByName('id').AsInteger := FId;
     qryTemp.ParamByName('ingles').AsString:= FPalavraIngles;
     qryTemp.ParamByName('portugues').AsString := FPalavraPortugues;
     qryTemp.ParamByName('ativo').AsString := FAtivo;
+    qryTemp.ParamByName('frase').AsString := FFrase;
 
     qryTemp.ExecSQL;
   finally
@@ -447,7 +448,7 @@ begin
     qryTemp.ParamByName('ingles').AsString:= FPalavraIngles;
     qryTemp.ParamByName('portugues').AsString := FPalavraPortugues;
     qryTemp.ParamByName('ativo').AsString := FAtivo;
-    qryTemp.ParamByName('frase').AsString := 'F';
+    qryTemp.ParamByName('frase').AsString := FFrase;
     qryTemp.ParamByName('qtdeAcertos').AsInteger := 0;
 
     if FDataSeqAcertos > StrToDate('30/12/1899') then

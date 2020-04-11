@@ -5,7 +5,7 @@ object frmParametros: TfrmParametros
   BorderStyle = bsSingle
   Caption = 'Par'#226'metros'
   ClientHeight = 234
-  ClientWidth = 479
+  ClientWidth = 500
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -44,7 +44,7 @@ object frmParametros: TfrmParametros
     OnClick = RadioGroup2Click
   end
   object btnGravar: TBitBtn
-    Left = 202
+    Left = 213
     Top = 205
     Width = 75
     Height = 25

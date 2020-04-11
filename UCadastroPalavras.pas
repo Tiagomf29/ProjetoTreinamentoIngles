@@ -5,11 +5,9 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.Grids,System.StrUtils,
-  Vcl.DBGrids, Vcl.ExtCtrls, UDM, Data.DB, ZAbstractRODataset, ZAbstractDataset,MidasLib,
-  ZDataset, Vcl.DBCtrls, Vcl.Mask, Datasnap.Provider, Datasnap.DBClient, System.Generics.Collections,
-  Vcl.MPlayer, Xml.xmldom, Xml.XMLIntf, Xml.Win.msxmldom, Xml.XMLDoc,
-  Vcl.ComCtrls;
-
+  Vcl.DBGrids,UDM, Data.DB, ZAbstractRODataset,ZAbstractDataset,MidasLib,
+  ZDataset, Vcl.DBCtrls,Datasnap.Provider, Datasnap.DBClient, System.Generics.Collections,
+  Xml.xmldom, Xml.XMLIntf, Xml.XMLDoc,Vcl.ComCtrls, Vcl.ExtCtrls, Xml.Win.msxmldom;
 type
   TfrmCadastroPalavras = class(TForm)
     Panel1: TPanel;
@@ -21,10 +19,8 @@ type
     QRYPALAVRAINGLES: TWideStringField;
     QRYPALAVRAPORTUGUES: TWideStringField;
     QRYATIVO: TWideStringField;
-    Label1: TLabel;
     edtPalavraIngles: TEdit;
     edtPalavraPortugues: TEdit;
-    cbbAtivo: TComboBox;
     Panel2: TPanel;
     btnInserir: TBitBtn;
     btnSalvar: TBitBtn;
@@ -49,6 +45,13 @@ type
     documento: TXMLDocument;
     pb: TProgressBar;
     btnStatusPalavras: TBitBtn;
+    QRYFRASE: TWideStringField;
+    QRYQTDESEQACERTOS: TSmallintField;
+    QRYDATA_SEQ_ACERTOS: TDateField;
+    QRYMP3: TBlobField;
+    CDSFRASE: TWideStringField;
+    cbAtivo: TCheckBox;
+    cbFrase: TCheckBox;
     procedure FormShow(Sender: TObject);
     procedure btnInserirClick(Sender: TObject);
     procedure btnSalvarClick(Sender: TObject);
@@ -61,6 +64,9 @@ type
     procedure btnExportarClick(Sender: TObject);
     procedure btnImportarClick(Sender: TObject);
     procedure btnStatusPalavrasClick(Sender: TObject);
+    procedure DBGrid1DrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumn; State: TGridDrawState);
+    procedure DBGrid1CellClick(Column: TColumn);
   private
     procedure statusBotaoInserir();
     procedure statusBotaoNaoInserir();
@@ -91,6 +97,8 @@ end;
 procedure TfrmCadastroPalavras.btnCancelarClick(Sender: TObject);
 begin
   statusBotaoNaoInserir();
+  CDS.First();
+  CDS.Refresh();
 end;
 
 procedure TfrmCadastroPalavras.btnExcluirClick(Sender: TObject);
@@ -272,7 +280,7 @@ end;
 procedure TfrmCadastroPalavras.btnInserirClick(Sender: TObject);
 begin
   statusBotaoInserir();
-  cbbAtivo.ItemIndex:=0;
+  cbAtivo.Checked := True;
   edtPalavraIngles.Text := '';
   edtPalavraPortugues.Text := '';
   statusInsercao := true;
@@ -303,7 +311,8 @@ begin
     palavras.id := CDSID.Value;
     palavras.palavraIngles := edtPalavraIngles.Text;
     palavras.palavraPortugues := edtPalavraPortugues.Text;
-    palavras.ativo := (cbbAtivo.ItemIndex = 0);
+    palavras.ativo := (cbAtivo.Checked = True);
+    palavras.frase := (cbFrase.Checked = True);
 
     if statusInsercao then    
       palavras.recordObjectInsercao()
@@ -357,11 +366,136 @@ begin
   edtPalavraPortugues.Text := CDSPALAVRAPORTUGUES.Value;
   
   if CDSATIVO.Value = 'T' then  
-    cbbAtivo.ItemIndex := 0
+    cbAtivo.Checked := True
   else
-    cbbAtivo.ItemIndex := 1;
+    cbAtivo.Checked := False;
 
+  if CDSFRASE.Value = 'T' then
+    cbFrase.Checked := True
+  else
+    cbFrase.Checked := False;
+    
   statusBotaoNaoInserir(); 
+
+end;
+
+procedure TfrmCadastroPalavras.DBGrid1CellClick(Column: TColumn);
+var
+  palavras : TPalavras;
+begin 
+  
+  if (DBGrid1.SelectedField.FieldName = 'Ativo') and (btnInserir.Enabled = True) then
+  begin
+
+    if cbAtivo.Checked = True then
+      cbAtivo.Checked := False
+    else
+      cbAtivo.Checked := True;          
+
+    palavras := TPalavras.Create;
+
+    try
+    
+      palavras.id               := CDSID.Value;
+      palavras.palavraIngles    := edtPalavraIngles.Text;
+      palavras.palavraPortugues := edtPalavraPortugues.Text;
+      palavras.ativo            := (cbAtivo.Checked = True);
+      palavras.frase            := (cbFrase.Checked = True);
+
+      palavras.recordObjectAtualizacao();
+
+      CDS.Refresh();
+      
+    finally
+      FreeAndNil(palavras);
+    end;
+
+  end 
+  else
+    if (DBGrid1.SelectedField.FieldName = 'FRASE') and (btnInserir.Enabled = True) then
+    begin
+
+      if cbFrase.Checked = True then
+        cbFrase.Checked := False
+      else
+        cbFrase.Checked := True;          
+
+      palavras := TPalavras.Create;
+
+      try
+    
+        palavras.id               := CDSID.Value;
+        palavras.palavraIngles    := edtPalavraIngles.Text;
+        palavras.palavraPortugues := edtPalavraPortugues.Text;
+        palavras.ativo            := (cbAtivo.Checked = True);
+        palavras.frase            := (cbFrase.Checked = True);
+
+        palavras.recordObjectAtualizacao();
+
+        CDS.Refresh();
+      
+      finally
+        FreeAndNil(palavras);
+      end;
+
+    end;
+      
+end;
+
+procedure TfrmCadastroPalavras.DBGrid1DrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+var
+  Check: Integer;
+  R: TRect;
+begin
+  inherited;
+
+  // Pinta a coluna FRASE na cor preta para não aparecer o texto da coluna (T ou F)
+  if (Column.FieldName = 'FRASE') then
+  begin
+    (Sender as TDBGrid).Canvas.Brush.Color:= clBlack;
+  end;
+
+  // Pinta a coluna Ativo na cor preta para não aparecer o texto da coluna (T ou F)
+  if (Column.FieldName = 'Ativo') then
+  begin
+    (Sender as TDBGrid).Canvas.Brush.Color:= clBlack;
+  end;  
+ 
+  if ((Sender as TDBGrid).DataSource.Dataset.IsEmpty) then
+    Exit;
+ 
+  // Desenha um checkbox no dbgrid
+  if Column.FieldName = 'Ativo' then
+  begin
+    TDBGrid(Sender).Canvas.FillRect(Rect);
+ 
+    if ((Sender as TDBGrid).DataSource.Dataset.FieldByName('Ativo').AsString = 'T') then
+      Check := DFCS_CHECKED
+    else
+      Check := 0;
+ 
+    R := Rect;
+    InflateRect(R, -2, -2); { Diminue o tamanho do CheckBox }
+    DrawFrameControl(TDBGrid(Sender).Canvas.Handle, R, DFC_BUTTON,
+      DFCS_BUTTONCHECK or Check);
+  end;
+
+  // Desenha um checkbox no dbgrid
+  if Column.FieldName = 'FRASE' then
+  begin
+    TDBGrid(Sender).Canvas.FillRect(Rect);
+ 
+    if ((Sender as TDBGrid).DataSource.Dataset.FieldByName('FRASE').AsString = 'T') then
+      Check := DFCS_CHECKED
+    else
+      Check := 0;
+ 
+    R := Rect;
+    InflateRect(R, -2, -2); { Diminue o tamanho do CheckBox }
+    DrawFrameControl(TDBGrid(Sender).Canvas.Handle, R, DFC_BUTTON,
+      DFCS_BUTTONCHECK or Check);
+  end;    
 
 end;
 
@@ -388,7 +522,7 @@ begin
   btnFechar.Enabled := False;
   edtPalavraIngles.Enabled := True;
   edtPalavraPortugues.Enabled := True;
-  cbbAtivo.Enabled := True;
+  cbAtivo.Enabled := True;
   edtPalavraIngles.SetFocus;
 end;
 
@@ -402,7 +536,7 @@ begin
   btnFechar.Enabled := True;
   edtPalavraIngles.Enabled := False;
   edtPalavraPortugues.Enabled := False;
-  cbbAtivo.Enabled := False;
+  cbAtivo.Enabled := False;
 end;
 
 end.
