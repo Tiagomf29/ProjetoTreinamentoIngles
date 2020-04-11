@@ -330,22 +330,14 @@ begin
 end;
 
 procedure TfrmPrincipal.FormClose(Sender: TObject; var Action: TCloseAction);
-var
-  palavras2 : TPalavras;
 begin
 
-  palavras2 := TPalavras.Create;
-  try
-    palavras2.atualizaQtdePalavrasFecharTela();
-  finally
-    FreeAndNil(palavras2);
-  end;
+  palavras.atualizaQtdePalavrasFecharTela();
 
+  
 
   FreeAndNil(par);
   FreeAndNil(palavras);
-
-
 end;
 
 procedure TfrmPrincipal.FormCreate(Sender: TObject);

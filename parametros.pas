@@ -143,36 +143,39 @@ end;
 
 procedure TParametros.recordObject;
 var
-  qry : TZQuery;
+  qryTemp : TZQuery;
 begin
 
-  qry := TZQuery.Create(nil);
+  qryTemp := TZQuery.Create(nil);
 
   try
   
-    qry.Connection := DM.conexao;
+    qryTemp.Connection := DM.conexao;
 
-    qry.Close;
-    qry.SQL.Clear;
-    qry.SQL.Add('update parametros set tp_letras =:tp_letras, apresentacao_palavras =:apresentacao_palavras,'); 
-    qry.SQL.Add('filtro_palavras_in =:filtroIN, filtro_palavras_fi =:filtroFI,');
-    qry.SQL.Add('repetir_palavra =:rp,ingles_to_portugues =:itp, palavras_aleatorias =:pa, divide_palavras_dia =:dpd, ordenar_palavras =:op,');
-    qry.SQL.Add('somenteAudio =:sa');
+    qryTemp.Connection.StartTransaction;
+
+    qryTemp.Close;
+    qryTemp.SQL.Clear;
+    qryTemp.SQL.Add('update parametros set tp_letras =:tp_letras, apresentacao_palavras =:apresentacao_palavras,'); 
+    qryTemp.SQL.Add('filtro_palavras_in =:filtroIN, filtro_palavras_fi =:filtroFI,');
+    qryTemp.SQL.Add('repetir_palavra =:rp,ingles_to_portugues =:itp, palavras_aleatorias =:pa, divide_palavras_dia =:dpd, ordenar_palavras =:op,');
+    qryTemp.SQL.Add('somenteAudio =:sa');
     
-    qry.ParamByName('tp_letras').AsInteger              := FTpLetras;
-    qry.ParamByName('apresentacao_palavras').AsInteger  := FApresentacaoPalavras;
-    qry.ParamByName('filtroIN').AsInteger               := FfiltroInicial;
-    qry.ParamByName('filtroFI').AsInteger               := FfiltroFinal;
-    qry.ParamByName('rp').AsString                      := FRepetirPalavras;
-    qry.ParamByName('itp').AsString                     := 'T';
-    qry.ParamByName('pa').AsString                      := FPalavrasAleatorias;
-    qry.ParamByName('dpd').AsString                     := FDividePalavrasDia;
-    qry.ParamByName('op').AsString                      := FOrdenarPalavras;
-    qry.ParamByName('sa').AsString                      := FSomenteAudio;
+    qryTemp.ParamByName('tp_letras').AsInteger              := FTpLetras;
+    qryTemp.ParamByName('apresentacao_palavras').AsInteger  := FApresentacaoPalavras;
+    qryTemp.ParamByName('filtroIN').AsInteger               := FfiltroInicial;
+    qryTemp.ParamByName('filtroFI').AsInteger               := FfiltroFinal;
+    qryTemp.ParamByName('rp').AsString                      := FRepetirPalavras;
+    qryTemp.ParamByName('itp').AsString                     := 'T';
+    qryTemp.ParamByName('pa').AsString                      := FPalavrasAleatorias;
+    qryTemp.ParamByName('dpd').AsString                     := FDividePalavrasDia;
+    qryTemp.ParamByName('op').AsString                      := FOrdenarPalavras;
+    qryTemp.ParamByName('sa').AsString                      := FSomenteAudio;
     
-    qry.ExecSQL;
+    qryTemp.ExecSQL;
   finally
-    FreeAndNil(qry);
+    qryTemp.Connection.Commit();
+    FreeAndNil(qryTemp);
   end;
   
 end;
@@ -215,33 +218,36 @@ end;
 
 procedure TParametros.setObject();
 var
-  qry : TZQuery;
+  qryTemp : TZQuery;
 begin
 
-  qry := TZQuery.Create(nil);
+  qryTemp := TZQuery.Create(nil);
   
   try
 
-    qry.Connection :=  DM.conexao;
+    qryTemp.Connection :=  DM.conexao;
+
+    qryTemp.Connection.StartTransaction;
   
-    qry.Close;
-    qry.SQL.Clear;
-    qry.SQL.Add('select * from parametros ');
-    qry.Open;
-    FId                   := qry.FieldByName('id').AsInteger;
-    FTpLetras             := qry.FieldByName('tp_letras').AsInteger;
-    FApresentacaoPalavras := qry.FieldByName('apresentacao_palavras').AsInteger;
-    FfiltroInicial        := qry.FieldByName('filtro_palavras_in').AsInteger;
-    FfiltroFinal          := qry.FieldByName('filtro_palavras_fi').AsInteger;
-    FRepetirPalavras      := qry.FieldByName('repetir_palavra').AsString;
-    FInglesToPortugues    := qry.FieldByName('ingles_to_portugues').AsString;
-    FPalavrasAleatorias   := qry.FieldByName('palavras_aleatorias').AsString;
-    FDividePalavrasDia    := qry.FieldByName('divide_palavras_dia').AsString;
-    FOrdenarPalavras      := qry.FieldByName('ordenar_palavras').AsString;
-    FSomenteAudio         := qry.FieldByName('somenteAudio').AsString;
+    qryTemp.Close;
+    qryTemp.SQL.Clear;
+    qryTemp.SQL.Add('select * from parametros ');
+    qryTemp.Open;
+    FId                   := qryTemp.FieldByName('id').AsInteger;
+    FTpLetras             := qryTemp.FieldByName('tp_letras').AsInteger;
+    FApresentacaoPalavras := qryTemp.FieldByName('apresentacao_palavras').AsInteger;
+    FfiltroInicial        := qryTemp.FieldByName('filtro_palavras_in').AsInteger;
+    FfiltroFinal          := qryTemp.FieldByName('filtro_palavras_fi').AsInteger;
+    FRepetirPalavras      := qryTemp.FieldByName('repetir_palavra').AsString;
+    FInglesToPortugues    := qryTemp.FieldByName('ingles_to_portugues').AsString;
+    FPalavrasAleatorias   := qryTemp.FieldByName('palavras_aleatorias').AsString;
+    FDividePalavrasDia    := qryTemp.FieldByName('divide_palavras_dia').AsString;
+    FOrdenarPalavras      := qryTemp.FieldByName('ordenar_palavras').AsString;
+    FSomenteAudio         := qryTemp.FieldByName('somenteAudio').AsString;
     
   finally
-    FreeAndNil(qry);
+    qryTemp.Connection.Commit();
+    FreeAndNil(qryTemp);
   end;
     
 end;

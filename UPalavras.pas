@@ -70,100 +70,121 @@ implementation
 
 procedure TPalavras.AlterarStatusTotasPalavras(AAtivar: Boolean);
 var
-  qry : TZQuery;
+  qryTemp : TZQuery;
 begin
-
-  qry := TZQuery.Create(nil);
-  qry.Connection := DM.conexao;
   
+  qryTemp := TZQuery.Create(nil);
+    
   try
-    qry.close;
-    qry.SQL.Add('update palavras set ');
-    qry.SQL.Add('ativo = '+QuotedStr(IfThen(AAtivar,'T','F')));
+  
+    qryTemp.Connection := DM.conexao;
+    qryTemp.Connection.StartTransaction;
+  
+    qryTemp.close;
+    qryTemp.SQL.Add('update palavras set ');
+    qryTemp.SQL.Add('ativo = '+QuotedStr(IfThen(AAtivar,'T','F')));
 
-    qry.ExecSQL;
+    qryTemp.ExecSQL;
   finally
-    FreeAndNil(qry);
+    qryTemp.Connection.Commit();
+    FreeAndNil(qryTemp);
   end;
 end;
 
 procedure TPalavras.atualizaAudio(id : Integer; mp3 : TBlobData);
 var
-  qry : TZQuery;
+  qryTemp : TZQuery;
 begin
-  qry := TZQuery.Create(nil);
-  qry.Connection := DM.conexao;
+
+  qryTemp := TZQuery.Create(nil);
+  
   try
-    qry.close;
-    qry.SQL.Add('update palavras set ');
-    qry.SQL.Add('mp3 =:mp3 ');
-    qry.SQL.Add('where id =:id');
+  
+    qryTemp.Connection := DM.conexao;
+    qryTemp.Connection.StartTransaction;
+  
+    qryTemp.close;
+    qryTemp.SQL.Add('update palavras set ');
+    qryTemp.SQL.Add('mp3 =:mp3 ');
+    qryTemp.SQL.Add('where id =:id');
 
-    qry.ParamByName('mp3').AsBlob := mp3;
-    qry.ParamByName('id').AsInteger := id;
+    qryTemp.ParamByName('mp3').AsBlob := mp3;
+    qryTemp.ParamByName('id').AsInteger := id;
 
-    qry.ExecSQL;
+    qryTemp.ExecSQL;
   finally
-    FreeAndNil(qry);
+    qryTemp.Connection.Commit();
+    FreeAndNil(qryTemp);
   end;
 end;
 
 procedure TPalavras.atualizaQtdePalavrasFecharTela;
 var
-  qry : TZQuery;
+  qryTemp : TZQuery;
 begin
-  qry := TZQuery.Create(nil);
-  qry.Connection := DM.conexao;
-  try
-    qry.close;
-    qry.SQL.Add('update palavras set ');
-    qry.SQL.Add('qtdeseqacertos = 0 ');
-    qry.SQL.Add('where data_seq_acertos > current_date');
 
-    qry.ExecSQL;
+  qryTemp := TZQuery.Create(nil);
+  
+  try
+  
+    qryTemp.Connection := DM.conexao;
+    qryTemp.Connection.StartTransaction;
+    
+    qryTemp.close;
+    qryTemp.SQL.Add('update palavras set ');
+    qryTemp.SQL.Add('qtdeseqacertos = 0 ');
+    qryTemp.SQL.Add('where data_seq_acertos > current_date');
+
+    qryTemp.ExecSQL;
+    
   finally
-    FreeAndNil(qry);
+    qryTemp.Connection.Commit;
+    FreeAndNil(qryTemp);    
   end;
 end;
 
 procedure TPalavras.atualizaStatusExibicaoPalavras(palavra : String; qtde : smallint);
 var
-  qry : TZQuery;
-  dia,mes,ano : String;
-  
+  qryTemp : TZQuery;
+  dia,mes,ano : String;  
 begin
 
   dia := Copy(DateToStr(Now+4),1,2);
   mes := Copy(DateToStr(Now+4),4,2);
   ano := Copy(DateToStr(Now+4),7,4);
 
-  qry := TZQuery.Create(nil);
-  qry.Connection := DM.conexao;
+  qryTemp := TZQuery.Create(nil);
+  
   try
-    qry.close;
-    qry.SQL.Add('update palavras set ');
+  
+    qryTemp.Connection := DM.conexao;
+    qryTemp.Connection.StartTransaction;
+  
+    qryTemp.close;
+    qryTemp.SQL.Add('update palavras set ');
 
     if qtde < 5 then
-      qry.SQL.Add('qtdeseqacertos =:qtde')
+      qryTemp.SQL.Add('qtdeseqacertos =:qtde')
     else
-      qry.SQL.Add('qtdeseqacertos =0,data_seq_acertos = '+QuotedStr(mes+'/'+dia+'/'+ano));
+      qryTemp.SQL.Add('qtdeseqacertos =0,data_seq_acertos = '+QuotedStr(mes+'/'+dia+'/'+ano));
       
-    qry.SQL.Add(' where palavraIngles =:palavra');
+    qryTemp.SQL.Add(' where palavraIngles =:palavra');
     
-    qry.ParamByName('palavra').AsString := palavra;
+    qryTemp.ParamByName('palavra').AsString := palavra;
     
     if qtde < 5 then
-      qry.ParamByName('qtde').AsInteger := qtde;
+      qryTemp.ParamByName('qtde').AsInteger := qtde;
     
     try
-      qry.ExecSQL;
+      qryTemp.ExecSQL;
     except on e: Exception do
       begin
         ShowMessage(e.Message);
       end;
     end;
   finally
-    FreeAndNil(qry);
+    qryTemp.Connection.Commit();
+    FreeAndNil(qryTemp);
   end; 
 end;
 
@@ -291,7 +312,7 @@ begin
   FQry.SQL.Add('and ativo = ''T''');
   if dividirPalavrasDia then  
     FQry.SQL.Add('and data_seq_acertos <='+QuotedStr(mes+'/'+dia+'/'+ano));
-  if AParam1 > 0 then
+  if (AParam1 > 0) or (AParam2 > 0) then
   begin
     FQry.SQL.Add(' and id between '+IntToStr(AParam1)+' and '+IntToStr(AParam2));
     FQry.SQL.Add(' order by 1');
@@ -357,70 +378,87 @@ end;
 
 procedure TPalavras.recordObjectAtualizacao;
 var
-  qry : TZQuery;
+  qryTemp : TZQuery;
 begin
-  qry := TZQuery.Create(nil);
-  qry.Connection := DM.conexao;
-  try
-    qry.close;
-    qry.SQL.Add('update palavras set');
-    qry.SQL.Add('palavraingles =:ingles,palavraportugues =:portugues,ativo =:ativo ');
-    qry.SQL.Add('where id =:id');
-    qry.ParamByName('id').AsInteger := FId;
-    qry.ParamByName('ingles').AsString:= FPalavraIngles;
-    qry.ParamByName('portugues').AsString := FPalavraPortugues;
-    qry.ParamByName('ativo').AsString := FAtivo;
 
-    qry.ExecSQL;
+  qryTemp := TZQuery.Create(nil);
+  
+  try
+  
+    qryTemp.Connection := DM.conexao;
+    qryTemp.Connection.StartTransaction;
+  
+    qryTemp.close;
+    qryTemp.SQL.Add('update palavras set');
+    qryTemp.SQL.Add('palavraingles =:ingles,palavraportugues =:portugues,ativo =:ativo ');
+    qryTemp.SQL.Add('where id =:id');
+    qryTemp.ParamByName('id').AsInteger := FId;
+    qryTemp.ParamByName('ingles').AsString:= FPalavraIngles;
+    qryTemp.ParamByName('portugues').AsString := FPalavraPortugues;
+    qryTemp.ParamByName('ativo').AsString := FAtivo;
+
+    qryTemp.ExecSQL;
   finally
-    FreeAndNil(qry);
+    qryTemp.Connection.Commit();
+    FreeAndNil(qryTemp);
   end; 
 end;
 
 procedure TPalavras.recordObjectDelete;
 var
-  qry : TZQuery;
+  qryTemp : TZQuery;
 begin
-  qry := TZQuery.Create(nil);
-  qry.Connection := DM.conexao;
-  try
-    qry.close;
-    qry.SQL.Add('delete from palavras where id =:id');
-    qry.ParamByName('id').AsInteger :=FId;
 
-    qry.ExecSQL;
+  qryTemp := TZQuery.Create(nil);
+  
+  try
+  
+    qryTemp.Connection := DM.conexao;
+    qryTemp.Connection.StartTransaction;
+  
+    qryTemp.close;
+    qryTemp.SQL.Add('delete from palavras where id =:id');
+    qryTemp.ParamByName('id').AsInteger :=FId;
+
+    qryTemp.ExecSQL;
   finally
-    FreeAndNil(qry);
+    qryTemp.Connection.Commit();
+    FreeAndNil(qryTemp);
   end; 
 end;
 
 procedure TPalavras.recordObjectInsercao;
 var
-  qry : TZQuery;
+  qryTemp : TZQuery;
 begin
-  qry := TZQuery.Create(nil);
-  qry.Connection := DM.conexao;
+  qryTemp := TZQuery.Create(nil);
+  
   try
-    qry.close;
-    qry.SQL.Add('insert into palavras');
-    qry.SQL.Add('(id,palavraingles,palavraportugues,ativo,frase,qtdeseqacertos,data_seq_acertos)');
-    qry.SQL.Add('values');
-    qry.SQL.Add('(:id,:ingles,:portugues,:ativo,:frase,:qtdeAcertos,:dataAcertos)');
-    qry.ParamByName('id').AsInteger :=FId;
-    qry.ParamByName('ingles').AsString:= FPalavraIngles;
-    qry.ParamByName('portugues').AsString := FPalavraPortugues;
-    qry.ParamByName('ativo').AsString := FAtivo;
-    qry.ParamByName('frase').AsString := 'F';
-    qry.ParamByName('qtdeAcertos').AsInteger := 0;
+  
+    qryTemp.Connection := DM.conexao;
+    qryTemp.Connection.StartTransaction;
+    
+    qryTemp.close;
+    qryTemp.SQL.Add('insert into palavras');
+    qryTemp.SQL.Add('(id,palavraingles,palavraportugues,ativo,frase,qtdeseqacertos,data_seq_acertos)');
+    qryTemp.SQL.Add('values');
+    qryTemp.SQL.Add('(:id,:ingles,:portugues,:ativo,:frase,:qtdeAcertos,:dataAcertos)');
+    qryTemp.ParamByName('id').AsInteger :=FId;
+    qryTemp.ParamByName('ingles').AsString:= FPalavraIngles;
+    qryTemp.ParamByName('portugues').AsString := FPalavraPortugues;
+    qryTemp.ParamByName('ativo').AsString := FAtivo;
+    qryTemp.ParamByName('frase').AsString := 'F';
+    qryTemp.ParamByName('qtdeAcertos').AsInteger := 0;
 
     if FDataSeqAcertos > StrToDate('30/12/1899') then
-      qry.ParamByName('dataAcertos').AsDate := FDataSeqAcertos
+      qryTemp.ParamByName('dataAcertos').AsDate := FDataSeqAcertos
     else
-      qry.ParamByName('dataAcertos').AsDate := StrToDate('30/12/1899');
+      qryTemp.ParamByName('dataAcertos').AsDate := StrToDate('30/12/1899');
 
-    qry.ExecSQL;
+    qryTemp.ExecSQL;
   finally
-    FreeAndNil(qry);
+    qryTemp.Connection.Commit();
+    FreeAndNil(qryTemp);
   end;  
 end;
 
