@@ -14,6 +14,7 @@ object frmProgresso: TfrmProgresso
   Font.Style = []
   OldCreateOrder = False
   Position = poScreenCenter
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object progresso: TGauge
@@ -30,6 +31,8 @@ object frmProgresso: TfrmProgresso
     ExplicitHeight = 100
   end
   object timer: TTimer
+    Enabled = False
+    Interval = 10
     OnTimer = timerTimer
     Left = 208
     Top = 16

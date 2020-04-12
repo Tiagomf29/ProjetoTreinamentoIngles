@@ -12,6 +12,7 @@ type
     timer: TTimer;
     progresso: TGauge;
     procedure timerTimer(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     { Private declarations }
     procedure executarUtilitario();
@@ -102,15 +103,24 @@ begin
         begin
           Inc(j);
           progresso.Progress := progresso.Progress +1;
-        end;
+        end;      
      
-    end; 
+    end;
+
+    timer.Enabled := False;
+    MessageDlg('Organização de palavras por dia concluído com sucesso!',mtInformation,[mbOK],0);     
+    
   finally
     FreeAndNil(parametrosTemp);
     FreeAndNil(listaTmp);
     FreeAndNil(palavrasTemp);       
   end;
 
+end;
+
+procedure TfrmProgresso.FormShow(Sender: TObject);
+begin
+  Timer.Enabled := True;
 end;
 
 procedure TfrmProgresso.timerTimer(Sender: TObject);
