@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
-  System.Classes, Vcl.Graphics,System.StrUtils,
+  System.Classes, Vcl.Graphics,System.StrUtils,System.Generics.Collections,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls,
   parametros;
 
@@ -23,9 +23,12 @@ type
     cbOrdenarPalavras: TCheckBox;
     cbPalavrasAleatorias: TCheckBox;
     cbExibirSomenteAudio: TCheckBox;
+    btnutilitario: TBitBtn;
     procedure FormShow(Sender: TObject);
     procedure btnGravarClick(Sender: TObject);
     procedure RadioGroup2Click(Sender: TObject);
+    procedure btnutilitarioClick(Sender: TObject);
+    procedure cbParMesclaPalavrasDiaClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -36,6 +39,8 @@ var
   frmParametros: TfrmParametros;
 
 implementation
+uses
+ UPalavras, UProgresso;
 
 {$R *.dfm}
 
@@ -80,7 +85,33 @@ begin
     FreeAndNil(par);
   end;
      
+end;
 
+procedure TfrmParametros.btnutilitarioClick(Sender: TObject);
+begin
+
+   frmProgresso := TfrmProgresso.Create(nil);
+   
+   try
+
+     if MessageDlg('Tem certeza que deseja reorganizar as palavras cadastradas para os próximos 4 dias?',mtConfirmation,
+               [mbYes,mbNo],0,mbNo)= mrYes then
+     begin   
+       frmProgresso.ShowModal(); 
+     end;
+   finally
+       MessageDlg('Organização de palavras por dia concluído com sucesso!',mtInformation,[mbOK],0);
+     FreeAndNil(frmProgresso);
+   end;
+ 
+end;
+
+procedure TfrmParametros.cbParMesclaPalavrasDiaClick(Sender: TObject);
+begin
+  if cbParMesclaPalavrasDia.Checked then
+    btnutilitario.Enabled := True
+  else
+    btnutilitario.Enabled := False;  
 end;
 
 procedure TfrmParametros.FormShow(Sender: TObject);
@@ -115,11 +146,13 @@ begin
 
     Edit1.Text := IntToStr(par.filtroInicial);
     Edit2.Text := IntToStr(par.filtroFinal);
-  
+
   finally
     FreeAndNil(par);
   end;
 
+  btnutilitario.Enabled := (cbParMesclaPalavrasDia.Checked);
+  
 end;
 
 procedure TfrmParametros.RadioGroup2Click(Sender: TObject);

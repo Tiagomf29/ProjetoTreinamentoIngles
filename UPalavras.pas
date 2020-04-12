@@ -57,7 +57,8 @@ type
     procedure atualizaStatusExibicaoPalavras(palavra : String; qtde : smallint);
     procedure atualizaQtdePalavrasFecharTela();
     procedure atualizaAudio(id : Integer; mp3 : TBlobData);
-    procedure AlterarStatusTotasPalavras(AAtivar : Boolean);
+    procedure alterarStatusTotasPalavras(AAtivar : Boolean);
+    procedure atualizaSeparaPalavrasBydata();
 
     constructor Create();
     destructor Destroy; override;
@@ -143,6 +144,34 @@ begin
   end;
 end;
 
+procedure TPalavras.atualizaSeparaPalavrasBydata;
+var
+  qryTemp : TZQuery;
+begin
+
+  qryTemp := TZQuery.Create(nil);
+  
+  try
+  
+    qryTemp.Connection := DM.conexao;
+    qryTemp.Connection.StartTransaction;
+  
+    qryTemp.close;
+    qryTemp.SQL.Add('update palavras set');
+    qryTemp.SQL.Add('qtdeSeqAcertos =:qsa, data_seq_acertos =:dsa ');
+    qryTemp.SQL.Add('where id =:id');
+    
+    qryTemp.ParamByName('id').AsInteger  := FId;
+    qryTemp.ParamByName('qsa').AsInteger := FQtdeSeqAcertos;
+    qryTemp.ParamByName('dsa').AsDate    := FDataSeqAcertos;
+    
+    qryTemp.ExecSQL;
+  finally
+    qryTemp.Connection.Commit();
+    FreeAndNil(qryTemp);
+  end;
+end;
+
 procedure TPalavras.atualizaStatusExibicaoPalavras(palavra : String; qtde : smallint);
 var
   qryTemp : TZQuery;
@@ -163,7 +192,7 @@ begin
     qryTemp.close;
     qryTemp.SQL.Add('update palavras set ');
 
-    if qtde < 5 then
+    if qtde < 2 then
       qryTemp.SQL.Add('qtdeseqacertos =:qtde')
     else
       qryTemp.SQL.Add('qtdeseqacertos =0,data_seq_acertos = '+QuotedStr(mes+'/'+dia+'/'+ano));
@@ -172,7 +201,7 @@ begin
     
     qryTemp.ParamByName('palavra').AsString := palavra;
     
-    if qtde < 5 then
+    if qtde < 2 then
       qryTemp.ParamByName('qtde').AsInteger := qtde;
     
     try
@@ -208,7 +237,7 @@ var
 begin
   FQry.Close;
   FQry.SQL.Clear;
-  FQry.SQL.Add('select data_seq_acertos,count(*)as qtde from palavras where frase = '+QuotedStr('F') +' group by data_seq_acertos');
+  FQry.SQL.Add('select data_seq_acertos,count(*)as qtde from palavras group by data_seq_acertos');
   FQry.Open;  
 
   lista := TList<string>.Create;

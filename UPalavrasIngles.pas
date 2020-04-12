@@ -184,8 +184,8 @@ procedure TfrmPrincipal.Estatisticasdepalavrasacertadas1Click(Sender: TObject);
 var
   palavra : TPalavras;
   i,linha : Integer;
-begin
-  palavra := TPalavras.Create;
+  listaTemp : TList<string>;
+begin  
 
   RDP.CaptionSetup := 'Selecione uma impressora';
   RDP.Impressora   := Grafico;
@@ -203,19 +203,35 @@ begin
   RDP.Impf(5,1,'------------------------------------------------------------------------------------------------',[negrito]);
 
   linha:=7;
-    
-  for i := 0 to palavra.estatistica1().Count-1 do
-  begin
-    RDP.Impf(linha,1,palavra.estatistica1.Items[i],[negrito]);
-    Inc(linha);
-    if linha = 65 then
-    begin
-      rdp.Novapagina;
-      linha:=2;
-    end;    
-  end;
 
-  rdp.Fechar;  
+  palavra := TPalavras.Create;
+    
+  try
+
+    listaTemp := palavra.estatistica1;
+    
+    try
+    
+      for i := 0 to listaTemp.Count-1 do
+      begin
+        RDP.Impf(linha,1,listaTemp.Items[i],[negrito]);
+        Inc(linha);
+        if linha = 65 then
+        begin
+          rdp.Novapagina;
+          linha:=2;
+        end;    
+      end;
+
+      rdp.Fechar;
+      
+    finally
+      FreeAndNil(listaTemp);
+    end;
+      
+  finally
+    FreeAndNil(palavra);    
+  end;
 
 end;
 

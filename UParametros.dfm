@@ -105,6 +105,7 @@ object frmParametros: TfrmParametros
     Height = 16
     Caption = 'Divide Palavras por dia'
     TabOrder = 6
+    OnClick = cbParMesclaPalavrasDiaClick
   end
   object cbOrdenarPalavras: TCheckBox
     Left = 192
@@ -131,5 +132,15 @@ object frmParametros: TfrmParametros
     Height = 21
     Caption = 'somente '#225'udio em ingl'#234's'
     TabOrder = 8
+  end
+  object btnutilitario: TBitBtn
+    Left = 328
+    Top = 130
+    Width = 145
+    Height = 25
+    Caption = 'Organizar palavras di'#225'rias'
+    Enabled = False
+    TabOrder = 9
+    OnClick = btnutilitarioClick
   end
 end

@@ -102,6 +102,10 @@
 				<FormType>dfm</FormType>
 			</DCCReference>
 			<DCCReference Include="parametros.pas"/>
+			<DCCReference Include="UProgresso.pas">
+				<Form>frmProgresso</Form>
+				<FormType>dfm</FormType>
+			</DCCReference>
 			<BuildConfiguration Include="Release">
 				<Key>Cfg_2</Key>
 				<CfgParent>Base</CfgParent>

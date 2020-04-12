@@ -9,7 +9,8 @@ uses
   UParametros in 'UParametros.pas' {frmParametros},
   parametros in 'parametros.pas',
   Vcl.Themes,
-  Vcl.Styles;
+  Vcl.Styles,
+  UProgresso in 'UProgresso.pas' {frmProgresso};
 
 {$R *.res}
 
