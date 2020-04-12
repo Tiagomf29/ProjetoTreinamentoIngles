@@ -73,40 +73,54 @@ uses
 
 procedure TfrmPrincipal.Acertossequenciais1Click(Sender: TObject);
 var
-  palavra : TPalavras;
-  i,linha : Integer;
+  palavra   : TPalavras;
+  i,linha   : Integer;
+  listaTemp : TList<string>;
 begin
+
   palavra := TPalavras.Create;
 
-  RDP.CaptionSetup := 'Selecione uma impressora';
-  RDP.Impressora   := Grafico;
-  RDP.OpcoesPreview.CaptionPreview := 'Visualização do relatório';
-  RDP.OpcoesPreview.Preview := True;
-  RDP.UsaGerenciadorImpr    := True;
-  RDP.TamanhoQteLinhas      := 66;
-  RDP.TamanhoQteColunas     := 96;
-  RDP.Abrir;
+  try
+    RDP.CaptionSetup := 'Selecione uma impressora';
+    RDP.Impressora   := Grafico;
+    RDP.OpcoesPreview.CaptionPreview := 'Visualização do relatório';
+    RDP.OpcoesPreview.Preview := True;
+    RDP.UsaGerenciadorImpr    := True;
+    RDP.TamanhoQteLinhas      := 66;
+    RDP.TamanhoQteColunas     := 96;
+    RDP.Abrir;
      
-  RDP.Impf(1,1,'------------------------------------------------------------------------------------------------',[negrito]);
+    RDP.Impf(1,1,'------------------------------------------------------------------------------------------------',[negrito]);
       
-  RDP.ImpF(3,17,'Estatística de acerto de palavras sequênciais por data corrente',[negrito]);
+    RDP.ImpF(3,17,'Estatística de acerto de palavras sequênciais por data corrente',[negrito]);
 
-  RDP.Impf(5,1,'------------------------------------------------------------------------------------------------',[negrito]);
+    RDP.Impf(5,1,'------------------------------------------------------------------------------------------------',[negrito]);
 
-  linha:=7;
-    
-  for i := 0 to palavra.estatistica2().Count-1 do
-  begin
-    RDP.Impf(linha,1,palavra.estatistica2.Items[i],[negrito]);
-    Inc(linha);
-    if linha = 65 then
-    begin
-      rdp.Novapagina;
-      linha:=2;
-    end;    
+    linha:=7;
+
+    listaTemp := palavra.estatistica2();
+
+    try
+      for i := 0 to listaTemp.Count-1 do
+      begin
+        RDP.Impf(linha,1,listaTemp.Items[i],[negrito]);
+        Inc(linha);
+        if linha = 65 then
+        begin
+          rdp.Novapagina;
+          linha:=2;
+        end;    
+      end;
+
+      rdp.Fechar;
+      
+    finally
+      FreeAndNil(listaTemp);
+    end;
+      
+  finally
+    FreeAndNil(palavra);
   end;
-
-  rdp.Fechar;  
 
 end;
 
@@ -345,9 +359,6 @@ procedure TfrmPrincipal.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
 
   palavras.atualizaQtdePalavrasFecharTela();
-
-  
-
   FreeAndNil(par);
   FreeAndNil(palavras);
 end;
@@ -402,33 +413,34 @@ end;
 
 procedure TfrmPrincipal.Palavrasrestantes1Click(Sender: TObject);
 var
-  palavrasTemp: TPalavras;
-  listaTemp: TObjectList<TPalavras>;
-  listaPalavrasRestanteTemp: TObjectList<TPalavras>;
-  i,j,linha : Integer;
-  validacao : boolean;
-  par :  TParametros;
+  palavrasTemp              : TPalavras;
+  parTemp                   : TParametros;
+  listaPalavrasRestanteTemp : TObjectList<TPalavras>;
+  i,j,linha                 : Integer;
+  validacao                 : boolean;
 begin                                                                                 
   
-  par := TParametros.Create(); 
-  par.setObject(); 
-  palavrasTemp := TPalavras.Create;
-  listaTemp := palavrasTemp.listaPalavrasIngles(par.filtroInicial,par.filtroFinal,par.ordenarPalavras,par.dividePalavrasDia); 
-  listaPalavrasRestanteTemp := TObjectList<TPalavras>.Create;
+  parTemp := TParametros.Create(); 
+  parTemp.setObject(); 
+  palavrasTemp := TPalavras.Create();
+  palavrasTemp.listaPalavrasIngles(parTemp.filtroInicial,parTemp.filtroFinal,parTemp.ordenarPalavras,parTemp.dividePalavrasDia);
+
+   
+  listaPalavrasRestanteTemp := TObjectList<TPalavras>.Create(False);
   try
-    for i := 0 to listaTemp.Count-1 do
+    for i := 0 to palavrasTemp.lista.Count-1 do
       begin
         validacao := False;
         for j := 0 to Length(listaPalavrasAcertadas)-1 do
         begin
-          if listaTemp.Items[i].palavraIngles = listaPalavrasAcertadas[j] then
+          if palavrasTemp.lista.Items[i].palavraIngles = listaPalavrasAcertadas[j] then
           begin
             validacao := True;
             break;
           end;
         end;
         if not validacao then         
-          listaPalavrasRestanteTemp.Add(listaTemp.Items[i]);         
+          listaPalavrasRestanteTemp.Add(palavrasTemp.lista.Items[i]);         
       end;
 
       RDP.CaptionSetup := 'Selecione uma impressora';
@@ -461,8 +473,10 @@ begin
       end;
 
       rdp.Fechar;
-  finally
-    FreeAndNil(par);
+  finally      
+    FreeAndNil(listaPalavrasRestanteTemp);
+    FreeAndNil(parTemp); 
+    FreeAndNil(palavrasTemp);   
   end;
 end;
 

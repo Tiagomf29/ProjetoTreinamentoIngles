@@ -100,7 +100,7 @@ begin
        frmProgresso.ShowModal(); 
      end;
    finally
-       MessageDlg('Organização de palavras por dia concluído com sucesso!',mtInformation,[mbOK],0);
+     MessageDlg('Organização de palavras por dia concluído com sucesso!',mtInformation,[mbOK],0);
      FreeAndNil(frmProgresso);
    end;
  

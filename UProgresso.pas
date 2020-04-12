@@ -30,17 +30,41 @@ uses
 
 procedure TfrmProgresso.executarUtilitario;
 var
-  lDataInicial           : TDate;
-  lQtdePalavraPorDia,i,j : Integer;
-  palavrasTemp           : TPalavras;
-  parametrosTemp         : TParametros;
-  listaTmp               : TObjectList<TPalavras>;
+  lDataInicial               : TDate;
+  lQtdePalavraPorDia,i,j     : Integer;
+  palavrasTemp,palavrasTemp2 : TPalavras;
+  parametrosTemp             : TParametros;
+  listaTmp                   : TObjectList<TPalavras>;
 begin
   
-  parametrosTemp     := TParametros.Create;
-  palavrasTemp       := TPalavras.Create;
+  parametrosTemp := TParametros.Create;
+
+  // criei a rotina para conseguir destruir o primeiro objeto criado por conta do memoy leak
   
-  listaTmp           := palavrasTemp.listaPalavrasIngles(parametrosTemp.filtroInicial,parametrosTemp.filtroFinal,(parametrosTemp.ordenarPalavras),(parametrosTemp.dividePalavrasDia));
+  palavrasTemp2  := TPalavras.Create;
+  
+  palavrasTemp2.listaPalavrasIngles(parametrosTemp.filtroInicial,parametrosTemp.filtroFinal,(parametrosTemp.ordenarPalavras),(parametrosTemp.dividePalavrasDia));
+
+  listaTmp       := TObjectList<TPalavras>.Create;
+  
+  try
+    for I := 0 to palavrasTemp2.lista.Count -1 do
+    begin
+
+      palavrasTemp := TPalavras.Create;
+  
+      palavrasTemp.id               := palavrasTemp2.lista.Items[i].id;
+      palavrasTemp.palavraIngles    := palavrasTemp2.lista.Items[i].palavraIngles;
+      palavrasTemp.palavraPortugues := palavrasTemp2.lista.Items[i].palavraPortugues;
+
+      listaTmp.Add(palavrasTemp);
+    end;
+  finally
+    FreeAndNil(palavrasTemp2);
+  end;
+
+  // Fim da rotina memory leak
+    
   lQtdePalavraPorDia := listaTmp.Count div 4;
 
   lDataInicial       := Now;
@@ -50,6 +74,7 @@ begin
   progresso.MinValue := 0;
   
   try
+     
     for i := 0 to listaTmp.Count -1 do
     begin
          
@@ -79,10 +104,11 @@ begin
           progresso.Progress := progresso.Progress +1;
         end;
      
-    end;
+    end; 
   finally
     FreeAndNil(parametrosTemp);
     FreeAndNil(listaTmp);
+    FreeAndNil(palavrasTemp);       
   end;
 
 end;

@@ -35,6 +35,8 @@ type
     procedure setMp3(const Value: TBlobData);
     function getdataSeqAcertos: TDate;
     procedure setdataSeqAcertos(const Value: TDate);
+    function getLista: TObjectList<TPalavras>;
+    procedure setLista(const Value: TObjectList<TPalavras>);
   public
     property id : Integer read getId write setId;
     property palavraIngles : String read getPalavraIngles write setPalavrasIngles;
@@ -44,6 +46,7 @@ type
     property qtdeSeqAcertos : SmallInt read getQtdeSeqAcertos write setQtdeSeqAcertos;
     property dataSeqAcertos : TDate read getdataSeqAcertos write setdataSeqAcertos;
     property mp3 : TBlobData read getMp3 write setMp3;
+    property lista : TObjectList<TPalavras> read getLista write setLista;
 
     function listaPalavrasIngles(AParam1,AParam2 : SmallInt; ordenarPalavra : Boolean = false; dividirPalavrasDia : Boolean = false): TObjectList<TPalavras>;
     function listaTodasPalavras(): TObjectList<TPalavras>;
@@ -59,8 +62,9 @@ type
     procedure atualizaAudio(id : Integer; mp3 : TBlobData);
     procedure alterarStatusTotasPalavras(AAtivar : Boolean);
     procedure atualizaSeparaPalavrasBydata();
+    procedure copyFromObjectFlista(ALista : TObjectList<Tpalavras>);
 
-    constructor Create();
+    constructor Create(); 
     destructor Destroy; override;
     
   end;
@@ -217,16 +221,35 @@ begin
   end; 
 end;
 
+procedure TPalavras.copyFromObjectFlista(ALista: TObjectList<Tpalavras>);
+var
+  i : Integer;
+  palavras : TPalavras;
+begin
+
+  for i := 0 to ALista.Count -1 do
+  begin  
+    palavras.id := ALista.Items[i].id;
+    palavras.palavraIngles := ALista.Items[i].palavraIngles;
+    palavras.palavraPortugues := ALista.Items[i].palavraPortugues;
+    palavras.ativo := ALista.Items[i].ativo;
+    palavras.frase := ALista.Items[i].frase;
+    palavras.qtdeSeqAcertos := ALista.Items[i].qtdeSeqAcertos;
+    palavras.dataSeqAcertos := ALista.Items[i].dataSeqAcertos;
+
+    Flista.Add(palavras);
+    
+  end;
+
+end;
+
 constructor TPalavras.Create;
 begin
-  FQry := TZQuery.Create(nil);
-  Flista := TObjectList<TPalavras>.Create;
-  FQry.Connection := DM.conexao;
+  Flista := TObjectList<TPalavras>.Create;  
 end;
 
 destructor TPalavras.Destroy;
 begin
-  FreeAndNil(FQry);
   FreeAndNil(Flista);
   inherited;
 end;
@@ -235,44 +258,63 @@ function TPalavras.estatistica1: TList<string>;
 var
   lista : TList<string>;
 begin
-  FQry.Close;
-  FQry.SQL.Clear;
-  FQry.SQL.Add('select data_seq_acertos,count(*)as qtde from palavras group by data_seq_acertos');
-  FQry.Open;  
 
-  lista := TList<string>.Create;
+  FQry := TZQuery.Create(nil);
+
+  try
+
+    FQry.Connection := DM.conexao; 
   
-  while not FQry.Eof do
-  begin
+    FQry.Close;
+    FQry.SQL.Clear;
+    FQry.SQL.Add('select data_seq_acertos,count(*)as qtde from palavras group by data_seq_acertos');
+    FQry.Open;  
+
+    lista := TList<string>.Create;
+  
+    while not FQry.Eof do
+    begin
       
-    lista.add(FQry.FieldByName('data_seq_acertos').AsString +'  ====================>  '+FQry.FieldByName('qtde').AsString);
+      lista.add(FQry.FieldByName('data_seq_acertos').AsString +'  ====================>  '+FQry.FieldByName('qtde').AsString);
 
-    FQry.Next;   
+      FQry.Next;   
+    end;
+
+    Result := lista;
+  finally
+    FreeAndNil(FQry);
   end;
-
-  Result := lista;  
 end;
 
 function TPalavras.estatistica2: TList<string>;
 var
   lista : TList<string>;
 begin
-  FQry.Close;
-  FQry.SQL.Clear;
-  FQry.SQL.Add('select b.palavraingles,b.qtdeseqacertos from palavras b where frase = '+QuotedStr('F')+' and b.data_seq_acertos <= current_date order by 2 desc ');
-  FQry.Open;  
 
-  lista := TList<string>.Create;
+  FQry := TZQuery.Create(nil);
+
+  try
+    FQry.Connection := DM.conexao;
+
+    FQry.Close;
+    FQry.SQL.Clear;
+    FQry.SQL.Add('select b.palavraingles,b.qtdeseqacertos from palavras b where frase = '+QuotedStr('F')+' and b.data_seq_acertos <= current_date order by 2 desc ');
+    FQry.Open;  
+
+    lista := TList<string>.Create;
   
-  while not FQry.Eof do
-  begin
+    while not FQry.Eof do
+    begin
       
-    lista.add(FQry.FieldByName('palavraingles').AsString +':'+FQry.FieldByName('qtdeseqacertos').AsString);
+      lista.add(FQry.FieldByName('palavraingles').AsString +':'+FQry.FieldByName('qtdeseqacertos').AsString);
 
-    FQry.Next;   
+      FQry.Next;   
+    end;
+
+    Result := lista;  
+  finally
+    FreeAndNil(FQry);
   end;
-
-  Result := lista;  
 end;
 
 function TPalavras.getAtivo: Boolean;
@@ -305,6 +347,11 @@ begin
   Result := FId;
 end;
 
+function TPalavras.getLista: TObjectList<TPalavras>;
+begin
+  Result := Flista;
+end;
+
 function TPalavras.getMp3: TBlobData;
 begin
   Result := mp3;
@@ -335,41 +382,49 @@ begin
   mes := Copy(DateToStr(Now),4,2);
   ano := Copy(DateToStr(Now),7,4);
 
-  FQry.Close;
-  FQry.SQL.Clear;
-  FQry.SQL.Add('select * from palavras ');
-  FQry.SQL.Add('where ativo = ''T''');
-  if dividirPalavrasDia then  
-    FQry.SQL.Add('and data_seq_acertos <='+QuotedStr(mes+'/'+dia+'/'+ano));
-  if (AParam1 > 0) or (AParam2 > 0) then
-  begin
-    FQry.SQL.Add(' and id between '+IntToStr(AParam1)+' and '+IntToStr(AParam2));
-    FQry.SQL.Add(' order by 1');
-  end 
-  else
-  if ordenarPalavra then
-    FQry.SQL.Add(' order by 2')
-  else
-    FQry.SQL.Add(' order by 1');      
-  
-   
-  FQry.Open;  
+  FQry := TZQuery.Create(nil);
 
-  while not FQry.Eof do
-  begin
+  try
+    FQry.Connection := DM.conexao;
   
-    palavraIngles := TPalavras.Create;
+    FQry.Close;
+    FQry.SQL.Clear;
+    FQry.SQL.Add('select * from palavras ');
+    FQry.SQL.Add('where ativo = ''T''');
+    if dividirPalavrasDia then  
+      FQry.SQL.Add('and data_seq_acertos <='+QuotedStr(mes+'/'+dia+'/'+ano));
+    if (AParam1 > 0) or (AParam2 > 0) then
+    begin
+      FQry.SQL.Add(' and id between '+IntToStr(AParam1)+' and '+IntToStr(AParam2));
+      FQry.SQL.Add(' order by 1');
+    end 
+    else
+    if ordenarPalavra then
+      FQry.SQL.Add(' order by 2')
+    else
+      FQry.SQL.Add(' order by 1');      
+     
+    FQry.Open;  
+  
+    while not FQry.Eof do
+    begin
+  
+      palavraIngles := TPalavras.Create;
 
-    palavraIngles.FID := FQry.FieldByName('ID').AsInteger;
-    palavraIngles.FPalavraIngles := FQry.FieldByName('PALAVRAINGLES').AsString;
-    palavraIngles.FPalavraPortugues := FQry.FieldByName('PALAVRAPORTUGUES').AsString;
+      palavraIngles.FID := FQry.FieldByName('ID').AsInteger;
+      palavraIngles.FPalavraIngles := FQry.FieldByName('PALAVRAINGLES').AsString;
+      palavraIngles.FPalavraPortugues := FQry.FieldByName('PALAVRAPORTUGUES').AsString;
     
-    Flista.Add(palavraIngles); 
+      Flista.Add(palavraIngles); 
 
-    FQry.Next;   
+      FQry.Next;   
+    end;
+
+    Result := Flista; 
+
+  finally
+    FreeAndNil(FQry);
   end;
-
-  Result := Flista;    
 
 end;
 
@@ -378,30 +433,40 @@ var
   palavra : TPalavras;
 begin
  
-  FQry.Close;
-  FQry.SQL.Clear;
-  FQry.SQL.Add('select * from palavras order by 1');
-  FQry.Open;  
+  FQry := TZQuery.Create(nil);
 
-  while not FQry.Eof do
-  begin
+  try
   
-    palavra := TPalavras.Create;
+    FQry.Connection := DM.conexao;
+ 
+    FQry.Close;
+    FQry.SQL.Clear;
+    FQry.SQL.Add('select * from palavras order by 1');
+    FQry.Open;  
+  
+    while not FQry.Eof do
+    begin
+  
+      palavra := TPalavras.Create;
 
-    palavra.FID := FQry.FieldByName('ID').AsInteger;
-    palavra.FPalavraIngles := FQry.FieldByName('PALAVRAINGLES').AsString;
-    palavra.FPalavraPortugues := FQry.FieldByName('PALAVRAPORTUGUES').AsString;
-    palavra.FAtivo := FQry.FieldByName('ativo').AsString;
-    palavra.frase := FQry.FieldByName('frase').AsBoolean;
-    palavra.FQtdeSeqAcertos := FQry.FieldByName('QTDESEQACERTOS').AsInteger;
-    palavra.FDataSeqAcertos := FQry.FieldByName('DATA_SEQ_ACERTOS').AsDateTime;
+      palavra.FID := FQry.FieldByName('ID').AsInteger;
+      palavra.FPalavraIngles := FQry.FieldByName('PALAVRAINGLES').AsString;
+      palavra.FPalavraPortugues := FQry.FieldByName('PALAVRAPORTUGUES').AsString;
+      palavra.FAtivo := FQry.FieldByName('ativo').AsString;
+      palavra.frase := FQry.FieldByName('frase').AsBoolean;
+      palavra.FQtdeSeqAcertos := FQry.FieldByName('QTDESEQACERTOS').AsInteger;
+      palavra.FDataSeqAcertos := FQry.FieldByName('DATA_SEQ_ACERTOS').AsDateTime;
     
-    Flista.Add(palavra); 
+      Flista.Add(palavra); 
 
-    FQry.Next;   
-  end;
+      FQry.Next;   
+    end;
       
-  Result := Flista;    
+    Result := Flista;   
+     
+  finally
+    FreeAndNil(FQry);
+  end;
 
 end;
 
@@ -520,6 +585,11 @@ begin
   FId := Value;
 end;
 
+procedure TPalavras.setLista(const Value: TObjectList<TPalavras>);
+begin
+  Flista := Value;
+end;
+
 procedure TPalavras.setMp3(const Value: TBlobData);
 begin
   FMp3 := Value;
@@ -527,19 +597,27 @@ end;
 
 procedure TPalavras.setObject(APalavraIngles: String);
 begin
-  FQry.Close;
-  FQry.SQL.Clear;
-  FQry.SQL.Add('select * from palavras');
-  FQry.SQL.Add('where palavraingles =:palavraIngles');
-  FQry.ParamByName('palavraIngles').AsString := APalavraIngles;
-  FQry.Open; 
 
-  FID := FQry.FieldByName('id').AsInteger;
-  FPalavraIngles := FQry.FieldByName('palavraingles').AsString;
-  FPalavraPortugues := FQry.FieldByName('palavraPortugues').AsString;
-  FFrase := FQry.FieldByName('frase').AsString;
-  FQtdeSeqAcertos := FQry.FieldByName('qtdeSeqAcertos').AsInteger;
-  FDataSeqAcertos := FQry.FieldByName('data_seq_acertos').AsDateTime;
+  FQry := TZQuery.Create(nil);
+  try
+    FQry.Connection := DM.conexao;
+
+    FQry.Close;
+    FQry.SQL.Clear;
+    FQry.SQL.Add('select * from palavras');
+    FQry.SQL.Add('where palavraingles =:palavraIngles');
+    FQry.ParamByName('palavraIngles').AsString := APalavraIngles;
+    FQry.Open; 
+
+    FID := FQry.FieldByName('id').AsInteger;
+    FPalavraIngles := FQry.FieldByName('palavraingles').AsString;
+    FPalavraPortugues := FQry.FieldByName('palavraPortugues').AsString;
+    FFrase := FQry.FieldByName('frase').AsString;
+    FQtdeSeqAcertos := FQry.FieldByName('qtdeSeqAcertos').AsInteger;
+    FDataSeqAcertos := FQry.FieldByName('data_seq_acertos').AsDateTime;
+  finally
+    FreeAndNil(FQry);
+  end;
 end;
 
 procedure TPalavras.setPalavrasIngles(const Value: String);
