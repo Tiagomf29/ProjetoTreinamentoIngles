@@ -38,17 +38,16 @@ var
   listaTmp                   : TObjectList<TPalavras>;
 begin
   
-  parametrosTemp := TParametros.Create;
-
   // criei a rotina para conseguir destruir o primeiro objeto criado por conta do memoy leak
   
   palavrasTemp2  := TPalavras.Create;
   
-  palavrasTemp2.listaPalavrasIngles(parametrosTemp.filtroInicial,parametrosTemp.filtroFinal,(parametrosTemp.ordenarPalavras),(parametrosTemp.dividePalavrasDia));
-
-  listaTmp       := TObjectList<TPalavras>.Create;
-  
   try
+  
+    palavrasTemp2.listaPalavrasIngles(0,0,False,False);
+
+    listaTmp       := TObjectList<TPalavras>.Create;
+  
     for I := 0 to palavrasTemp2.lista.Count -1 do
     begin
 
@@ -65,8 +64,15 @@ begin
   end;
 
   // Fim da rotina memory leak
-    
-  lQtdePalavraPorDia := listaTmp.Count div 4;
+
+  parametrosTemp := TParametros.Create;
+
+  try
+    parametrosTemp.setObject;    
+    lQtdePalavraPorDia := (listaTmp.Count div parametrosTemp.quantidadeDiasDivisaoPalavras);
+  finally
+    FreeAndNil(parametrosTemp);
+  end;
 
   lDataInicial       := Now;
   j                  := 1;
@@ -111,7 +117,6 @@ begin
     MessageDlg('Organização de palavras por dia concluído com sucesso!',mtInformation,[mbOK],0);     
     
   finally
-    FreeAndNil(parametrosTemp);
     FreeAndNil(listaTmp);
     FreeAndNil(palavrasTemp);       
   end;

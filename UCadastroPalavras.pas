@@ -11,16 +11,12 @@ uses
 type
   TfrmCadastroPalavras = class(TForm)
     Panel1: TPanel;
-    lblPalavraIngles: TLabel;
-    lblPalavraPortugues: TLabel;
     QRY: TZQuery;
     DTS: TDataSource;
     QRYID: TIntegerField;
     QRYPALAVRAINGLES: TWideStringField;
     QRYPALAVRAPORTUGUES: TWideStringField;
     QRYATIVO: TWideStringField;
-    edtPalavraIngles: TEdit;
-    edtPalavraPortugues: TEdit;
     Panel2: TPanel;
     btnInserir: TBitBtn;
     btnSalvar: TBitBtn;
@@ -37,21 +33,35 @@ type
     gbPesquisa: TGroupBox;
     Nome: TLabel;
     edtPesquisa: TEdit;
-    btnExportar: TBitBtn;
     dlgSave: TSaveDialog;
     DBGrid1: TDBGrid;
-    btnImportar: TBitBtn;
     dlgOpen: TOpenDialog;
     documento: TXMLDocument;
     pb: TProgressBar;
-    btnStatusPalavras: TBitBtn;
     QRYFRASE: TWideStringField;
     QRYQTDESEQACERTOS: TSmallintField;
     QRYDATA_SEQ_ACERTOS: TDateField;
     QRYMP3: TBlobField;
     CDSFRASE: TWideStringField;
+    pnl1: TPanel;
+    btnExportar: TBitBtn;
+    btnStatusPalavras: TBitBtn;
+    btnImportar: TBitBtn;
+    grp1: TGroupBox;
+    lblPalavraIngles: TLabel;
+    edtPalavraIngles: TEdit;
     cbAtivo: TCheckBox;
     cbFrase: TCheckBox;
+    edtPalavraPortugues: TEdit;
+    Label1: TLabel;
+    Edit1: TEdit;
+    Label2: TLabel;
+    Edit2: TEdit;
+    Label3: TLabel;
+    QRYFRASE_INTUITIVA_INGLES: TWideStringField;
+    QRYFRASE_INTUITIVA_PORTUGUES: TWideStringField;
+    CDSFRASE_INTUITIVA_INGLES: TWideStringField;
+    CDSFRASE_INTUITIVA_PORTUGUES: TWideStringField;
     procedure FormShow(Sender: TObject);
     procedure btnInserirClick(Sender: TObject);
     procedure btnSalvarClick(Sender: TObject);
@@ -162,6 +172,8 @@ begin
        palavra.AddChild('frase').Text:= IfThen((listaTemp.Items[i].frase),'true','false');
        palavra.AddChild('qtdeSeqAcertos').Text:= IntToStr(listaTemp.Items[i].qtdeSeqAcertos);     
        palavra.AddChild('dataSeqAcertos').Text:= DateToStr(listaTemp.Items[i].dataSeqAcertos);
+       palavra.AddChild('frase_intuitiva_ingles').Text:= listaTemp.Items[i].fraseIntuitivaIngles;
+       palavra.AddChild('frase_intuitiva_portugues').Text:= listaTemp.Items[i].fraseIntuitivaPortugues;             
 
        pb.Position := pb.Position + 1;
         
@@ -171,8 +183,10 @@ begin
      
      try
        if dlgSave.Execute() then
+       begin
          documento.SaveToFile(dlgSave.FileName);  
-       MessageDlg('Exportação realizado com sucesso!',mtInformation,[mbOK],0);
+         MessageDlg('Exportação realizado com sucesso!',mtInformation,[mbOK],0);
+       end;
      except on e: Exception do
        begin
          if e.Message <> 'Parâmetro incorreto' then
@@ -199,7 +213,6 @@ procedure TfrmCadastroPalavras.btnImportarClick(Sender: TObject);
 var
   palavra : TPalavras;
   nodePalavras : IXMLNode;
-  dia,mes,ano : string;
   contador : Integer;
 begin
   contador := 0;
@@ -248,15 +261,14 @@ begin
       
       palavra.palavraPortugues := nodePalavras.ChildValues['palavraPortugues'];
       palavra.ativo :=  nodePalavras.ChildValues['ativo'];
-      palavra.frase := nodePalavras.ChildValues['frase']; 
-      palavra.qtdeSeqAcertos := nodePalavras.ChildValues['qtdeSeqAcertos'];
-      
-      dia := copy(nodePalavras.ChildValues['dataSeqAcertos'],1,2);
-      mes := copy(nodePalavras.ChildValues['dataSeqAcertos'],4,2);
-      ano := copy(nodePalavras.ChildValues['dataSeqAcertos'],7,4);
+      palavra.frase := nodePalavras.ChildValues['frase'];
 
-      palavra.dataSeqAcertos := StrToDate(dia+'/'+mes+'/'+ano);
-       
+       if not VarIsNull(nodePalavras.ChildNodes['frase_intuitiva_ingles'].NodeValue) then      
+         palavra.fraseIntuitivaIngles := nodePalavras.ChildValues['frase_intuitiva_ingles'];
+
+       if not VarIsNull(nodePalavras.ChildNodes['frase_intuitiva_portugues'].NodeValue) then      
+           palavra.fraseIntuitivaPortugues := nodePalavras.ChildValues['frase_intuitiva_portugues'];      
+             
       palavra.recordObjectInsercao();
         
       CDS.Refresh;
@@ -313,6 +325,8 @@ begin
     palavras.palavraPortugues := edtPalavraPortugues.Text;
     palavras.ativo := (cbAtivo.Checked = True);
     palavras.frase := (cbFrase.Checked = True);
+    palavras.fraseIntuitivaIngles := Edit1.Text;
+    palavras.fraseIntuitivaPortugues := Edit2.Text;
 
     if statusInsercao then    
       palavras.recordObjectInsercao()
@@ -364,6 +378,8 @@ procedure TfrmCadastroPalavras.CDSAfterScroll(DataSet: TDataSet);
 begin
   edtPalavraIngles.Text    := CDSPALAVRAINGLES.Value;
   edtPalavraPortugues.Text := CDSPALAVRAPORTUGUES.Value;
+  Edit1.Text               := CDSFRASE_INTUITIVA_INGLES.Value;
+  Edit2.Text               := CDSFRASE_INTUITIVA_PORTUGUES.Value;
   
   if CDSATIVO.Value = 'T' then  
     cbAtivo.Checked := True
@@ -522,7 +538,10 @@ begin
   btnFechar.Enabled := False;
   edtPalavraIngles.Enabled := True;
   edtPalavraPortugues.Enabled := True;
+  Edit1.Enabled := True;
+  Edit2.Enabled := True;
   cbAtivo.Enabled := True;
+  cbFrase.Enabled := True;
   edtPalavraIngles.SetFocus;
 end;
 
@@ -536,7 +555,10 @@ begin
   btnFechar.Enabled := True;
   edtPalavraIngles.Enabled := False;
   edtPalavraPortugues.Enabled := False;
+  Edit1.Enabled :=False;
+  Edit2.Enabled := False;
   cbAtivo.Enabled := False;
+  cbFrase.Enabled := False;
 end;
 
 end.

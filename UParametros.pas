@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
   System.Classes, Vcl.Graphics,System.StrUtils,System.Generics.Collections,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls,
-  parametros;
+  parametros, Vcl.DBLookup, Vcl.Samples.Spin;
 
 type
   TfrmParametros = class(TForm)
@@ -18,19 +18,23 @@ type
     Edit2: TEdit;
     Label1: TLabel;
     Label2: TLabel;
-    cbRepetirPalavras: TCheckBox;
+    grpmetodoEstudo: TGroupBox;
     cbParMesclaPalavrasDia: TCheckBox;
-    cbOrdenarPalavras: TCheckBox;
-    cbPalavrasAleatorias: TCheckBox;
-    cbExibirSomenteAudio: TCheckBox;
     btnutilitario: TBitBtn;
+    cbExibirSomenteAudio: TCheckBox;
+    cbexibirPlavrasEFrase: TCheckBox;
+    grpOutros: TGroupBox;
+    cbPalavrasAleatorias: TCheckBox;
+    cbOrdenarPalavras: TCheckBox;
+    cbRepetirPalavras: TCheckBox;
+    seQuantidadeDias: TSpinEdit;
     procedure FormShow(Sender: TObject);
     procedure btnGravarClick(Sender: TObject);
     procedure RadioGroup2Click(Sender: TObject);
     procedure btnutilitarioClick(Sender: TObject);
     procedure cbParMesclaPalavrasDiaClick(Sender: TObject);
   private
-    { Private declarations }
+    procedure salvarParametro();
   public
     { Public declarations }
   end;
@@ -45,6 +49,109 @@ uses
 {$R *.dfm}
 
 procedure TfrmParametros.btnGravarClick(Sender: TObject);
+begin
+
+  salvarParametro();
+  MessageDlg('Registro gravado com sucesso!'+#13+'Inicie o programa novamente.',mtInformation,[mbOK],0);
+  close;
+
+end;
+
+procedure TfrmParametros.btnutilitarioClick(Sender: TObject);
+begin
+   salvarParametro();
+   
+   frmProgresso := TfrmProgresso.Create(nil);
+   
+   try
+
+     if MessageDlg('Tem certeza que deseja reorganizar as palavras cadastradas para os próximos '+seQuantidadeDias.Text +' dias?',mtConfirmation,
+               [mbYes,mbNo],0,mbNo)= mrYes then
+     begin   
+       frmProgresso.ShowModal(); 
+     end;
+   finally     
+     FreeAndNil(frmProgresso);
+   end;
+ 
+end;
+
+procedure TfrmParametros.cbParMesclaPalavrasDiaClick(Sender: TObject);
+begin
+  if cbParMesclaPalavrasDia.Checked then
+  begin
+    btnutilitario.Enabled    := True;
+    seQuantidadeDias.Enabled := True;
+  end
+  else
+    begin
+      btnutilitario.Enabled    := False;
+      seQuantidadeDias.Enabled := False;
+    end;
+end;
+
+procedure TfrmParametros.FormShow(Sender: TObject);
+var
+  par: Tparametros;
+begin
+
+  par := Tparametros.Create;
+
+  try
+    par.setObject();
+
+    cbRepetirPalavras.Checked      := (par.repetirPalavras);
+    cbParMesclaPalavrasDia.Checked := (par.dividePalavrasDia);
+    cbOrdenarPalavras.Checked      := (par.ordenarPalavras);
+    cbPalavrasAleatorias.Checked   := (par.palavrasAleatorias);
+    cbExibirSomenteAudio.Checked   := (par.somenteAudio);
+    cbexibirPlavrasEFrase.Checked  := (par.exibirPalavrasComFrases);
+
+    if par.tpLetras = 1 then
+      RadioGroup1.ItemIndex := 0
+    else
+      RadioGroup1.ItemIndex :=1;  
+
+    case par.apresentacaoPalavras of
+  
+      1  : RadioGroup2.ItemIndex  := 0;  
+      4  : RadioGroup2.ItemIndex  := 1;
+      8  : RadioGroup2.ItemIndex  := 2;
+      12 : RadioGroup2.ItemIndex  := 3;
+  
+    end;
+
+    seQuantidadeDias.Text := IntToStr(par.quantidadeDiasDivisaoPalavras);
+    
+    Edit1.Text := IntToStr(par.filtroInicial);
+    Edit2.Text := IntToStr(par.filtroFinal);
+
+  finally
+    FreeAndNil(par);
+  end;
+
+  btnutilitario.Enabled := (cbParMesclaPalavrasDia.Checked);
+  seQuantidadeDias.Enabled := (cbParMesclaPalavrasDia.Checked);
+  
+end;
+
+procedure TfrmParametros.RadioGroup2Click(Sender: TObject);
+begin
+  if RadioGroup2.ItemIndex = 0 then
+  begin
+    cbExibirSomenteAudio.Enabled  := True;
+    cbexibirPlavrasEFrase.Enabled := True;
+  end
+  else
+  begin
+    cbExibirSomenteAudio.Enabled  := False;  
+    cbExibirSomenteAudio.Checked  := False;
+    cbexibirPlavrasEFrase.Enabled := False;
+    cbexibirPlavrasEFrase.Checked := False;
+  end;
+end;
+
+procedure TfrmParametros.salvarParametro;
 var
 par : TParametros;
 begin
@@ -74,95 +181,15 @@ begin
     par.dividePalavrasDia  := cbParMesclaPalavrasDia.Checked;  
     par.ordenarPalavras    := cbOrdenarPalavras.Checked;
     par.somenteAudio       := cbExibirSomenteAudio.Checked;
+    par.exibirPalavrasComFrases := cbexibirPlavrasEFrase.Checked;
+    par.quantidadeDiasDivisaoPalavras := StrToInt(seQuantidadeDias.Text);
 
     par.recordObject;
-
-    MessageDlg('Registro gravado com sucesso!'+#13+'Inicie o programa novamente.',mtInformation,[mbOK],0);
-
-    close;
   
   finally
     FreeAndNil(par);
   end;
      
-end;
-
-procedure TfrmParametros.btnutilitarioClick(Sender: TObject);
-begin
-
-   frmProgresso := TfrmProgresso.Create(nil);
-   
-   try
-
-     if MessageDlg('Tem certeza que deseja reorganizar as palavras cadastradas para os próximos 4 dias?',mtConfirmation,
-               [mbYes,mbNo],0,mbNo)= mrYes then
-     begin   
-       frmProgresso.ShowModal(); 
-     end;
-   finally     
-     FreeAndNil(frmProgresso);
-   end;
- 
-end;
-
-procedure TfrmParametros.cbParMesclaPalavrasDiaClick(Sender: TObject);
-begin
-  if cbParMesclaPalavrasDia.Checked then
-    btnutilitario.Enabled := True
-  else
-    btnutilitario.Enabled := False;  
-end;
-
-procedure TfrmParametros.FormShow(Sender: TObject);
-var
-  par: Tparametros;
-begin
-
-  par := Tparametros.Create;
-
-  try
-    par.setObject();
-
-    cbRepetirPalavras.Checked      := (par.repetirPalavras);
-    cbParMesclaPalavrasDia.Checked := (par.dividePalavrasDia);
-    cbOrdenarPalavras.Checked      := (par.ordenarPalavras);
-    cbPalavrasAleatorias.Checked   := (par.palavrasAleatorias);
-    cbExibirSomenteAudio.Checked   := (par.somenteAudio);
-
-    if par.tpLetras = 1 then
-      RadioGroup1.ItemIndex := 0
-    else
-      RadioGroup1.ItemIndex :=1;  
-
-    case par.apresentacaoPalavras of
-  
-      1  : RadioGroup2.ItemIndex  := 0;  
-      4  : RadioGroup2.ItemIndex  := 1;
-      8  : RadioGroup2.ItemIndex  := 2;
-      12 : RadioGroup2.ItemIndex  := 3;
-  
-    end;
-
-    Edit1.Text := IntToStr(par.filtroInicial);
-    Edit2.Text := IntToStr(par.filtroFinal);
-
-  finally
-    FreeAndNil(par);
-  end;
-
-  btnutilitario.Enabled := (cbParMesclaPalavrasDia.Checked);
-  
-end;
-
-procedure TfrmParametros.RadioGroup2Click(Sender: TObject);
-begin
-  if RadioGroup2.ItemIndex = 0 then
-    cbExibirSomenteAudio.Enabled := True
-  else
-  begin
-    cbExibirSomenteAudio.Enabled := False;  
-    cbExibirSomenteAudio.Checked := False;
-  end;
 end;
 
 end.

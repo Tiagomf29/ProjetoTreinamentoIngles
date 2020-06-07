@@ -19,6 +19,8 @@ type
     FDividePalavrasDia : string;
     FOrdenarPalavras : string;
     FSomenteAudio : string;
+    FExibirPalavrasComFrases : string;
+    FQuantidadeDiasDivisaoPalavras : SmallInt;
     function getApresentacaoPalavras: SmallInt;
     function getId: Integer;
     function getTpLetras: SmallInt;
@@ -41,6 +43,10 @@ type
     procedure setPalavrasAleatorias(const Value: Boolean);
     function getSomenteAudio: Boolean;
     procedure setSomenteAudio(const Value: Boolean);
+    function getExibirPalavrasComFrases: Boolean;
+    procedure setExibirPalavrasComFrases(const Value: Boolean);
+    function getQuantidadeDiasDivisaoPalavras: SmallInt;
+    procedure setQuantidadeDiasDivisaoPalavras(const Value: SmallInt);
 
   public
     property id: Integer read getId write setId;
@@ -54,6 +60,9 @@ type
     property dividePalavrasDia :Boolean read getDividePalavrasDia write setDividePalavrasDia;
     property ordenarPalavras: Boolean read getOrdenarPalavras write setOrdenarPalavras;
     property somenteAudio: Boolean read getSomenteAudio write setSomenteAudio;
+    property exibirPalavrasComFrases: Boolean read getExibirPalavrasComFrases write setExibirPalavrasComFrases; 
+    property quantidadeDiasDivisaoPalavras :SmallInt read getQuantidadeDiasDivisaoPalavras write setQuantidadeDiasDivisaoPalavras;    
+    
     
 
     procedure setObject();
@@ -76,6 +85,14 @@ end;
 function TParametros.getDividePalavrasDia: Boolean;
 begin
   if FDividePalavrasDia = 'T' then
+    Result := true
+  else
+    Result :=False;
+end;
+
+function TParametros.getExibirPalavrasComFrases: Boolean;
+begin
+  if FExibirPalavrasComFrases = 'T' then
     Result := true
   else
     Result :=False;
@@ -120,6 +137,11 @@ begin
     Result :=False;
 end;
 
+function TParametros.getQuantidadeDiasDivisaoPalavras: SmallInt;
+begin
+  Result := FQuantidadeDiasDivisaoPalavras;
+end;
+
 function TParametros.getRepetirPalavras: Boolean;
 begin  
   if FRepetirPalavras = 'T' then
@@ -157,9 +179,9 @@ begin
     qryTemp.Close;
     qryTemp.SQL.Clear;
     qryTemp.SQL.Add('update parametros set tp_letras =:tp_letras, apresentacao_palavras =:apresentacao_palavras,'); 
-    qryTemp.SQL.Add('filtro_palavras_in =:filtroIN, filtro_palavras_fi =:filtroFI,');
+    qryTemp.SQL.Add('filtro_palavras_in =:filtroIN, filtro_palavras_fi =:filtroFI,exibir_Palavra_com_frase =:epcf,');
     qryTemp.SQL.Add('repetir_palavra =:rp,ingles_to_portugues =:itp, palavras_aleatorias =:pa, divide_palavras_dia =:dpd, ordenar_palavras =:op,');
-    qryTemp.SQL.Add('somenteAudio =:sa');
+    qryTemp.SQL.Add('somenteAudio =:sa,qtde_dias_divisao_palavras =:qddp');
     
     qryTemp.ParamByName('tp_letras').AsInteger              := FTpLetras;
     qryTemp.ParamByName('apresentacao_palavras').AsInteger  := FApresentacaoPalavras;
@@ -171,6 +193,8 @@ begin
     qryTemp.ParamByName('dpd').AsString                     := FDividePalavrasDia;
     qryTemp.ParamByName('op').AsString                      := FOrdenarPalavras;
     qryTemp.ParamByName('sa').AsString                      := FSomenteAudio;
+    qryTemp.ParamByName('epcf').AsString                    := FExibirPalavrasComFrases;
+    qryTemp.ParamByName('qddp').AsInteger                   := FQuantidadeDiasDivisaoPalavras;
     
     qryTemp.ExecSQL;
   finally
@@ -191,6 +215,14 @@ begin
     FDividePalavrasDia := 'T'
   else
     FDividePalavrasDia := 'F';
+end;
+
+procedure TParametros.setExibirPalavrasComFrases(const Value: Boolean);
+begin
+  if Value then
+    FExibirPalavrasComFrases := 'T'
+  else
+    FExibirPalavrasComFrases := 'F';
 end;
 
 procedure TParametros.setfiltroFinal(const Value: SmallInt);
@@ -233,6 +265,7 @@ begin
     qryTemp.SQL.Clear;
     qryTemp.SQL.Add('select * from parametros ');
     qryTemp.Open;
+    
     FId                   := qryTemp.FieldByName('id').AsInteger;
     FTpLetras             := qryTemp.FieldByName('tp_letras').AsInteger;
     FApresentacaoPalavras := qryTemp.FieldByName('apresentacao_palavras').AsInteger;
@@ -244,6 +277,8 @@ begin
     FDividePalavrasDia    := qryTemp.FieldByName('divide_palavras_dia').AsString;
     FOrdenarPalavras      := qryTemp.FieldByName('ordenar_palavras').AsString;
     FSomenteAudio         := qryTemp.FieldByName('somenteAudio').AsString;
+    FExibirPalavrasComFrases := qryTemp.FieldByName('exibir_Palavra_com_frase').AsString;
+    FQuantidadeDiasDivisaoPalavras := qryTemp.FieldByName('qtde_dias_divisao_palavras').AsInteger;
     
   finally
     qryTemp.Connection.Commit();
@@ -266,6 +301,11 @@ begin
     FPalavrasAleatorias := 'T'
   else
     FPalavrasAleatorias := 'F';
+end;
+
+procedure TParametros.setQuantidadeDiasDivisaoPalavras(const Value: SmallInt);
+begin
+   FQuantidadeDiasDivisaoPalavras := Value;
 end;
 
 procedure TParametros.setRepetirPalavras(const Value: Boolean);

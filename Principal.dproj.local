@@ -14,25 +14,27 @@
     <Transaction>2020/02/12 21:17:44.000.889,=C:\Tiago\Desenvolvimento\Projetos Git\ProjetoIngles\Unit1.pas</Transaction>
     <Transaction>2020/02/12 21:18:26.000.843,C:\Tiago\Desenvolvimento\Projetos Git\ProjetoIngles\Unit1.pas=C:\Tiago\Desenvolvimento\Projetos Git\ProjetoIngles\uPalavras_ingles.pas</Transaction>
     <Transaction>2020/02/12 21:24:17.000.746,=C:\Tiago\Desenvolvimento\Projetos Git\ProjetoIngles\Unit1.pas</Transaction>
-    <Transaction>2020/02/12 21:24:32.000.697,C:\Tiago\Desenvolvimento\Projetos Git\ProjetoIngles\Unit1.pas=C:\Tiago\Desenvolvimento\Projetos Git\ProjetoIngles\UDM.pas</Transaction>
     <Transaction>2020/02/12 21:24:32.000.697,C:\Tiago\Desenvolvimento\Projetos Git\ProjetoIngles\Unit1.dfm=C:\Tiago\Desenvolvimento\Projetos Git\ProjetoIngles\UDM.dfm</Transaction>
+    <Transaction>2020/02/12 21:24:32.000.697,C:\Tiago\Desenvolvimento\Projetos Git\ProjetoIngles\Unit1.pas=C:\Tiago\Desenvolvimento\Projetos Git\ProjetoIngles\UDM.pas</Transaction>
     <Transaction>2020/02/12 21:40:38.000.492,=C:\Tiago\Desenvolvimento\Projetos Git\ProjetoIngles\Unit1.pas</Transaction>
     <Transaction>2020/02/12 21:40:59.000.664,C:\Tiago\Desenvolvimento\Projetos Git\ProjetoIngles\Unit1.pas=C:\Tiago\Desenvolvimento\Projetos Git\ProjetoIngles\uPalavras_portugues.pas</Transaction>
     <Transaction>2020/02/16 16:27:32.000.936,=C:\Tiago\Desenvolvimento\Projetos Git\ProjetoIngles\Unit2.pas</Transaction>
-    <Transaction>2020/02/16 16:33:28.000.245,C:\Tiago\Desenvolvimento\Projetos Git\ProjetoIngles\Unit2.pas=C:\Tiago\Desenvolvimento\Projetos Git\ProjetoIngles\UCadastroPalavras.pas</Transaction>
     <Transaction>2020/02/16 16:33:28.000.245,C:\Tiago\Desenvolvimento\Projetos Git\ProjetoIngles\Unit2.dfm=C:\Tiago\Desenvolvimento\Projetos Git\ProjetoIngles\UCadastroPalavras.dfm</Transaction>
+    <Transaction>2020/02/16 16:33:28.000.245,C:\Tiago\Desenvolvimento\Projetos Git\ProjetoIngles\Unit2.pas=C:\Tiago\Desenvolvimento\Projetos Git\ProjetoIngles\UCadastroPalavras.pas</Transaction>
     <Transaction>2020/02/16 18:06:59.000.259,=C:\Tiago\Desenvolvimento\Projetos Git\ProjetoIngles\Unit1.pas</Transaction>
     <Transaction>2020/02/16 18:07:23.000.693,C:\Tiago\Desenvolvimento\Projetos Git\ProjetoIngles\Unit1.pas=C:\Tiago\Desenvolvimento\Projetos Git\ProjetoIngles\UPalavras.pas</Transaction>
     <Transaction>2020/02/16 18:57:05.000.395,C:\Tiago\Desenvolvimento\Projetos Git\ProjetoIngles\uPalavras_ingles.pas=</Transaction>
     <Transaction>2020/02/16 18:57:14.000.984,C:\Tiago\Desenvolvimento\Projetos Git\ProjetoIngles\uPalavras_portugues.pas=</Transaction>
     <Transaction>2020/02/19 22:02:58.000.760,=C:\Tiago\Desenvolvimento\Projetos Git\ProjetoIngles\Unit1.pas</Transaction>
-    <Transaction>2020/02/19 22:03:32.000.203,C:\Tiago\Desenvolvimento\Projetos Git\ProjetoIngles\Unit1.dfm=C:\Tiago\Desenvolvimento\Projetos Git\ProjetoIngles\UParametros.dfm</Transaction>
     <Transaction>2020/02/19 22:03:32.000.203,C:\Tiago\Desenvolvimento\Projetos Git\ProjetoIngles\Unit1.pas=C:\Tiago\Desenvolvimento\Projetos Git\ProjetoIngles\UParametros.pas</Transaction>
+    <Transaction>2020/02/19 22:03:32.000.203,C:\Tiago\Desenvolvimento\Projetos Git\ProjetoIngles\Unit1.dfm=C:\Tiago\Desenvolvimento\Projetos Git\ProjetoIngles\UParametros.dfm</Transaction>
     <Transaction>2020/02/19 22:05:29.000.273,=C:\Tiago\Desenvolvimento\Projetos Git\ProjetoIngles\Unit1.pas</Transaction>
     <Transaction>2020/02/19 22:07:01.000.235,C:\Tiago\Desenvolvimento\Projetos Git\ProjetoIngles\Unit1.pas=C:\Tiago\Desenvolvimento\Projetos Git\ProjetoIngles\parametros.pas</Transaction>
     <Transaction>2020/04/11 11:39:12.000.771,=C:\Tiago\Desenvolvimento\Projetos Git\ProjetoTreinamentoIngles\Unit1.pas</Transaction>
     <Transaction>2020/04/12 10:05:41.000.791,=C:\Tiago\Desenvolvimento\Projetos Git\ProjetoTreinamentoIngles\Unit1.pas</Transaction>
-    <Transaction>2020/04/12 10:07:20.000.019,C:\Tiago\Desenvolvimento\Projetos Git\ProjetoTreinamentoIngles\Unit1.pas=C:\Tiago\Desenvolvimento\Projetos Git\ProjetoTreinamentoIngles\UProgresso.pas</Transaction>
     <Transaction>2020/04/12 10:07:20.000.019,C:\Tiago\Desenvolvimento\Projetos Git\ProjetoTreinamentoIngles\Unit1.dfm=C:\Tiago\Desenvolvimento\Projetos Git\ProjetoTreinamentoIngles\UProgresso.dfm</Transaction>
+    <Transaction>2020/04/12 10:07:20.000.019,C:\Tiago\Desenvolvimento\Projetos Git\ProjetoTreinamentoIngles\Unit1.pas=C:\Tiago\Desenvolvimento\Projetos Git\ProjetoTreinamentoIngles\UProgresso.pas</Transaction>
+    <Transaction>2020/06/07 01:11:46.000.244,=C:\Tiago\Desenvolvimento\Projetos Git\ProjetoTreinamentoIngles\Unit1.pas</Transaction>
+    <Transaction>2020/06/07 01:12:06.000.985,C:\Tiago\Desenvolvimento\Projetos Git\ProjetoTreinamentoIngles\UConexaoBanco.pas=C:\Tiago\Desenvolvimento\Projetos Git\ProjetoTreinamentoIngles\Unit1.pas</Transaction>
   </Transactions>
 </BorlandProject>

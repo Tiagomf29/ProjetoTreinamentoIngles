@@ -29,6 +29,12 @@ type
     lblTempo: TLabel;
     timer: TTimer;
     mp1: TMediaPlayer;
+    pnltexto: TPanel;
+    img: TImage;
+    rcTexto: TRichEdit;
+    mp2: TMediaPlayer;
+    btnPlay: TBitBtn;
+    BitBtn1: TBitBtn;
     procedure FormShow(Sender: TObject);
     procedure Palavras1Click(Sender: TObject);
     procedure Parmetros1Click(Sender: TObject);
@@ -40,12 +46,20 @@ type
     procedure Acertossequenciais1Click(Sender: TObject);
     procedure timerTimer(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure BitBtn1Click(Sender: TObject);
+    procedure btnPlayClick(Sender: TObject);
+
+    function contagemPontos(AMsg: String): String;
   private
     procedure exibePalavrasInglesBanco();
     procedure traducaoInglesPortugues();
     procedure atualizaStatusBar(); 
     procedure propriedadeLabelPadrao();
-    function contagemPontos(AMsg: String): String;
+    procedure reproduzirSomFrasesIngles();
+    procedure reproduzirSomPalavrasIngles();
+    procedure exibicaoTextoTraducaoIngles(AFrase : String);
+    
+    
     function palavraConcatenada(Apalavra1, APalavra2 : String; AQtdePalavras,AContador: Integer): String;
     function removerEspacosNoMeio( palavra : String):String;
     
@@ -58,7 +72,7 @@ type
       Acertos,AcertosTotal, Erros: Integer;
 
   public
-
+     function retornaNumeroParFormualario(AValor : integer): Integer;
   end;
 
 var
@@ -67,7 +81,7 @@ var
 implementation
 
 uses
-  UCadastroPalavras;
+  UCadastroPalavras, ComObj;
 
 {$R *.dfm}
 
@@ -131,6 +145,19 @@ begin
   StatusBar1.Panels.Items[3].Text:= 'Erros: '+ IntToStr(Erros);
 end;
 
+procedure TfrmPrincipal.BitBtn1Click(Sender: TObject);
+begin
+   try
+     ReproduzirSomFrasesIngles();
+   except
+     on e: Exception do
+     begin
+       MessageDlg('Nenhum som foi configurado para esta frase.',mtInformation,[mbOK],0);
+       Abort;
+     end;
+   end;
+end;
+
 procedure TfrmPrincipal.btn1Click(Sender: TObject);
 begin
        mp1.FileName := Trim('C:\Ingles\Mp3\'+Label1.Caption+'.mp3');
@@ -138,11 +165,17 @@ begin
        mp1.Play;
 end;
 
+procedure TfrmPrincipal.btnPlayClick(Sender: TObject);
+begin
+  reproduzirSomPalavrasIngles();
+  mmo.SetFocus;
+end;
+
 procedure TfrmPrincipal.btnValidarClick(Sender: TObject);
 var
   qtdePalavrasEdt, qtdePalavrasAleatorias : TStringDynArray;
 begin
-  
+ 
   if Label1.Caption = 'Parabéns voce acertou todas as palavras!!'+#13+'Feche o programa para começar novamente.' then
   begin  
     timer.Enabled := False;
@@ -186,7 +219,7 @@ begin
   if AMsg = 'Você acertou!' then
     begin
       Acertos := Acertos + 1;
-      AcertosTotal:= AcertosTotal +1;;
+      AcertosTotal:= AcertosTotal +1;
     end
   else
     Erros := Erros + 1;
@@ -251,10 +284,9 @@ end;
 
 procedure TfrmPrincipal.exibePalavrasInglesBanco;
 var
-  palavrasTemp                                                 : TPalavras;
   par                                                          : TParametros;
-  j,l,validador,divisaoPalavras,lNumeroAleatorio,lQtdePalavras : Integer;
-  lPalavrasConcatenadas                                        : String;
+  i,j,l,validador,divisaoPalavras,lNumeroAleatorio,lQtdePalavras : Integer;
+  lPalavrasConcatenadas,texto                                        : String;
 begin
 
   if Label1.Caption = 'Parabéns voce acertou todas as palavras!!'+#13+'Feche o programa para começar novamente.' then
@@ -262,7 +294,6 @@ begin
 
   par := TParametros.Create(); 
   par.setObject(); 
-  palavrasTemp := TPalavras.Create;
   
   StatusBar1.Panels.Items[0].Text:= 'Qtde Palavras: '+  IntToStr(lista.Count);
   atualizaStatusBar();
@@ -332,27 +363,56 @@ begin
 
    Label1.Visible := not par.somenteAudio;  
 
-   Label1.Caption := IfThen(par.tpLetras = 1,UpperCase(lPalavrasConcatenadas),LowerCase(lPalavrasConcatenadas));  
+   Label1.Caption := IfThen(par.tpLetras = 1,UpperCase(lPalavrasConcatenadas),LowerCase(lPalavrasConcatenadas)); 
+
+   exibicaoTextoTraducaoIngles(AnsiLowerCase(lista.Items[lNumeroAleatorio].fraseIntuitivaIngles));
+
+   application.processmessages;
    
    if par.apresentacaoPalavras = 1 then
-   begin
-     try
-       mp1.FileName := 'C:\Ingles\Mp3\'+Label1.Caption+'.mp3';
-       mp1.Open;
-       mp1.Play;
-     except on e: Exception do
-       begin
-         MessageDlg('Não existe som configurado para esta palavra.',mtInformation,[mbOK],0);
-         Abort;
-       end;
-     end  
+   begin     
+     
+     reproduzirSomPalavrasIngles();    
+
+     if par.exibirPalavrasComFrases then
+     begin
+     
+       try
+
+         img.Picture := nil;       
+         img.Picture.LoadFromFile('C:\Ingles\imagem\'+Label1.Caption+'.jpg');
+
+       except on e: Exception do
+         mmo.SetFocus;
+
+       end;     
+
+       application.processmessages;
+       Sleep(1000);
+
+       ReproduzirSomFrasesIngles();
+     end;
+
    end;
    
   finally
-    FreeAndNil(palavrasTemp);
     FreeAndNil(par);
   end;
   
+end;
+
+procedure TfrmPrincipal.exibicaoTextoTraducaoIngles(AFrase : String);
+begin
+   rcTexto.Clear;
+   rcTexto.Lines.Add('Frase em inglês:');
+   rcTexto.Lines.Add('');
+   
+   rcTexto.Lines.Add(AFrase);
+   
+   rcTexto.Lines.Add('');
+   rcTexto.Lines.Add(''); 
+   rcTexto.Lines.Add('Tradução:');
+   rcTexto.Lines.Add('');
 end;
 
 procedure TfrmPrincipal.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -364,7 +424,28 @@ begin
 end;
 
 procedure TfrmPrincipal.FormCreate(Sender: TObject);
+var
+  parametros : TParametros;
 begin
+  
+  parametros := TParametros.Create;  
+  
+  try
+
+    parametros.setObject();
+  
+    if (parametros.apresentacaoPalavras > 1) or not (parametros.exibirPalavrasComFrases) then
+    begin
+      frmPrincipal.Width:= 786;
+      frmPrincipal.Height := 488;
+    end ;
+
+    btnPlay.Visible := not (parametros.apresentacaoPalavras > 1);
+
+  finally
+    FreeAndNil(parametros);
+  end;    
+
   lblTempo.Caption := '00:00:00:000';
   tempoOld := Now;
 end;
@@ -384,7 +465,7 @@ begin
     Label1.Caption := 'Sem palavras para ser exibido!';
     Abort;
   end;
-
+  
   exibePalavrasInglesBanco();
 end;
 
@@ -492,10 +573,11 @@ end;
 
 procedure TfrmPrincipal.propriedadeLabelPadrao;
 begin
-  Label1.Top:=11;
+  Label1.Top:=12;
   Label1.Font.Size := 17;
   mmo.Font.Size := 10;
   mp1.Enabled := False;
+  StatusBar1.Height := 25;
 end;
 
 function TfrmPrincipal.removerEspacosNoMeio( palavra: String): String;
@@ -512,6 +594,77 @@ begin
   end;
     
   Result := linha;
+end;
+
+procedure TfrmPrincipal.ReproduzirSomFrasesIngles;
+var
+  texto : string;
+  i : Integer;
+  voz : OLEVariant; 
+begin
+
+  for i := 0 to rcTexto.Lines.Count -1 do
+  begin
+    if i >= 2 then
+    begin
+      if copy(rcTexto.Lines[i],1,1)='' then
+      begin
+        break;
+      end;
+
+      texto := texto + rcTexto.Lines[i];
+      
+    end;        
+  end;
+  
+  try
+
+    //Ler texto em voz alta
+    voz := CreateOLEObject ('SAPI.SpVoice');
+    voz.Voice := voz.GetVoices.item(1);
+    voz.Speak(texto, 0);
+    mp1.Enabled := True;
+
+    {
+    mp2.FileName := 'C:\Ingles\Mp3\'+texto+'.mp3';
+    mp2.Open;
+    mp2.Play;
+    }
+    except on e: Exception do
+     raise EAbort.Create('Não conseguiu reproduzir o som para esta frase.');
+  end  
+  
+end;
+
+procedure TfrmPrincipal.reproduzirSomPalavrasIngles;
+var
+  voz : OleVariant;
+begin
+  try
+    
+  //Ler texto em voz alta
+    voz := CreateOLEObject ('SAPI.SpVoice');
+    voz.Voice := voz.GetVoices.item(1);
+    voz.Speak(Label1.Caption, 0);
+    mp1.Enabled := True;
+     
+    {
+    mp1.FileName := 'C:\Ingles\Mp3\'+Label1.Caption+'.mp3';
+    mp1.Open;
+    mp1.Play;
+    }
+     
+  except on e: Exception do
+    begin
+      MessageDlg('Não conseguiu reproduzir o som para esta palavra.',mtInformation,[mbOK],0);
+      Abort;
+    end;
+  end
+end;
+
+function TfrmPrincipal.retornaNumeroParFormualario(AValor: integer): Integer;
+begin
+  Result := AValor;
 end;
 
 procedure TfrmPrincipal.timerTimer(Sender: TObject);
@@ -536,7 +689,7 @@ begin
       palavrasTemp.setObject(UpperCase(listaPalavrasConcatenadas[j-1]));  
       lPalavraConcatenadaTemp := palavraConcatenada(lPalavraConcatenadaTemp,palavrasTemp.palavraPortugues,Length(listaPalavrasConcatenadas),j);                                  
     end;
-      
+
     SetLength(listaPalavrasAcertadas, lista.Count);
 
     palavraEdit := removerEspacosNoMeio(Trim(AnsiUpperCase(mmo.Text)));
@@ -545,10 +698,15 @@ begin
     if palavraEdit = ReplaceStr(Trim(AnsiUpperCase(lPalavraConcatenadaTemp)),',','') then
     begin
 
-      for j := 0 to Length(listaPalavrasConcatenadas)-1 do
-      begin         
-        palavrasTemp.setObject(listaPalavrasConcatenadas[j]);
-        palavrasTemp.atualizaStatusExibicaoPalavras(listaPalavrasConcatenadas[j],palavrasTemp.qtdeSeqAcertos+1);
+      rcTexto.Lines.Add(AnsiLowerCase(palavrasTemp.fraseIntuitivaPortugues));      
+
+      if par.dividePalavrasDia then
+      begin
+        for j := 0 to Length(listaPalavrasConcatenadas)-1 do
+        begin         
+          palavrasTemp.setObject(listaPalavrasConcatenadas[j]);
+          palavrasTemp.atualizaStatusExibicaoPalavras(listaPalavrasConcatenadas[j],palavrasTemp.qtdeSeqAcertos+1, par.quantidadeDiasDivisaoPalavras);
+        end;
       end;
              
       for j := 0 to lista.Count -1 do
@@ -581,7 +739,7 @@ begin
             if listaPalavrasAcertadas[l]= '' then
             begin
                Label1.Visible := True;
-               contagemPontos('Você acertou!')  ;
+               contagemPontos('Você acertou!');
                listaPalavrasAcertadas[l]:= UpperCase(listaPalavrasConcatenadas[j]);
                break;
              end;
@@ -611,12 +769,15 @@ begin
     for j := 0 to Length(lPalavrasErradas)-1 do
       lPalavraConcatenadaTemp:= lPalavraConcatenadaTemp +#13+ lPalavrasErradas[j];
       
-    // Se chegou aqui é poruqe a palavra não foi traduzida corretamente. 
+    // Se chegou aqui é porque a palavra não foi traduzida corretamente. 
 
-    for j := 0 to Length(listaPalavrasConcatenadas)-1 do
-    begin         
-      palavrasTemp.setObject(listaPalavrasConcatenadas[j]);
-      palavrasTemp.atualizaStatusExibicaoPalavras(listaPalavrasConcatenadas[j],0);
+    if par.dividePalavrasDia then
+    begin
+      for j := 0 to Length(listaPalavrasConcatenadas)-1 do
+      begin         
+        palavrasTemp.setObject(listaPalavrasConcatenadas[j]);
+        palavrasTemp.atualizaStatusExibicaoPalavras(listaPalavrasConcatenadas[j],0,par.quantidadeDiasDivisaoPalavras);
+      end;
     end;
      
     MessageDlg(contagemPontos('Você errou!')+#13+#13+'Tradução:'+#13+ lPalavraConcatenadaTemp,mtInformation,[mbOK],0);

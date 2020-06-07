@@ -10,7 +10,8 @@ uses
   parametros in 'parametros.pas',
   Vcl.Themes,
   Vcl.Styles,
-  UProgresso in 'UProgresso.pas' {frmProgresso};
+  UProgresso in 'UProgresso.pas' {frmProgresso},
+  UConexaoBanco in 'UConexaoBanco.pas';
 
 {$R *.res}
 
@@ -21,7 +22,7 @@ begin
 
   ReportMemoryLeaksOnShutdown := (DebugHook <> 0);
   
-  Application.CreateForm(TfrmPrincipal, frmPrincipal);
   Application.CreateForm(TDM, DM);
+  Application.CreateForm(TfrmPrincipal, frmPrincipal);
   Application.Run;
 end.

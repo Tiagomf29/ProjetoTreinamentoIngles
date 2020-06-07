@@ -2,7 +2,8 @@ unit UPalavras;
 
 interface
 uses
-  ZDataSet, UDM, System.SysUtils, System.Generics.Collections,FMX.Dialogs,System.Classes,DB,System.StrUtils;
+  ZDataSet, UDM, System.SysUtils, System.Generics.Collections,FMX.Dialogs,
+  System.Classes,DB,System.StrUtils, UConexaoBanco;
 
 type
 
@@ -16,9 +17,12 @@ type
     FFrase : string;
     FQtdeSeqAcertos :SmallInt;
     FDataSeqAcertos : TDate;
+    FFraseIntuitivaIngles : string;
+    FFraseIntuitivaPortugues : string;
     FMp3 : TBlobData;
     FQry : TZQuery;
     Flista : TObjectList<TPalavras>;
+    FConexao : TConexaoBanco;
     function getAtivo: Boolean;
     function getPalavraIngles: String;
     function getPalavraPortugues: String;
@@ -37,6 +41,10 @@ type
     procedure setdataSeqAcertos(const Value: TDate);
     function getLista: TObjectList<TPalavras>;
     procedure setLista(const Value: TObjectList<TPalavras>);
+    function getFraseIntuitivaIngles: string;
+    function getFraseIntuitivaPortugues: string;
+    procedure setFraseIntuitivaIngles(const Value: string);
+    procedure setFraseIntuitivaPortugues(const Value: string);
   public
     property id : Integer read getId write setId;
     property palavraIngles : String read getPalavraIngles write setPalavrasIngles;
@@ -47,6 +55,8 @@ type
     property dataSeqAcertos : TDate read getdataSeqAcertos write setdataSeqAcertos;
     property mp3 : TBlobData read getMp3 write setMp3;
     property lista : TObjectList<TPalavras> read getLista write setLista;
+    property fraseIntuitivaIngles : string read getFraseIntuitivaIngles write setFraseIntuitivaIngles;
+    property fraseIntuitivaPortugues : string read getFraseIntuitivaPortugues write setFraseIntuitivaPortugues;
 
     function listaPalavrasIngles(AParam1,AParam2 : SmallInt; ordenarPalavra : Boolean = false; dividirPalavrasDia : Boolean = false): TObjectList<TPalavras>;
     function listaTodasPalavras(): TObjectList<TPalavras>;
@@ -57,12 +67,13 @@ type
     procedure recordObjectInsercao();
     procedure recordObjectAtualizacao();
     procedure recordObjectDelete();
-    procedure atualizaStatusExibicaoPalavras(palavra : String; qtde : smallint);
+    procedure atualizaStatusExibicaoPalavras(palavra : String; qtde : smallint; qtdeParametroDiasDivididos : SmallInt);
     procedure atualizaQtdePalavrasFecharTela();
     procedure atualizaAudio(id : Integer; mp3 : TBlobData);
     procedure alterarStatusTotasPalavras(AAtivar : Boolean);
     procedure atualizaSeparaPalavrasBydata();
     procedure copyFromObjectFlista(ALista : TObjectList<Tpalavras>);
+    function retornaNumeroPar(AValor : integer): Integer;
 
     constructor Create(); 
     destructor Destroy; override;
@@ -82,7 +93,7 @@ begin
     
   try
   
-    qryTemp.Connection := DM.conexao;
+    qryTemp.Connection := FConexao.conectar();
     qryTemp.Connection.StartTransaction;
   
     qryTemp.close;
@@ -105,7 +116,7 @@ begin
   
   try
   
-    qryTemp.Connection := DM.conexao;
+    qryTemp.Connection := FConexao.conectar();
     qryTemp.Connection.StartTransaction;
   
     qryTemp.close;
@@ -132,7 +143,7 @@ begin
   
   try
   
-    qryTemp.Connection := DM.conexao;
+    qryTemp.Connection := FConexao.conectar();
     qryTemp.Connection.StartTransaction;
     
     qryTemp.close;
@@ -153,11 +164,10 @@ var
   qryTemp : TZQuery;
 begin
 
-  qryTemp := TZQuery.Create(nil);
-  
+  qryTemp := TZQuery.Create(nil);  
   try
   
-    qryTemp.Connection := DM.conexao;
+    qryTemp.Connection := FConexao.conectar();
     qryTemp.Connection.StartTransaction;
   
     qryTemp.close;
@@ -176,21 +186,21 @@ begin
   end;
 end;
 
-procedure TPalavras.atualizaStatusExibicaoPalavras(palavra : String; qtde : smallint);
+procedure TPalavras.atualizaStatusExibicaoPalavras(palavra : String; qtde : smallint; qtdeParametroDiasDivididos : SmallInt);
 var
   qryTemp : TZQuery;
   dia,mes,ano : String;  
 begin
 
-  dia := Copy(DateToStr(Now+4),1,2);
-  mes := Copy(DateToStr(Now+4),4,2);
-  ano := Copy(DateToStr(Now+4),7,4);
+  dia := Copy(DateToStr(Now+(qtdeParametroDiasDivididos+1)),1,2);
+  mes := Copy(DateToStr(Now+(qtdeParametroDiasDivididos+1)),4,2);
+  ano := Copy(DateToStr(Now+(qtdeParametroDiasDivididos+1)),7,4);
 
   qryTemp := TZQuery.Create(nil);
   
   try
   
-    qryTemp.Connection := DM.conexao;
+    qryTemp.Connection := FConexao.conectar();
     qryTemp.Connection.StartTransaction;
   
     qryTemp.close;
@@ -236,6 +246,8 @@ begin
     palavras.frase := ALista.Items[i].frase;
     palavras.qtdeSeqAcertos := ALista.Items[i].qtdeSeqAcertos;
     palavras.dataSeqAcertos := ALista.Items[i].dataSeqAcertos;
+    palavras.fraseIntuitivaIngles := ALista.Items[i].fraseIntuitivaIngles;
+    palavras.fraseIntuitivaPortugues := ALista.Items[i].fraseIntuitivaPortugues;
 
     Flista.Add(palavras);
     
@@ -245,12 +257,14 @@ end;
 
 constructor TPalavras.Create;
 begin
+  Fconexao := TConexaoBanco.Create;
   Flista := TObjectList<TPalavras>.Create;  
 end;
 
 destructor TPalavras.Destroy;
 begin
   FreeAndNil(Flista);
+  FreeAndNil(Fconexao);
   inherited;
 end;
 
@@ -263,7 +277,7 @@ begin
 
   try
 
-    FQry.Connection := DM.conexao; 
+    FQry.Connection := FConexao.conectar();
   
     FQry.Close;
     FQry.SQL.Clear;
@@ -294,7 +308,7 @@ begin
   FQry := TZQuery.Create(nil);
 
   try
-    FQry.Connection := DM.conexao;
+    FQry.Connection := FConexao.conectar();
 
     FQry.Close;
     FQry.SQL.Clear;
@@ -342,6 +356,16 @@ begin
   
 end;
 
+function TPalavras.getFraseIntuitivaIngles: string;
+begin
+  Result := FFraseIntuitivaIngles;
+end;
+
+function TPalavras.getFraseIntuitivaPortugues: string;
+begin
+  Result := FFraseIntuitivaPOrtugues;
+end;
+
 function TPalavras.getId: Integer;
 begin
   Result := FId;
@@ -385,7 +409,7 @@ begin
   FQry := TZQuery.Create(nil);
 
   try
-    FQry.Connection := DM.conexao;
+    FQry.Connection := FConexao.conectar();
   
     FQry.Close;
     FQry.SQL.Clear;
@@ -414,6 +438,8 @@ begin
       palavraIngles.FID := FQry.FieldByName('ID').AsInteger;
       palavraIngles.FPalavraIngles := FQry.FieldByName('PALAVRAINGLES').AsString;
       palavraIngles.FPalavraPortugues := FQry.FieldByName('PALAVRAPORTUGUES').AsString;
+      palavraIngles.FFraseIntuitivaIngles := FQry.FieldByName('frase_intuitiva_ingles').AsString;
+      palavraIngles.FFraseIntuitivaPortugues := FQry.FieldByName('frase_intuitiva_portugues').AsString;
     
       Flista.Add(palavraIngles); 
 
@@ -437,7 +463,7 @@ begin
 
   try
   
-    FQry.Connection := DM.conexao;
+    FQry.Connection := FConexao.conectar();
  
     FQry.Close;
     FQry.SQL.Clear;
@@ -456,6 +482,8 @@ begin
       palavra.frase := FQry.FieldByName('frase').AsBoolean;
       palavra.FQtdeSeqAcertos := FQry.FieldByName('QTDESEQACERTOS').AsInteger;
       palavra.FDataSeqAcertos := FQry.FieldByName('DATA_SEQ_ACERTOS').AsDateTime;
+      palavra.FFraseIntuitivaIngles := FQry.FieldByName('frase_intuitiva_ingles').AsString;
+      palavra.FFraseIntuitivaPortugues := FQry.FieldByName('frase_intuitiva_portugues').AsString;
     
       Flista.Add(palavra); 
 
@@ -479,18 +507,22 @@ begin
   
   try
   
-    qryTemp.Connection := DM.conexao;
+    qryTemp.Connection := FConexao.conectar();
     qryTemp.Connection.StartTransaction;
   
     qryTemp.close;
     qryTemp.SQL.Add('update palavras set');
-    qryTemp.SQL.Add('palavraingles =:ingles,palavraportugues =:portugues,ativo =:ativo, frase =:frase ');
+    qryTemp.SQL.Add('palavraingles =:ingles,palavraportugues =:portugues,ativo =:ativo,frase =:frase, ');
+    qryTemp.SQL.Add('frase_intuitiva_portugues =:fip, frase_intuitiva_ingles =:fii ');
     qryTemp.SQL.Add('where id =:id');
     qryTemp.ParamByName('id').AsInteger := FId;
     qryTemp.ParamByName('ingles').AsString:= FPalavraIngles;
     qryTemp.ParamByName('portugues').AsString := FPalavraPortugues;
     qryTemp.ParamByName('ativo').AsString := FAtivo;
     qryTemp.ParamByName('frase').AsString := FFrase;
+    qryTemp.ParamByName('fip').AsString := FFraseIntuitivaPortugues;
+    qryTemp.ParamByName('fii').AsString := FFraseIntuitivaIngles;
+    
 
     qryTemp.ExecSQL;
   finally
@@ -508,7 +540,7 @@ begin
   
   try
   
-    qryTemp.Connection := DM.conexao;
+    qryTemp.Connection := FConexao.conectar();
     qryTemp.Connection.StartTransaction;
   
     qryTemp.close;
@@ -530,20 +562,23 @@ begin
   
   try
   
-    qryTemp.Connection := DM.conexao;
+    qryTemp.Connection := FConexao.conectar();
     qryTemp.Connection.StartTransaction;
     
     qryTemp.close;
     qryTemp.SQL.Add('insert into palavras');
-    qryTemp.SQL.Add('(id,palavraingles,palavraportugues,ativo,frase,qtdeseqacertos,data_seq_acertos)');
+    qryTemp.SQL.Add('(id,palavraingles,palavraportugues,ativo,frase,qtdeseqacertos,data_seq_acertos,frase_intuitiva_portugues,frase_intuitiva_ingles)');
     qryTemp.SQL.Add('values');
-    qryTemp.SQL.Add('(:id,:ingles,:portugues,:ativo,:frase,:qtdeAcertos,:dataAcertos)');
+    qryTemp.SQL.Add('(:id,:ingles,:portugues,:ativo,:frase,:qtdeAcertos,:dataAcertos,:fip,:fii)');
     qryTemp.ParamByName('id').AsInteger :=FId;
     qryTemp.ParamByName('ingles').AsString:= FPalavraIngles;
     qryTemp.ParamByName('portugues').AsString := FPalavraPortugues;
     qryTemp.ParamByName('ativo').AsString := FAtivo;
     qryTemp.ParamByName('frase').AsString := FFrase;
     qryTemp.ParamByName('qtdeAcertos').AsInteger := 0;
+    qryTemp.ParamByName('fip').AsString := FFraseIntuitivaPortugues;
+    qryTemp.ParamByName('fii').AsString := FFraseIntuitivaIngles;    
+    
 
     if FDataSeqAcertos > StrToDate('30/12/1899') then
       qryTemp.ParamByName('dataAcertos').AsDate := FDataSeqAcertos
@@ -555,6 +590,11 @@ begin
     qryTemp.Connection.Commit();
     FreeAndNil(qryTemp);
   end;  
+end;
+
+function TPalavras.retornaNumeroPar(AValor: integer): Integer;
+begin
+  Result := AValor;
 end;
 
 procedure TPalavras.setAtivo(const Value: Boolean);
@@ -580,6 +620,16 @@ begin
     FFrase := 'F';  
 end;
 
+procedure TPalavras.setFraseIntuitivaIngles(const Value: string);
+begin
+  FFraseIntuitivaIngles := Value;
+end;
+
+procedure TPalavras.setFraseIntuitivaPortugues(const Value: string);
+begin
+  FFraseIntuitivaPortugues := Value;
+end;
+
 procedure TPalavras.setId(const Value: Integer);
 begin
   FId := Value;
@@ -600,7 +650,7 @@ begin
 
   FQry := TZQuery.Create(nil);
   try
-    FQry.Connection := DM.conexao;
+    FQry.Connection := FConexao.conectar();
 
     FQry.Close;
     FQry.SQL.Clear;
@@ -615,6 +665,8 @@ begin
     FFrase := FQry.FieldByName('frase').AsString;
     FQtdeSeqAcertos := FQry.FieldByName('qtdeSeqAcertos').AsInteger;
     FDataSeqAcertos := FQry.FieldByName('data_seq_acertos').AsDateTime;
+    FFraseIntuitivaIngles := FQry.FieldByName('frase_intuitiva_ingles').AsString;
+    FFraseIntuitivaPortugues := FQry.FieldByName('frase_intuitiva_portugues').AsString;
   finally
     FreeAndNil(FQry);
   end;
