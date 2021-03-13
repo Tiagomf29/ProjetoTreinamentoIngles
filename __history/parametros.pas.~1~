@@ -60,8 +60,10 @@ type
     property dividePalavrasDia :Boolean read getDividePalavrasDia write setDividePalavrasDia;
     property ordenarPalavras: Boolean read getOrdenarPalavras write setOrdenarPalavras;
     property somenteAudio: Boolean read getSomenteAudio write setSomenteAudio;
-    property exibirPalavrasComFrases: Boolean read getExibirPalavrasComFrases write setExibirPalavrasComFrases;
-    property quantidadeDiasDivisaoPalavras :SmallInt read getQuantidadeDiasDivisaoPalavras write setQuantidadeDiasDivisaoPalavras;
+    property exibirPalavrasComFrases: Boolean read getExibirPalavrasComFrases write setExibirPalavrasComFrases; 
+    property quantidadeDiasDivisaoPalavras :SmallInt read getQuantidadeDiasDivisaoPalavras write setQuantidadeDiasDivisaoPalavras;    
+    
+    
 
     procedure setObject();
     procedure recordObject();
@@ -180,20 +182,20 @@ begin
     qryTemp.SQL.Add('filtro_palavras_in =:filtroIN, filtro_palavras_fi =:filtroFI,exibir_Palavra_com_frase =:epcf,');
     qryTemp.SQL.Add('repetir_palavra =:rp,ingles_to_portugues =:itp, palavras_aleatorias =:pa, divide_palavras_dia =:dpd, ordenar_palavras =:op,');
     qryTemp.SQL.Add('somenteAudio =:sa,qtde_dias_divisao_palavras =:qddp');
-
+    
     qryTemp.ParamByName('tp_letras').AsInteger              := FTpLetras;
     qryTemp.ParamByName('apresentacao_palavras').AsInteger  := FApresentacaoPalavras;
     qryTemp.ParamByName('filtroIN').AsInteger               := FfiltroInicial;
     qryTemp.ParamByName('filtroFI').AsInteger               := FfiltroFinal;
     qryTemp.ParamByName('rp').AsString                      := FRepetirPalavras;
-    qryTemp.ParamByName('itp').AsString                     := FInglesToPortugues;
+    qryTemp.ParamByName('itp').AsString                     := 'T';
     qryTemp.ParamByName('pa').AsString                      := FPalavrasAleatorias;
     qryTemp.ParamByName('dpd').AsString                     := FDividePalavrasDia;
     qryTemp.ParamByName('op').AsString                      := FOrdenarPalavras;
     qryTemp.ParamByName('sa').AsString                      := FSomenteAudio;
     qryTemp.ParamByName('epcf').AsString                    := FExibirPalavrasComFrases;
     qryTemp.ParamByName('qddp').AsInteger                   := FQuantidadeDiasDivisaoPalavras;
-
+    
     qryTemp.ExecSQL;
   finally
     qryTemp.Connection.Commit();

@@ -7,7 +7,7 @@ object DM: TDM
     AutoEncodeStrings = True
     Connected = True
     Port = 0
-    Database = 'C:\Ingles\Banco\BANCO.FDB'
+    Database = 'D:\Projetos GitHub\ProjetoTreinamentoIngles\Banco\BANCO.FDB'
     User = 'sysdba'
     Password = 'masterkey'
     Protocol = 'firebird-3.0'

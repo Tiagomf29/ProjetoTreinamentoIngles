@@ -107,7 +107,7 @@ begin
     cbPalavrasAleatorias.Checked   := (par.palavrasAleatorias);
     cbExibirSomenteAudio.Checked   := (par.somenteAudio);
     cbexibirPlavrasEFrase.Checked  := (par.exibirPalavrasComFrases);
-    chkApresentarPalavrasPortugues.Checked := ( not par.inglesToPortugues);
+    chkApresentarPalavrasPortugues.Checked := (par.apresentarPalavrasPortugues);
 
     if par.tpLetras = 1 then
       RadioGroup1.ItemIndex := 0
@@ -185,7 +185,7 @@ begin
     par.somenteAudio       := cbExibirSomenteAudio.Checked;
     par.exibirPalavrasComFrases := cbexibirPlavrasEFrase.Checked;
     par.quantidadeDiasDivisaoPalavras := StrToInt(seQuantidadeDias.Text);
-    par.inglesToPortugues := not chkApresentarPalavrasPortugues.Checked;
+    par.apresentarPalavrasPortugues := chkApresentarPalavrasPortugues.Checked;
 
     par.recordObject;
 

@@ -175,7 +175,7 @@ procedure TfrmPrincipal.btnValidarClick(Sender: TObject);
 var
   qtdePalavrasEdt, qtdePalavrasAleatorias : TStringDynArray;
 begin
-
+ 
   if Label1.Caption = 'Parabéns voce acertou todas as palavras!!'+#13+'Feche o programa para começar novamente.' then
   begin  
     timer.Enabled := False;
@@ -677,17 +677,17 @@ var
   palavrasTemp                        : TPalavras;
   j,l                                 : Integer; 
   lPalavraConcatenadaTemp,palavraEdit : String;
-  lPalavrasErradas                    : TStringDynArray;
+  lPalavrasErradas                    : TStringDynArray;   
 begin
 
   palavrasTemp := TPalavras.Create;
-
+   
   try
-
+         
     for j := 1 to Length(listaPalavrasConcatenadas) do
     begin
-      palavrasTemp.setObject(UpperCase(listaPalavrasConcatenadas[j-1]));
-      lPalavraConcatenadaTemp := palavraConcatenada(lPalavraConcatenadaTemp,palavrasTemp.palavraPortugues,Length(listaPalavrasConcatenadas),j);
+      palavrasTemp.setObject(UpperCase(listaPalavrasConcatenadas[j-1]));  
+      lPalavraConcatenadaTemp := palavraConcatenada(lPalavraConcatenadaTemp,palavrasTemp.palavraPortugues,Length(listaPalavrasConcatenadas),j);                                  
     end;
 
     SetLength(listaPalavrasAcertadas, lista.Count);

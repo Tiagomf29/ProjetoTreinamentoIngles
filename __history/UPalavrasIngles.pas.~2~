@@ -147,15 +147,15 @@ end;
 
 procedure TfrmPrincipal.BitBtn1Click(Sender: TObject);
 begin
-  try
-    ReproduzirSomFrasesIngles();
-  except
-   on e: Exception do
-   begin
-     MessageDlg('Nenhum som foi configurado para esta frase.',mtInformation,[mbOK],0);
-     Abort;
+   try
+     ReproduzirSomFrasesIngles();
+   except
+     on e: Exception do
+     begin
+       MessageDlg('Nenhum som foi configurado para esta frase.',mtInformation,[mbOK],0);
+       Abort;
+     end;
    end;
-  end;
 end;
 
 procedure TfrmPrincipal.btn1Click(Sender: TObject);
@@ -175,7 +175,7 @@ procedure TfrmPrincipal.btnValidarClick(Sender: TObject);
 var
   qtdePalavrasEdt, qtdePalavrasAleatorias : TStringDynArray;
 begin
-
+ 
   if Label1.Caption = 'Parabéns voce acertou todas as palavras!!'+#13+'Feche o programa para começar novamente.' then
   begin  
     timer.Enabled := False;
@@ -284,9 +284,9 @@ end;
 
 procedure TfrmPrincipal.exibePalavrasInglesBanco;
 var
-  par                                                            : TParametros;
+  par                                                          : TParametros;
   i,j,l,validador,divisaoPalavras,lNumeroAleatorio,lQtdePalavras : Integer;
-  lPalavrasConcatenadas,texto                                    : String;
+  lPalavrasConcatenadas,texto                                        : String;
 begin
 
   if Label1.Caption = 'Parabéns voce acertou todas as palavras!!'+#13+'Feche o programa para começar novamente.' then
@@ -456,7 +456,7 @@ begin
   SystemParametersInfo(SPI_SETBEEP, 0, nil, SPIF_SENDWININICHANGE);
 
   par := TParametros.Create(); 
-  par.setObject();
+  par.setObject(); 
   palavras := TPalavras.Create;
   lista := palavras.listaPalavrasIngles(par.filtroInicial,par.filtroFinal,(par.ordenarPalavras),(par.dividePalavrasDia));
   if lista.Count = 0 then
@@ -677,17 +677,17 @@ var
   palavrasTemp                        : TPalavras;
   j,l                                 : Integer; 
   lPalavraConcatenadaTemp,palavraEdit : String;
-  lPalavrasErradas                    : TStringDynArray;
+  lPalavrasErradas                    : TStringDynArray;   
 begin
 
   palavrasTemp := TPalavras.Create;
-
+   
   try
-
+         
     for j := 1 to Length(listaPalavrasConcatenadas) do
     begin
-      palavrasTemp.setObject(UpperCase(listaPalavrasConcatenadas[j-1]));
-      lPalavraConcatenadaTemp := palavraConcatenada(lPalavraConcatenadaTemp,palavrasTemp.palavraPortugues,Length(listaPalavrasConcatenadas),j);
+      palavrasTemp.setObject(UpperCase(listaPalavrasConcatenadas[j-1]));  
+      lPalavraConcatenadaTemp := palavraConcatenada(lPalavraConcatenadaTemp,palavrasTemp.palavraPortugues,Length(listaPalavrasConcatenadas),j);                                  
     end;
 
     SetLength(listaPalavrasAcertadas, lista.Count);

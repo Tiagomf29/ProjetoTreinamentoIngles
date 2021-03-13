@@ -92,7 +92,7 @@ object frmCadastroPalavras: TfrmCadastroPalavras
         MaxLength = 60
         TabOrder = 3
       end
-      object edtFraseIngles: TEdit
+      object Edit1: TEdit
         Left = 8
         Top = 126
         Width = 637
@@ -102,7 +102,7 @@ object frmCadastroPalavras: TfrmCadastroPalavras
         MaxLength = 100
         TabOrder = 4
       end
-      object edtFrasePortugues: TEdit
+      object Edit2: TEdit
         Left = 8
         Top = 176
         Width = 640
@@ -548,6 +548,7 @@ object frmCadastroPalavras: TfrmCadastroPalavras
   end
   object QRY: TZQuery
     Connection = DM.conexao
+    Active = True
     SQL.Strings = (
       'select * from palavras order by 1 desc')
     Params = <>

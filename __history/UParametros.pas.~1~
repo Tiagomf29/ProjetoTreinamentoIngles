@@ -28,7 +28,6 @@ type
     cbOrdenarPalavras: TCheckBox;
     cbRepetirPalavras: TCheckBox;
     seQuantidadeDias: TSpinEdit;
-    chkApresentarPalavrasPortugues: TCheckBox;
     procedure FormShow(Sender: TObject);
     procedure btnGravarClick(Sender: TObject);
     procedure RadioGroup2Click(Sender: TObject);
@@ -107,7 +106,6 @@ begin
     cbPalavrasAleatorias.Checked   := (par.palavrasAleatorias);
     cbExibirSomenteAudio.Checked   := (par.somenteAudio);
     cbexibirPlavrasEFrase.Checked  := (par.exibirPalavrasComFrases);
-    chkApresentarPalavrasPortugues.Checked := ( not par.inglesToPortugues);
 
     if par.tpLetras = 1 then
       RadioGroup1.ItemIndex := 0
@@ -134,7 +132,7 @@ begin
 
   btnutilitario.Enabled := (cbParMesclaPalavrasDia.Checked);
   seQuantidadeDias.Enabled := (cbParMesclaPalavrasDia.Checked);
-
+  
 end;
 
 procedure TfrmParametros.RadioGroup2Click(Sender: TObject);
@@ -185,10 +183,9 @@ begin
     par.somenteAudio       := cbExibirSomenteAudio.Checked;
     par.exibirPalavrasComFrases := cbexibirPlavrasEFrase.Checked;
     par.quantidadeDiasDivisaoPalavras := StrToInt(seQuantidadeDias.Text);
-    par.inglesToPortugues := not chkApresentarPalavrasPortugues.Checked;
 
     par.recordObject;
-
+  
   finally
     FreeAndNil(par);
   end;

@@ -545,8 +545,8 @@ begin
   btnFechar.Enabled := False;
   edtPalavraIngles.Enabled := True;
   edtPalavraPortugues.Enabled := True;
-  edtFraseIngles.Enabled := True;
-  edtFrasePortugues.Enabled := True;
+  Edit1.Enabled := True;
+  Edit2.Enabled := True;
   cbAtivo.Enabled := True;
   cbFrase.Enabled := True;
   edtPalavraIngles.SetFocus;
@@ -562,8 +562,8 @@ begin
   btnFechar.Enabled := True;
   edtPalavraIngles.Enabled := False;
   edtPalavraPortugues.Enabled := False;
-  edtFraseIngles.Enabled :=False;
-  edtFrasePortugues.Enabled := False;
+  Edit1.Enabled :=False;
+  Edit2.Enabled := False;
   cbAtivo.Enabled := False;
   cbFrase.Enabled := False;
 end;

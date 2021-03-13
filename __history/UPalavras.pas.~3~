@@ -94,7 +94,7 @@ begin
     
   try
   
-    qryTemp.Connection := DM.conexao;
+    qryTemp.Connection := FConexao.conectar();
     qryTemp.Connection.StartTransaction;
   
     qryTemp.close;
@@ -117,7 +117,7 @@ begin
   
   try
   
-    qryTemp.Connection := DM.conexao;
+    qryTemp.Connection := FConexao.conectar();
     qryTemp.Connection.StartTransaction;
   
     qryTemp.close;
@@ -144,7 +144,7 @@ begin
   
   try
   
-    qryTemp.Connection := DM.conexao;
+    qryTemp.Connection := FConexao.conectar();
     qryTemp.Connection.StartTransaction;
     
     qryTemp.close;
@@ -168,7 +168,7 @@ begin
   qryTemp := TZQuery.Create(nil);  
   try
   
-    qryTemp.Connection := DM.conexao;
+    qryTemp.Connection := FConexao.conectar();
     qryTemp.Connection.StartTransaction;
   
     qryTemp.close;
@@ -201,7 +201,7 @@ begin
   
   try
   
-    qryTemp.Connection := DM.conexao;
+    qryTemp.Connection := FConexao.conectar();
     qryTemp.Connection.StartTransaction;
   
     qryTemp.close;
@@ -278,7 +278,7 @@ begin
 
   try
 
-    FQry.Connection := DM.conexao;
+    FQry.Connection := FConexao.conectar();
   
     FQry.Close;
     FQry.SQL.Clear;
@@ -309,7 +309,7 @@ begin
   FQry := TZQuery.Create(nil);
 
   try
-    FQry.Connection := DM.conexao;
+    FQry.Connection := FConexao.conectar();
 
     FQry.Close;
     FQry.SQL.Clear;
@@ -415,7 +415,7 @@ begin
   FQry := TZQuery.Create(nil);
 
   try
-    FQry.Connection := DM.conexao;
+    FQry.Connection := FConexao.conectar();
   
     FQry.Close;
     FQry.SQL.Clear;
@@ -469,7 +469,7 @@ begin
 
   try
   
-    FQry.Connection := DM.conexao;
+    FQry.Connection := FConexao.conectar();
  
     FQry.Close;
     FQry.SQL.Clear;
@@ -513,7 +513,7 @@ begin
   
   try
   
-    qryTemp.Connection := DM.conexao;
+    qryTemp.Connection := FConexao.conectar();
     qryTemp.Connection.StartTransaction;
 
     qryTemp.close;
@@ -547,7 +547,7 @@ begin
   
   try
   
-    qryTemp.Connection := DM.conexao;
+    qryTemp.Connection := FConexao.conectar();
     qryTemp.Connection.StartTransaction;
   
     qryTemp.close;
@@ -569,7 +569,7 @@ begin
   
   try
   
-    qryTemp.Connection := DM.conexao;
+    qryTemp.Connection := FConexao.conectar();
     qryTemp.Connection.StartTransaction;
     
     qryTemp.close;
@@ -657,7 +657,7 @@ begin
 
   FQry := TZQuery.Create(nil);
   try
-    FQry.Connection := DM.conexao;
+    FQry.Connection := FConexao.conectar();
 
     FQry.Close;
     FQry.SQL.Clear;

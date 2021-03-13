@@ -54,9 +54,9 @@ type
     cbFrase: TCheckBox;
     edtPalavraPortugues: TEdit;
     Label1: TLabel;
-    edtFraseIngles: TEdit;
+    Edit1: TEdit;
     Label2: TLabel;
-    edtFrasePortugues: TEdit;
+    Edit2: TEdit;
     Label3: TLabel;
     QRYFRASE_INTUITIVA_INGLES: TWideStringField;
     QRYFRASE_INTUITIVA_PORTUGUES: TWideStringField;
@@ -295,8 +295,6 @@ begin
   cbAtivo.Checked := True;
   edtPalavraIngles.Text := '';
   edtPalavraPortugues.Text := '';
-  edtFraseIngles.Text := '';
-  edtFrasePortugues.Text := '';
   statusInsercao := true;
 end;
 
@@ -327,23 +325,18 @@ begin
     palavras.palavraPortugues := edtPalavraPortugues.Text;
     palavras.ativo := (cbAtivo.Checked = True);
     palavras.frase := (cbFrase.Checked = True);
-    palavras.fraseIntuitivaIngles := edtFraseIngles.Text;
-    palavras.fraseIntuitivaPortugues := edtFrasePortugues.Text;
+    palavras.fraseIntuitivaIngles := Edit1.Text;
+    palavras.fraseIntuitivaPortugues := Edit2.Text;
 
-    if statusInsercao then
+    if statusInsercao then    
       palavras.recordObjectInsercao()
     else
       palavras.recordObjectAtualizacao();
 
     statusBotaoNaoInserir();
-
-    QRY.Close;
-    QRY.SQL.Clear;
-    qry.SQL.Add(TPalavras.getConsulta);
-    QRY.Open;
-
+  
     cds.Refresh;
-
+    
   finally
     FreeAndNil(palavras);
   end;
@@ -385,8 +378,8 @@ procedure TfrmCadastroPalavras.CDSAfterScroll(DataSet: TDataSet);
 begin
   edtPalavraIngles.Text    := CDSPALAVRAINGLES.Value;
   edtPalavraPortugues.Text := CDSPALAVRAPORTUGUES.Value;
-  edtFraseIngles.Text      := CDSFRASE_INTUITIVA_INGLES.Value;
-  edtFrasePortugues.Text   := CDSFRASE_INTUITIVA_PORTUGUES.Value;
+  Edit1.Text               := CDSFRASE_INTUITIVA_INGLES.Value;
+  Edit2.Text               := CDSFRASE_INTUITIVA_PORTUGUES.Value;
   
   if CDSATIVO.Value = 'T' then  
     cbAtivo.Checked := True
@@ -545,8 +538,8 @@ begin
   btnFechar.Enabled := False;
   edtPalavraIngles.Enabled := True;
   edtPalavraPortugues.Enabled := True;
-  edtFraseIngles.Enabled := True;
-  edtFrasePortugues.Enabled := True;
+  Edit1.Enabled := True;
+  Edit2.Enabled := True;
   cbAtivo.Enabled := True;
   cbFrase.Enabled := True;
   edtPalavraIngles.SetFocus;
@@ -562,8 +555,8 @@ begin
   btnFechar.Enabled := True;
   edtPalavraIngles.Enabled := False;
   edtPalavraPortugues.Enabled := False;
-  edtFraseIngles.Enabled :=False;
-  edtFrasePortugues.Enabled := False;
+  Edit1.Enabled :=False;
+  Edit2.Enabled := False;
   cbAtivo.Enabled := False;
   cbFrase.Enabled := False;
 end;

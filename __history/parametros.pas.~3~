@@ -21,6 +21,7 @@ type
     FSomenteAudio : string;
     FExibirPalavrasComFrases : string;
     FQuantidadeDiasDivisaoPalavras : SmallInt;
+    FAprePalavrasPortugues : String;
     function getApresentacaoPalavras: SmallInt;
     function getId: Integer;
     function getTpLetras: SmallInt;
@@ -47,6 +48,8 @@ type
     procedure setExibirPalavrasComFrases(const Value: Boolean);
     function getQuantidadeDiasDivisaoPalavras: SmallInt;
     procedure setQuantidadeDiasDivisaoPalavras(const Value: SmallInt);
+    function getApresentarPalavrasPortugues: string;
+    procedure setApresentarPalavrasPortugues(const Value: string);
 
   public
     property id: Integer read getId write setId;
@@ -62,6 +65,7 @@ type
     property somenteAudio: Boolean read getSomenteAudio write setSomenteAudio;
     property exibirPalavrasComFrases: Boolean read getExibirPalavrasComFrases write setExibirPalavrasComFrases;
     property quantidadeDiasDivisaoPalavras :SmallInt read getQuantidadeDiasDivisaoPalavras write setQuantidadeDiasDivisaoPalavras;
+    property apresentarPalavrasPortugues : string read getApresentarPalavrasPortugues write setApresentarPalavrasPortugues;
 
     procedure setObject();
     procedure recordObject();
@@ -78,6 +82,11 @@ uses
 function TParametros.getApresentacaoPalavras: SmallInt;
 begin
   Result := FApresentacaoPalavras;
+end;
+
+function TParametros.getApresentarPalavrasPortugues: string;
+begin
+  Result := FAprePalavrasPortugues;
 end;
 
 function TParametros.getDividePalavrasDia: Boolean;
@@ -179,21 +188,22 @@ begin
     qryTemp.SQL.Add('update parametros set tp_letras =:tp_letras, apresentacao_palavras =:apresentacao_palavras,'); 
     qryTemp.SQL.Add('filtro_palavras_in =:filtroIN, filtro_palavras_fi =:filtroFI,exibir_Palavra_com_frase =:epcf,');
     qryTemp.SQL.Add('repetir_palavra =:rp,ingles_to_portugues =:itp, palavras_aleatorias =:pa, divide_palavras_dia =:dpd, ordenar_palavras =:op,');
-    qryTemp.SQL.Add('somenteAudio =:sa,qtde_dias_divisao_palavras =:qddp');
-
+    qryTemp.SQL.Add('somenteAudio =:sa,qtde_dias_divisao_palavras =:qddp, apre_palavras_portugues =:app');
+    
     qryTemp.ParamByName('tp_letras').AsInteger              := FTpLetras;
     qryTemp.ParamByName('apresentacao_palavras').AsInteger  := FApresentacaoPalavras;
     qryTemp.ParamByName('filtroIN').AsInteger               := FfiltroInicial;
     qryTemp.ParamByName('filtroFI').AsInteger               := FfiltroFinal;
     qryTemp.ParamByName('rp').AsString                      := FRepetirPalavras;
-    qryTemp.ParamByName('itp').AsString                     := FInglesToPortugues;
+    qryTemp.ParamByName('itp').AsString                     := 'T';
     qryTemp.ParamByName('pa').AsString                      := FPalavrasAleatorias;
     qryTemp.ParamByName('dpd').AsString                     := FDividePalavrasDia;
     qryTemp.ParamByName('op').AsString                      := FOrdenarPalavras;
     qryTemp.ParamByName('sa').AsString                      := FSomenteAudio;
     qryTemp.ParamByName('epcf').AsString                    := FExibirPalavrasComFrases;
     qryTemp.ParamByName('qddp').AsInteger                   := FQuantidadeDiasDivisaoPalavras;
-
+    qryTemp.ParamByName('app').AsString                     := FAprePalavrasPortugues;
+    
     qryTemp.ExecSQL;
   finally
     qryTemp.Connection.Commit();
@@ -205,6 +215,11 @@ end;
 procedure TParametros.setApresentacaoPalavras(const Value: SmallInt);
 begin
   FApresentacaoPalavras := Value;
+end;
+
+procedure TParametros.setApresentarPalavrasPortugues(const Value: string);
+begin
+  FAprePalavrasPortugues := Value;
 end;
 
 procedure TParametros.setDividePalavrasDia(const Value: Boolean);
@@ -277,6 +292,7 @@ begin
     FSomenteAudio         := qryTemp.FieldByName('somenteAudio').AsString;
     FExibirPalavrasComFrases := qryTemp.FieldByName('exibir_Palavra_com_frase').AsString;
     FQuantidadeDiasDivisaoPalavras := qryTemp.FieldByName('qtde_dias_divisao_palavras').AsInteger;
+    FAprePalavrasPortugues := qryTemp.FieldByName('apre_palavras_portugues').AsString;
     
   finally
     qryTemp.Connection.Commit();

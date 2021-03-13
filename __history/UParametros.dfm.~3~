@@ -179,12 +179,11 @@ object frmParametros: TfrmParametros
     end
     object chkApresentarPalavrasPortugues: TCheckBox
       Left = 6
-      Top = 84
+      Top = 85
       Width = 203
       Height = 17
       Caption = 'Apresentar Palavras em portugues'
       TabOrder = 3
-      Visible = False
     end
   end
 end

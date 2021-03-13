@@ -177,14 +177,5 @@ object frmParametros: TfrmParametros
       Caption = 'Repetir palavras acertadas'
       TabOrder = 2
     end
-    object chkApresentarPalavrasPortugues: TCheckBox
-      Left = 6
-      Top = 84
-      Width = 203
-      Height = 17
-      Caption = 'Apresentar Palavras em portugues'
-      TabOrder = 3
-      Visible = False
-    end
   end
 end
