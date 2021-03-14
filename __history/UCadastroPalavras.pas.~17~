@@ -62,8 +62,13 @@ type
     QRYFRASE_INTUITIVA_PORTUGUES: TWideStringField;
     CDSFRASE_INTUITIVA_INGLES: TWideStringField;
     CDSFRASE_INTUITIVA_PORTUGUES: TWideStringField;
-    ComboBox1: TComboBox;
+    cbxTipo: TComboBox;
     Label4: TLabel;
+    QRYCATEGORIA: TSmallintField;
+    CDSQTDESEQACERTOS: TSmallintField;
+    CDSDATA_SEQ_ACERTOS: TDateField;
+    CDSMP3: TBlobField;
+    CDSCATEGORIA: TSmallintField;
     procedure FormShow(Sender: TObject);
     procedure btnInserirClick(Sender: TObject);
     procedure btnSalvarClick(Sender: TObject);
@@ -82,6 +87,7 @@ type
   private
     procedure statusBotaoInserir();
     procedure statusBotaoNaoInserir();
+    procedure popularComboboxCategorias();
     var
       statusInsercao : Boolean;
       
@@ -94,7 +100,7 @@ var
 
 implementation
 uses
- UPalavras;
+ UPalavras, Ucategorias;
 
 {$R *.dfm}
 
@@ -175,7 +181,8 @@ begin
        palavra.AddChild('qtdeSeqAcertos').Text:= IntToStr(listaTemp.Items[i].qtdeSeqAcertos);     
        palavra.AddChild('dataSeqAcertos').Text:= DateToStr(listaTemp.Items[i].dataSeqAcertos);
        palavra.AddChild('frase_intuitiva_ingles').Text:= listaTemp.Items[i].fraseIntuitivaIngles;
-       palavra.AddChild('frase_intuitiva_portugues').Text:= listaTemp.Items[i].fraseIntuitivaPortugues;             
+       palavra.AddChild('frase_intuitiva_portugues').Text:= listaTemp.Items[i].fraseIntuitivaPortugues;
+       palavra.AddChild('categoria').Text := IntToStr(listaTemp.Items[i].categoria);
 
        pb.Position := pb.Position + 1;
         
@@ -232,7 +239,7 @@ begin
 
   repeat
     contador:= contador +1; 
-    nodePalavras:= nodePalavras.NextSibling; 
+    nodePalavras:= nodePalavras.NextSibling;
   until nodePalavras = nil;
 
   pb.Min :=0;
@@ -264,8 +271,9 @@ begin
       palavra.palavraPortugues := nodePalavras.ChildValues['palavraPortugues'];
       palavra.ativo :=  nodePalavras.ChildValues['ativo'];
       palavra.frase := nodePalavras.ChildValues['frase'];
+      palavra.categoria:= nodePalavras.ChildValues['categoria'];
 
-       if not VarIsNull(nodePalavras.ChildNodes['frase_intuitiva_ingles'].NodeValue) then      
+       if not VarIsNull(nodePalavras.ChildNodes['frase_intuitiva_ingles'].NodeValue) then
          palavra.fraseIntuitivaIngles := nodePalavras.ChildValues['frase_intuitiva_ingles'];
 
        if not VarIsNull(nodePalavras.ChildNodes['frase_intuitiva_portugues'].NodeValue) then      
@@ -331,6 +339,7 @@ begin
     palavras.frase := (cbFrase.Checked = True);
     palavras.fraseIntuitivaIngles := edtFraseIngles.Text;
     palavras.fraseIntuitivaPortugues := edtFrasePortugues.Text;
+    palavras.categoria := Integer(cbxTipo.Items.Objects[cbxTipo.ItemIndex]);
 
     if statusInsercao then
       palavras.recordObjectInsercao()
@@ -389,8 +398,9 @@ begin
   edtPalavraPortugues.Text := CDSPALAVRAPORTUGUES.Value;
   edtFraseIngles.Text      := CDSFRASE_INTUITIVA_INGLES.Value;
   edtFrasePortugues.Text   := CDSFRASE_INTUITIVA_PORTUGUES.Value;
-  
-  if CDSATIVO.Value = 'T' then  
+  cbxTipo.ItemIndex        := cbxTipo.Items.IndexOfObject(TObject(CDSCATEGORIA.Value));
+
+  if CDSATIVO.Value = 'T' then
     cbAtivo.Checked := True
   else
     cbAtivo.Checked := False;
@@ -535,6 +545,32 @@ begin
   QRY.Active := True;
   CDS.Active := True;
   statusBotaoNaoInserir();
+  popularComboboxCategorias();
+end;
+
+procedure TfrmCadastroPalavras.popularComboboxCategorias;
+var
+  lQry : TZQuery;
+  i    : Integer;
+begin
+  lQry := TZQuery.Create(nil);
+  try
+
+    lQry.Connection := dm.conexao;
+    lQry.Close;
+    lQry.SQL.Clear;
+    lQry.SQL.Add(TCategorias.getConsulta);
+    lQry.Open;
+
+    while not lQry.Eof do
+    begin
+      cbxTipo.Items.AddObject(lQry.FieldByName('descricao').AsString, TObject(lQry.FieldByName('id').AsInteger));
+      lQry.Next;
+    end;
+
+  finally
+    FreeAndNil(lQry);
+  end;
 end;
 
 procedure TfrmCadastroPalavras.statusBotaoInserir;
@@ -551,6 +587,7 @@ begin
   edtFrasePortugues.Enabled := True;
   cbAtivo.Enabled := True;
   cbFrase.Enabled := True;
+  cbxTipo.Enabled := True;
   edtPalavraIngles.SetFocus;
 end;
 
@@ -568,6 +605,7 @@ begin
   edtFrasePortugues.Enabled := False;
   cbAtivo.Enabled := False;
   cbFrase.Enabled := False;
+  cbxTipo.Enabled := False;
 end;
 
 end.

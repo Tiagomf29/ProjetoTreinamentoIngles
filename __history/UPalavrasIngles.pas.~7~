@@ -537,8 +537,9 @@ begin
   parTemp := TParametros.Create(); 
   parTemp.setObject(); 
   palavrasTemp := TPalavras.Create();
-  palavrasTemp.listaPalavrasIngles(parTemp.filtroInicial,parTemp.filtroFinal,parTemp.ordenarPalavras,parTemp.dividePalavrasDia,categoriasParametrizadas);
+  palavrasTemp.listaPalavrasIngles(parTemp.filtroInicial,parTemp.filtroFinal,parTemp.ordenarPalavras,parTemp.dividePalavrasDia);
 
+   
   listaPalavrasRestanteTemp := TObjectList<TPalavras>.Create(False);
   try
     for i := 0 to palavrasTemp.lista.Count-1 do

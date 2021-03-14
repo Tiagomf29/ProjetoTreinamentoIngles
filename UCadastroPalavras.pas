@@ -181,7 +181,8 @@ begin
        palavra.AddChild('qtdeSeqAcertos').Text:= IntToStr(listaTemp.Items[i].qtdeSeqAcertos);     
        palavra.AddChild('dataSeqAcertos').Text:= DateToStr(listaTemp.Items[i].dataSeqAcertos);
        palavra.AddChild('frase_intuitiva_ingles').Text:= listaTemp.Items[i].fraseIntuitivaIngles;
-       palavra.AddChild('frase_intuitiva_portugues').Text:= listaTemp.Items[i].fraseIntuitivaPortugues;             
+       palavra.AddChild('frase_intuitiva_portugues').Text:= listaTemp.Items[i].fraseIntuitivaPortugues;
+       palavra.AddChild('categoria').Text := IntToStr(listaTemp.Items[i].categoria);
 
        pb.Position := pb.Position + 1;
         
@@ -238,7 +239,7 @@ begin
 
   repeat
     contador:= contador +1; 
-    nodePalavras:= nodePalavras.NextSibling; 
+    nodePalavras:= nodePalavras.NextSibling;
   until nodePalavras = nil;
 
   pb.Min :=0;
@@ -270,8 +271,9 @@ begin
       palavra.palavraPortugues := nodePalavras.ChildValues['palavraPortugues'];
       palavra.ativo :=  nodePalavras.ChildValues['ativo'];
       palavra.frase := nodePalavras.ChildValues['frase'];
+      palavra.categoria:= nodePalavras.ChildValues['categoria'];
 
-       if not VarIsNull(nodePalavras.ChildNodes['frase_intuitiva_ingles'].NodeValue) then      
+       if not VarIsNull(nodePalavras.ChildNodes['frase_intuitiva_ingles'].NodeValue) then
          palavra.fraseIntuitivaIngles := nodePalavras.ChildValues['frase_intuitiva_ingles'];
 
        if not VarIsNull(nodePalavras.ChildNodes['frase_intuitiva_portugues'].NodeValue) then      
@@ -434,6 +436,7 @@ begin
       palavras.palavraPortugues := edtPalavraPortugues.Text;
       palavras.ativo            := (cbAtivo.Checked = True);
       palavras.frase            := (cbFrase.Checked = True);
+      palavras.categoria        := Integer(cbxTipo.Items.Objects[cbxTipo.ItemIndex]);
 
       palavras.recordObjectAtualizacao();
 
@@ -462,6 +465,7 @@ begin
         palavras.palavraPortugues := edtPalavraPortugues.Text;
         palavras.ativo            := (cbAtivo.Checked = True);
         palavras.frase            := (cbFrase.Checked = True);
+        palavras.categoria        := Integer(cbxTipo.Items.Objects[cbxTipo.ItemIndex]);
 
         palavras.recordObjectAtualizacao();
 
@@ -540,10 +544,10 @@ end;
 
 procedure TfrmCadastroPalavras.FormShow(Sender: TObject);
 begin
+  popularComboboxCategorias();
   QRY.Active := True;
   CDS.Active := True;
   statusBotaoNaoInserir();
-  popularComboboxCategorias();
 end;
 
 procedure TfrmCadastroPalavras.popularComboboxCategorias;

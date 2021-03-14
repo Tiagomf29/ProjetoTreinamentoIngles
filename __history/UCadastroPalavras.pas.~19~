@@ -64,6 +64,11 @@ type
     CDSFRASE_INTUITIVA_PORTUGUES: TWideStringField;
     cbxTipo: TComboBox;
     Label4: TLabel;
+    QRYCATEGORIA: TSmallintField;
+    CDSQTDESEQACERTOS: TSmallintField;
+    CDSDATA_SEQ_ACERTOS: TDateField;
+    CDSMP3: TBlobField;
+    CDSCATEGORIA: TSmallintField;
     procedure FormShow(Sender: TObject);
     procedure btnInserirClick(Sender: TObject);
     procedure btnSalvarClick(Sender: TObject);
@@ -176,7 +181,8 @@ begin
        palavra.AddChild('qtdeSeqAcertos').Text:= IntToStr(listaTemp.Items[i].qtdeSeqAcertos);     
        palavra.AddChild('dataSeqAcertos').Text:= DateToStr(listaTemp.Items[i].dataSeqAcertos);
        palavra.AddChild('frase_intuitiva_ingles').Text:= listaTemp.Items[i].fraseIntuitivaIngles;
-       palavra.AddChild('frase_intuitiva_portugues').Text:= listaTemp.Items[i].fraseIntuitivaPortugues;             
+       palavra.AddChild('frase_intuitiva_portugues').Text:= listaTemp.Items[i].fraseIntuitivaPortugues;
+       palavra.AddChild('categoria').Text := IntToStr(listaTemp.Items[i].categoria);
 
        pb.Position := pb.Position + 1;
         
@@ -233,7 +239,7 @@ begin
 
   repeat
     contador:= contador +1; 
-    nodePalavras:= nodePalavras.NextSibling; 
+    nodePalavras:= nodePalavras.NextSibling;
   until nodePalavras = nil;
 
   pb.Min :=0;
@@ -265,8 +271,9 @@ begin
       palavra.palavraPortugues := nodePalavras.ChildValues['palavraPortugues'];
       palavra.ativo :=  nodePalavras.ChildValues['ativo'];
       palavra.frase := nodePalavras.ChildValues['frase'];
+      palavra.categoria:= nodePalavras.ChildValues['categoria'];
 
-       if not VarIsNull(nodePalavras.ChildNodes['frase_intuitiva_ingles'].NodeValue) then      
+       if not VarIsNull(nodePalavras.ChildNodes['frase_intuitiva_ingles'].NodeValue) then
          palavra.fraseIntuitivaIngles := nodePalavras.ChildValues['frase_intuitiva_ingles'];
 
        if not VarIsNull(nodePalavras.ChildNodes['frase_intuitiva_portugues'].NodeValue) then      
@@ -332,6 +339,7 @@ begin
     palavras.frase := (cbFrase.Checked = True);
     palavras.fraseIntuitivaIngles := edtFraseIngles.Text;
     palavras.fraseIntuitivaPortugues := edtFrasePortugues.Text;
+    palavras.categoria := Integer(cbxTipo.Items.Objects[cbxTipo.ItemIndex]);
 
     if statusInsercao then
       palavras.recordObjectInsercao()
@@ -390,8 +398,9 @@ begin
   edtPalavraPortugues.Text := CDSPALAVRAPORTUGUES.Value;
   edtFraseIngles.Text      := CDSFRASE_INTUITIVA_INGLES.Value;
   edtFrasePortugues.Text   := CDSFRASE_INTUITIVA_PORTUGUES.Value;
-  
-  if CDSATIVO.Value = 'T' then  
+  cbxTipo.ItemIndex        := cbxTipo.Items.IndexOfObject(TObject(CDSCATEGORIA.Value));
+
+  if CDSATIVO.Value = 'T' then
     cbAtivo.Checked := True
   else
     cbAtivo.Checked := False;
@@ -427,6 +436,7 @@ begin
       palavras.palavraPortugues := edtPalavraPortugues.Text;
       palavras.ativo            := (cbAtivo.Checked = True);
       palavras.frase            := (cbFrase.Checked = True);
+      palavras.categoria        := Integer(cbxTipo.Items.Objects[cbxTipo.ItemIndex]);
 
       palavras.recordObjectAtualizacao();
 
@@ -455,6 +465,7 @@ begin
         palavras.palavraPortugues := edtPalavraPortugues.Text;
         palavras.ativo            := (cbAtivo.Checked = True);
         palavras.frase            := (cbFrase.Checked = True);
+        palavras.categoria        := Integer(cbxTipo.Items.Objects[cbxTipo.ItemIndex]);
 
         palavras.recordObjectAtualizacao();
 

@@ -44,7 +44,7 @@ object frmParametros: TfrmParametros
     OnClick = RadioGroup2Click
   end
   object btnGravar: TBitBtn
-    Left = 219
+    Left = 323
     Top = 207
     Width = 75
     Height = 25
@@ -191,7 +191,7 @@ object frmParametros: TfrmParametros
     Left = 487
     Top = 114
     Width = 226
-    Height = 118
+    Height = 87
     Caption = 'Tipos de palavras'
     TabOrder = 6
     object chkCategorias: TCheckListBox
@@ -199,17 +199,9 @@ object frmParametros: TfrmParametros
       Top = 15
       Width = 222
       Height = 70
+      Align = alClient
       ItemHeight = 13
       TabOrder = 0
-    end
-    object btnMarcarTodos: TButton
-      Left = 75
-      Top = 87
-      Width = 93
-      Height = 25
-      Caption = 'Marcar todos'
-      TabOrder = 1
-      OnClick = btnMarcarTodosClick
     end
   end
 end

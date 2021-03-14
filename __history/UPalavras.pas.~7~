@@ -502,7 +502,6 @@ begin
       palavra.FDataSeqAcertos := FQry.FieldByName('DATA_SEQ_ACERTOS').AsDateTime;
       palavra.FFraseIntuitivaIngles := FQry.FieldByName('frase_intuitiva_ingles').AsString;
       palavra.FFraseIntuitivaPortugues := FQry.FieldByName('frase_intuitiva_portugues').AsString;
-      palavra.FCategoria := FQry.FieldByName('categoria').AsInteger;
     
       Flista.Add(palavra); 
 

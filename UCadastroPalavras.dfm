@@ -122,7 +122,7 @@ object frmCadastroPalavras: TfrmCadastroPalavras
       end
       object cbxTipo: TComboBox
         Left = 527
-        Top = 75
+        Top = 74
         Width = 187
         Height = 22
         Style = csOwnerDrawFixed
@@ -137,7 +137,6 @@ object frmCadastroPalavras: TfrmCadastroPalavras
     Height = 48
     Align = alBottom
     TabOrder = 1
-    ExplicitTop = 216
     object btnInserir: TBitBtn
       Left = 126
       Top = 10
@@ -435,8 +434,8 @@ object frmCadastroPalavras: TfrmCadastroPalavras
         Expanded = False
         FieldName = 'FRASE'
         Title.Caption = 'Frase'
-        Width = 29
-        Visible = True
+        Width = -1
+        Visible = False
       end>
   end
   object pb: TProgressBar

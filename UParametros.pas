@@ -31,11 +31,13 @@ type
     chkApresentarPalavrasPortugues: TCheckBox;
     GroupBox2: TGroupBox;
     chkCategorias: TCheckListBox;
+    btnMarcarTodos: TButton;
     procedure FormShow(Sender: TObject);
     procedure btnGravarClick(Sender: TObject);
     procedure RadioGroup2Click(Sender: TObject);
     procedure btnutilitarioClick(Sender: TObject);
     procedure cbParMesclaPalavrasDiaClick(Sender: TObject);
+    procedure btnMarcarTodosClick(Sender: TObject);
   private
     procedure salvarParametro();
     procedure populaCheckListBoxCategorias();
@@ -125,6 +127,27 @@ begin
   atualizaCategorias();
   MessageDlg('Registro gravado com sucesso!'+#13+'Inicie o programa novamente.',mtInformation,[mbOK],0);
   close;
+
+end;
+
+procedure TfrmParametros.btnMarcarTodosClick(Sender: TObject);
+var
+  i : Integer;
+begin
+  if btnMarcarTodos.Caption = 'Marcar todos' then
+  begin
+    for i := 0 to chkCategorias.Items.Count -1 do
+      chkCategorias.Checked[i]:=True;
+
+    btnMarcarTodos.Caption := 'Desmarcar todos'
+  end
+  else
+  begin
+    for i := 0 to chkCategorias.Items.Count -1 do
+      chkCategorias.Checked[i]:=False;
+
+    btnMarcarTodos.Caption := 'Marcar todos';
+  end;
 
 end;
 
