@@ -103,7 +103,7 @@ object frmCadastroPalavras: TfrmCadastroPalavras
       object edtFraseIngles: TEdit
         Left = 8
         Top = 126
-        Width = 637
+        Width = 706
         Height = 21
         CharCase = ecUpperCase
         Color = clScrollBar
@@ -113,7 +113,7 @@ object frmCadastroPalavras: TfrmCadastroPalavras
       object edtFrasePortugues: TEdit
         Left = 8
         Top = 176
-        Width = 640
+        Width = 706
         Height = 21
         CharCase = ecUpperCase
         Color = clScrollBar
@@ -132,11 +132,12 @@ object frmCadastroPalavras: TfrmCadastroPalavras
   end
   object Panel2: TPanel
     Left = 0
-    Top = 211
+    Top = 212
     Width = 732
     Height = 48
     Align = alBottom
     TabOrder = 1
+    ExplicitTop = 211
     object btnInserir: TBitBtn
       Left = 126
       Top = 10
@@ -356,9 +357,9 @@ object frmCadastroPalavras: TfrmCadastroPalavras
   end
   object gbPesquisa: TGroupBox
     Left = 0
-    Top = 259
+    Top = 260
     Width = 732
-    Height = 57
+    Height = 56
     Align = alBottom
     Caption = 'Pesquisa'
     Font.Charset = DEFAULT_CHARSET
@@ -368,6 +369,7 @@ object frmCadastroPalavras: TfrmCadastroPalavras
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 2
+    ExplicitTop = 265
     object Nome: TLabel
       Left = 3
       Top = 24
@@ -382,8 +384,8 @@ object frmCadastroPalavras: TfrmCadastroPalavras
       ParentFont = False
     end
     object edtPesquisa: TEdit
-      Left = 215
-      Top = 61
+      Left = 87
+      Top = 21
       Width = 497
       Height = 21
       CharCase = ecUpperCase
@@ -434,7 +436,6 @@ object frmCadastroPalavras: TfrmCadastroPalavras
         Expanded = False
         FieldName = 'FRASE'
         Title.Caption = 'Frase'
-        Width = -1
         Visible = False
       end>
   end
