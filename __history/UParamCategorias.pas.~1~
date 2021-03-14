@@ -1,0 +1,55 @@
+unit UParamCategorias;
+
+interface
+
+uses
+  ZDataSet, UDm, System.SysUtils;
+
+Type
+
+  TParam_Categorias = class
+
+    FIdCategoria: SmallInt;
+
+  private
+    procedure setId(const Value: SmallInt);
+    function getId: SmallInt;
+
+    procedure recorObject();
+
+  public
+    property idCategoria: SmallInt read getId write setId;
+
+  end;
+
+implementation
+
+{ TParam_Categorias }
+
+function TParam_Categorias.getId: SmallInt;
+begin
+  Result := FIdCategoria;
+end;
+
+procedure TParam_Categorias.recorObject;
+var
+  lQry: TZQuery;
+begin
+  lQry := TZQuery.Create(nil);
+  try
+    lQry.Connection := Dm.conexao;
+    lQry.SQL.Clear;
+    lQry.SQL.Add('insert into param_categorias values (:id_categoria)');
+    lQry.ParamByName('id_categoria').AsInteger := FIdCategoria;
+    lQry.ExecSQL;
+  finally
+    FreeAndNil(lQry);
+  end;
+end;
+
+procedure TParam_Categorias.setId(const Value: SmallInt);
+begin
+  FIdCategoria := Value;
+end;
+
+end.

@@ -122,7 +122,6 @@ procedure TfrmParametros.btnGravarClick(Sender: TObject);
 begin
 
   salvarParametro();
-  atualizaCategorias();
   MessageDlg('Registro gravado com sucesso!'+#13+'Inicie o programa novamente.',mtInformation,[mbOK],0);
   close;
 
@@ -206,6 +205,8 @@ begin
   seQuantidadeDias.Enabled := (cbParMesclaPalavrasDia.Checked);
   populaCheckListBoxCategorias();
   marcarCategorias();
+  atualizaCategorias();
+
 end;
 
 procedure TfrmParametros.populaCheckListBoxCategorias;

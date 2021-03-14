@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
   System.Classes, Vcl.Graphics,System.StrUtils,System.Generics.Collections,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls,
-  parametros, Vcl.DBLookup, Vcl.Samples.Spin;
+  parametros, Vcl.DBLookup, Vcl.Samples.Spin, Vcl.CheckLst;
 
 type
   TfrmParametros = class(TForm)
@@ -28,6 +28,9 @@ type
     cbOrdenarPalavras: TCheckBox;
     cbRepetirPalavras: TCheckBox;
     seQuantidadeDias: TSpinEdit;
+    chkApresentarPalavrasPortugues: TCheckBox;
+    GroupBox2: TGroupBox;
+    CheckListBox1: TCheckListBox;
     procedure FormShow(Sender: TObject);
     procedure btnGravarClick(Sender: TObject);
     procedure RadioGroup2Click(Sender: TObject);
@@ -106,6 +109,7 @@ begin
     cbPalavrasAleatorias.Checked   := (par.palavrasAleatorias);
     cbExibirSomenteAudio.Checked   := (par.somenteAudio);
     cbexibirPlavrasEFrase.Checked  := (par.exibirPalavrasComFrases);
+    chkApresentarPalavrasPortugues.Checked := ( not par.inglesToPortugues);
 
     if par.tpLetras = 1 then
       RadioGroup1.ItemIndex := 0
@@ -132,7 +136,7 @@ begin
 
   btnutilitario.Enabled := (cbParMesclaPalavrasDia.Checked);
   seQuantidadeDias.Enabled := (cbParMesclaPalavrasDia.Checked);
-  
+
 end;
 
 procedure TfrmParametros.RadioGroup2Click(Sender: TObject);
@@ -183,9 +187,10 @@ begin
     par.somenteAudio       := cbExibirSomenteAudio.Checked;
     par.exibirPalavrasComFrases := cbexibirPlavrasEFrase.Checked;
     par.quantidadeDiasDivisaoPalavras := StrToInt(seQuantidadeDias.Text);
+    par.inglesToPortugues := not chkApresentarPalavrasPortugues.Checked;
 
     par.recordObject;
-  
+
   finally
     FreeAndNil(par);
   end;

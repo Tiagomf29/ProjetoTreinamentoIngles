@@ -12,8 +12,7 @@ uses
   Vcl.Styles,
   UProgresso in 'UProgresso.pas' {frmProgresso},
   UConexaoBanco in 'UConexaoBanco.pas',
-  UCategorias in 'UCategorias.pas',
-  UParamCategorias in 'UParamCategorias.pas';
+  UCategorias in 'UCategorias.pas';
 
 {$R *.res}
 

@@ -11,9 +11,7 @@ uses
   Vcl.Themes,
   Vcl.Styles,
   UProgresso in 'UProgresso.pas' {frmProgresso},
-  UConexaoBanco in 'UConexaoBanco.pas',
-  UCategorias in 'UCategorias.pas',
-  UParamCategorias in 'UParamCategorias.pas';
+  UConexaoBanco in 'UConexaoBanco.pas';
 
 {$R *.res}
 

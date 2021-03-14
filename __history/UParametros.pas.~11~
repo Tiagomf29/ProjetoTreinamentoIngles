@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
   System.Classes, Vcl.Graphics,System.StrUtils,System.Generics.Collections,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls,
-  parametros, Vcl.DBLookup, Vcl.Samples.Spin;
+  parametros, Vcl.DBLookup, Vcl.Samples.Spin, Vcl.CheckLst, ZDataSet, UDm;
 
 type
   TfrmParametros = class(TForm)
@@ -29,6 +29,8 @@ type
     cbRepetirPalavras: TCheckBox;
     seQuantidadeDias: TSpinEdit;
     chkApresentarPalavrasPortugues: TCheckBox;
+    GroupBox2: TGroupBox;
+    chkCategorias: TCheckListBox;
     procedure FormShow(Sender: TObject);
     procedure btnGravarClick(Sender: TObject);
     procedure RadioGroup2Click(Sender: TObject);
@@ -36,6 +38,10 @@ type
     procedure cbParMesclaPalavrasDiaClick(Sender: TObject);
   private
     procedure salvarParametro();
+    procedure populaCheckListBoxCategorias();
+    procedure marcarCategorias();
+    procedure atualizaCategorias();
+
   public
     { Public declarations }
   end;
@@ -45,9 +51,74 @@ var
 
 implementation
 uses
- UPalavras, UProgresso;
+ UPalavras, UProgresso, UCategorias, UParamCategorias;
 
 {$R *.dfm}
+
+procedure TfrmParametros.marcarCategorias;
+var
+  lQry : TZQuery;
+  i    : SmallInt;
+begin
+  lQry := TZQuery.Create(nil);
+  try
+    lQry.Connection := DM.conexao;
+    lQry.Close;
+    lQry.SQL.Clear;
+    lQry.SQL.Add(TParam_Categorias.getConsulta);
+    lQry.Open;
+
+    while not lQry.Eof do
+    begin
+
+      for i := 0 to chkCategorias.Items.Count -1 do
+      begin
+        if Integer(chkCategorias.Items.Objects[i])= lQry.FieldByName('id_categoria').AsInteger then
+          chkCategorias.Checked[i]:=True;
+      end;
+
+      lQry.Next;
+
+    end;
+
+  finally
+    FreeAndNil(lQry);
+  end;
+end;
+
+procedure TfrmParametros.atualizaCategorias;
+var
+  lQry : TZQuery;
+  i    : SmallInt;
+  lParamCategoria : TParam_Categorias;
+begin
+  lQry := TZQuery.Create(nil);
+  try
+    lQry.Connection := DM.conexao;
+    lQry.Close;
+    lQry.SQL.Clear;
+    lQry.SQL.Add(TParam_Categorias.getConsulta);
+    lQry.Open;
+
+    for i := 0 to chkCategorias.Items.Count -1 do
+    begin
+      if chkCategorias.Checked[i] then
+      begin
+        lParamCategoria := TParam_Categorias.Create;
+        try
+          lParamCategoria.idCategoria := Integer(chkCategorias[i]);
+          lParamCategoria.
+        finally
+
+        end;
+      end;
+
+    end;
+
+  finally
+    FreeAndNil(lQry);
+  end;
+end;
 
 procedure TfrmParametros.btnGravarClick(Sender: TObject);
 begin
@@ -71,7 +142,7 @@ begin
      begin   
        frmProgresso.ShowModal(); 
      end;
-   finally     
+   finally
      FreeAndNil(frmProgresso);
    end;
  
@@ -107,7 +178,7 @@ begin
     cbPalavrasAleatorias.Checked   := (par.palavrasAleatorias);
     cbExibirSomenteAudio.Checked   := (par.somenteAudio);
     cbexibirPlavrasEFrase.Checked  := (par.exibirPalavrasComFrases);
-    chkApresentarPalavrasPortugues.Checked := (par.apresentarPalavrasPortugues);
+    chkApresentarPalavrasPortugues.Checked := ( not par.inglesToPortugues);
 
     if par.tpLetras = 1 then
       RadioGroup1.ItemIndex := 0
@@ -134,7 +205,34 @@ begin
 
   btnutilitario.Enabled := (cbParMesclaPalavrasDia.Checked);
   seQuantidadeDias.Enabled := (cbParMesclaPalavrasDia.Checked);
+  populaCheckListBoxCategorias();
+  marcarCategorias();
 
+end;
+
+procedure TfrmParametros.populaCheckListBoxCategorias;
+var
+  lQry : TZQuery;
+  contador : SmallInt;
+begin
+  lQry := TZQuery.Create(nil);
+  try
+
+    lQry.Connection := dm.conexao;
+    lQry.Close;
+    lQry.SQL.Clear;
+    lQry.SQL.Add(TCategorias.getConsulta);
+    lQry.Open;
+
+    while not lQry.Eof do
+    begin
+      chkCategorias.Items.AddObject(lQry.FieldByName('descricao').AsString,TObject(lQry.FieldByName('id').AsInteger));
+      lQry.Next;
+    end;
+
+  finally
+    FreeAndNil(lQry);
+  end;
 end;
 
 procedure TfrmParametros.RadioGroup2Click(Sender: TObject);
@@ -185,7 +283,7 @@ begin
     par.somenteAudio       := cbExibirSomenteAudio.Checked;
     par.exibirPalavrasComFrases := cbexibirPlavrasEFrase.Checked;
     par.quantidadeDiasDivisaoPalavras := StrToInt(seQuantidadeDias.Text);
-    par.apresentarPalavrasPortugues := chkApresentarPalavrasPortugues.Checked;
+    par.inglesToPortugues := not chkApresentarPalavrasPortugues.Checked;
 
     par.recordObject;
 

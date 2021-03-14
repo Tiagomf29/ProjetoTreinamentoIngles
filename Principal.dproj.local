@@ -19,8 +19,8 @@
     <Transaction>2020/02/12 21:40:38.000.492,=C:\Tiago\Desenvolvimento\Projetos Git\ProjetoIngles\Unit1.pas</Transaction>
     <Transaction>2020/02/12 21:40:59.000.664,C:\Tiago\Desenvolvimento\Projetos Git\ProjetoIngles\uPalavras_portugues.pas=C:\Tiago\Desenvolvimento\Projetos Git\ProjetoIngles\Unit1.pas</Transaction>
     <Transaction>2020/02/16 16:27:32.000.936,=C:\Tiago\Desenvolvimento\Projetos Git\ProjetoIngles\Unit2.pas</Transaction>
-    <Transaction>2020/02/16 16:33:28.000.245,C:\Tiago\Desenvolvimento\Projetos Git\ProjetoIngles\UCadastroPalavras.dfm=C:\Tiago\Desenvolvimento\Projetos Git\ProjetoIngles\Unit2.dfm</Transaction>
     <Transaction>2020/02/16 16:33:28.000.245,C:\Tiago\Desenvolvimento\Projetos Git\ProjetoIngles\UCadastroPalavras.pas=C:\Tiago\Desenvolvimento\Projetos Git\ProjetoIngles\Unit2.pas</Transaction>
+    <Transaction>2020/02/16 16:33:28.000.245,C:\Tiago\Desenvolvimento\Projetos Git\ProjetoIngles\UCadastroPalavras.dfm=C:\Tiago\Desenvolvimento\Projetos Git\ProjetoIngles\Unit2.dfm</Transaction>
     <Transaction>2020/02/16 18:06:59.000.259,=C:\Tiago\Desenvolvimento\Projetos Git\ProjetoIngles\Unit1.pas</Transaction>
     <Transaction>2020/02/16 18:07:23.000.693,C:\Tiago\Desenvolvimento\Projetos Git\ProjetoIngles\UPalavras.pas=C:\Tiago\Desenvolvimento\Projetos Git\ProjetoIngles\Unit1.pas</Transaction>
     <Transaction>2020/02/16 18:57:05.000.395,C:\Tiago\Desenvolvimento\Projetos Git\ProjetoIngles\uPalavras_ingles.pas=</Transaction>
@@ -36,5 +36,9 @@
     <Transaction>2020/04/12 10:07:20.000.019,C:\Tiago\Desenvolvimento\Projetos Git\ProjetoTreinamentoIngles\UProgresso.dfm=C:\Tiago\Desenvolvimento\Projetos Git\ProjetoTreinamentoIngles\Unit1.dfm</Transaction>
     <Transaction>2020/06/07 01:11:46.000.244,=C:\Tiago\Desenvolvimento\Projetos Git\ProjetoTreinamentoIngles\Unit1.pas</Transaction>
     <Transaction>2020/06/07 01:12:06.000.985,C:\Tiago\Desenvolvimento\Projetos Git\ProjetoTreinamentoIngles\Unit1.pas=C:\Tiago\Desenvolvimento\Projetos Git\ProjetoTreinamentoIngles\UConexaoBanco.pas</Transaction>
+    <Transaction>2021/03/14 00:11:47.639,=D:\Projetos GitHub\ProjetoTreinamentoIngles\Unit1.pas</Transaction>
+    <Transaction>2021/03/14 00:20:34.321,D:\Projetos GitHub\ProjetoTreinamentoIngles\UCategorias.pas=D:\Projetos GitHub\ProjetoTreinamentoIngles\Unit1.pas</Transaction>
+    <Transaction>2021/03/14 00:34:04.279,=D:\Projetos GitHub\ProjetoTreinamentoIngles\Unit1.pas</Transaction>
+    <Transaction>2021/03/14 00:41:03.706,D:\Projetos GitHub\ProjetoTreinamentoIngles\UParamCategorias.pas=D:\Projetos GitHub\ProjetoTreinamentoIngles\Unit1.pas</Transaction>
   </Transactions>
 </BorlandProject>

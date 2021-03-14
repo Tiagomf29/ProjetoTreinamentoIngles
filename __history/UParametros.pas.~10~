@@ -102,17 +102,19 @@ begin
 
     for i := 0 to chkCategorias.Items.Count -1 do
     begin
-      lParamCategoria := TParam_Categorias.Create;
-      try
-        lParamCategoria.idCategoria := Integer(chkCategorias.Items.Objects[i]);
-        if chkCategorias.Checked[i] then
-          lParamCategoria.recorObject()
-        else
-          lParamCategoria.deleteObject();
-      finally
-        FreeAndNil(lParamCategoria);
+      if chkCategorias.Checked[i] then
+      begin
+        lParamCategoria := TParam_Categorias.Create;
+        try
+          lParamCategoria.idCategoria := Integer(chkCategorias[i]);
+          lParamCategoria.r
+        finally
+
+        end;
       end;
+
     end;
+
   finally
     FreeAndNil(lQry);
   end;
@@ -122,7 +124,6 @@ procedure TfrmParametros.btnGravarClick(Sender: TObject);
 begin
 
   salvarParametro();
-  atualizaCategorias();
   MessageDlg('Registro gravado com sucesso!'+#13+'Inicie o programa novamente.',mtInformation,[mbOK],0);
   close;
 
@@ -206,6 +207,7 @@ begin
   seQuantidadeDias.Enabled := (cbParMesclaPalavrasDia.Checked);
   populaCheckListBoxCategorias();
   marcarCategorias();
+
 end;
 
 procedure TfrmParametros.populaCheckListBoxCategorias;

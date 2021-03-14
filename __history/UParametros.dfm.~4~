@@ -4,7 +4,7 @@ object frmParametros: TfrmParametros
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Par'#226'metros'
-  ClientHeight = 237
+  ClientHeight = 235
   ClientWidth = 722
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -148,7 +148,7 @@ object frmParametros: TfrmParametros
     Left = 487
     Top = 0
     Width = 226
-    Height = 115
+    Height = 201
     Caption = 'Outros'
     TabOrder = 5
     object cbPalavrasAleatorias: TCheckBox
@@ -185,23 +185,6 @@ object frmParametros: TfrmParametros
       Caption = 'Apresentar Palavras em portugues'
       TabOrder = 3
       Visible = False
-    end
-  end
-  object GroupBox2: TGroupBox
-    Left = 487
-    Top = 114
-    Width = 226
-    Height = 87
-    Caption = 'Tipos de palavras'
-    TabOrder = 6
-    object chkCategorias: TCheckListBox
-      Left = 2
-      Top = 15
-      Width = 222
-      Height = 70
-      Align = alClient
-      ItemHeight = 13
-      TabOrder = 0
     end
   end
 end

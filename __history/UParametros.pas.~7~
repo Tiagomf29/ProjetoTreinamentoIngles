@@ -39,8 +39,6 @@ type
   private
     procedure salvarParametro();
     procedure populaCheckListBoxCategorias();
-    procedure marcarCategorias();
-    procedure atualizaCategorias();
 
   public
     { Public declarations }
@@ -51,78 +49,14 @@ var
 
 implementation
 uses
- UPalavras, UProgresso, UCategorias, UParamCategorias;
+ UPalavras, UProgresso, UCategorias;
 
 {$R *.dfm}
-
-procedure TfrmParametros.marcarCategorias;
-var
-  lQry : TZQuery;
-  i    : SmallInt;
-begin
-  lQry := TZQuery.Create(nil);
-  try
-    lQry.Connection := DM.conexao;
-    lQry.Close;
-    lQry.SQL.Clear;
-    lQry.SQL.Add(TParam_Categorias.getConsulta);
-    lQry.Open;
-
-    while not lQry.Eof do
-    begin
-
-      for i := 0 to chkCategorias.Items.Count -1 do
-      begin
-        if Integer(chkCategorias.Items.Objects[i])= lQry.FieldByName('id_categoria').AsInteger then
-          chkCategorias.Checked[i]:=True;
-      end;
-
-      lQry.Next;
-
-    end;
-
-  finally
-    FreeAndNil(lQry);
-  end;
-end;
-
-procedure TfrmParametros.atualizaCategorias;
-var
-  lQry : TZQuery;
-  i    : SmallInt;
-  lParamCategoria : TParam_Categorias;
-begin
-  lQry := TZQuery.Create(nil);
-  try
-    lQry.Connection := DM.conexao;
-    lQry.Close;
-    lQry.SQL.Clear;
-    lQry.SQL.Add(TParam_Categorias.getConsulta);
-    lQry.Open;
-
-    for i := 0 to chkCategorias.Items.Count -1 do
-    begin
-      lParamCategoria := TParam_Categorias.Create;
-      try
-        lParamCategoria.idCategoria := Integer(chkCategorias.Items.Objects[i]);
-        if chkCategorias.Checked[i] then
-          lParamCategoria.recorObject()
-        else
-          lParamCategoria.deleteObject();
-      finally
-        FreeAndNil(lParamCategoria);
-      end;
-    end;
-  finally
-    FreeAndNil(lQry);
-  end;
-end;
 
 procedure TfrmParametros.btnGravarClick(Sender: TObject);
 begin
 
   salvarParametro();
-  atualizaCategorias();
   MessageDlg('Registro gravado com sucesso!'+#13+'Inicie o programa novamente.',mtInformation,[mbOK],0);
   close;
 
@@ -141,7 +75,7 @@ begin
      begin   
        frmProgresso.ShowModal(); 
      end;
-   finally
+   finally     
      FreeAndNil(frmProgresso);
    end;
  
@@ -204,14 +138,12 @@ begin
 
   btnutilitario.Enabled := (cbParMesclaPalavrasDia.Checked);
   seQuantidadeDias.Enabled := (cbParMesclaPalavrasDia.Checked);
-  populaCheckListBoxCategorias();
-  marcarCategorias();
+
 end;
 
 procedure TfrmParametros.populaCheckListBoxCategorias;
 var
   lQry : TZQuery;
-  contador : SmallInt;
 begin
   lQry := TZQuery.Create(nil);
   try
@@ -224,8 +156,8 @@ begin
 
     while not lQry.Eof do
     begin
-      chkCategorias.Items.AddObject(lQry.FieldByName('descricao').AsString,TObject(lQry.FieldByName('id').AsInteger));
-      lQry.Next;
+      chkCategorias.Items.AddObject(lQry.FieldByName('descricao').AsString,lQry.FieldByName('id').AsInteger);
+      Next;
     end;
 
   finally

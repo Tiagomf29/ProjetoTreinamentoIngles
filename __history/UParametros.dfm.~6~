@@ -194,7 +194,7 @@ object frmParametros: TfrmParametros
     Height = 87
     Caption = 'Tipos de palavras'
     TabOrder = 6
-    object chkCategorias: TCheckListBox
+    object CheckListBox1: TCheckListBox
       Left = 2
       Top = 15
       Width = 222
