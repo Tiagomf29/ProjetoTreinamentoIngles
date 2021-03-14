@@ -137,7 +137,6 @@ object frmCadastroPalavras: TfrmCadastroPalavras
     Height = 48
     Align = alBottom
     TabOrder = 1
-    ExplicitTop = 216
     object btnInserir: TBitBtn
       Left = 126
       Top = 10
@@ -383,8 +382,8 @@ object frmCadastroPalavras: TfrmCadastroPalavras
       ParentFont = False
     end
     object edtPesquisa: TEdit
-      Left = 215
-      Top = 61
+      Left = 89
+      Top = 21
       Width = 497
       Height = 21
       CharCase = ecUpperCase
@@ -566,19 +565,7 @@ object frmCadastroPalavras: TfrmCadastroPalavras
   object QRY: TZQuery
     Connection = DM.conexao
     SQL.Strings = (
-      ''
-      'select id,'
-      '       palavraingles,'
-      '       palavraportugues,'
-      '       ativo,'
-      '       frase,'
-      '       qtdeseqacertos,'
-      '       data_seq_acertos,'
-      '       mp3,'
-      '       frase_intuitiva_ingles,'
-      '       frase_intuitiva_portugues,'
-      '       categoria'
-      '        from palavras order by 1 desc')
+      'select * from palavras order by 1 desc')
     Params = <>
     Left = 328
     Top = 312
@@ -628,9 +615,6 @@ object frmCadastroPalavras: TfrmCadastroPalavras
     object QRYFRASE_INTUITIVA_PORTUGUES: TWideStringField
       FieldName = 'FRASE_INTUITIVA_PORTUGUES'
       Size = 100
-    end
-    object QRYCATEGORIA: TSmallintField
-      FieldName = 'CATEGORIA'
     end
   end
   object DTS: TDataSource
@@ -693,8 +677,8 @@ object frmCadastroPalavras: TfrmCadastroPalavras
     object CDSMP3: TBlobField
       FieldName = 'MP3'
     end
-    object CDSCATEGORIA: TSmallintField
-      FieldName = 'CATEGORIA'
+    object CDScategoria: TSmallintField
+      FieldName = 'categoria'
     end
   end
   object DSP: TDataSetProvider

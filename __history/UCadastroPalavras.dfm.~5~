@@ -82,6 +82,7 @@ object frmCadastroPalavras: TfrmCadastroPalavras
         Height = 17
         Caption = 'Frase'
         TabOrder = 2
+        Visible = False
       end
       object edtPalavraPortugues: TEdit
         Left = 8
@@ -92,7 +93,7 @@ object frmCadastroPalavras: TfrmCadastroPalavras
         MaxLength = 60
         TabOrder = 3
       end
-      object Edit1: TEdit
+      object edtFraseIngles: TEdit
         Left = 8
         Top = 126
         Width = 637
@@ -102,7 +103,7 @@ object frmCadastroPalavras: TfrmCadastroPalavras
         MaxLength = 100
         TabOrder = 4
       end
-      object Edit2: TEdit
+      object edtFrasePortugues: TEdit
         Left = 8
         Top = 176
         Width = 640

@@ -137,7 +137,6 @@ object frmCadastroPalavras: TfrmCadastroPalavras
     Height = 48
     Align = alBottom
     TabOrder = 1
-    ExplicitTop = 216
     object btnInserir: TBitBtn
       Left = 126
       Top = 10
@@ -383,8 +382,8 @@ object frmCadastroPalavras: TfrmCadastroPalavras
       ParentFont = False
     end
     object edtPesquisa: TEdit
-      Left = 215
-      Top = 61
+      Left = 89
+      Top = 21
       Width = 497
       Height = 21
       CharCase = ecUpperCase
@@ -565,6 +564,7 @@ object frmCadastroPalavras: TfrmCadastroPalavras
   end
   object QRY: TZQuery
     Connection = DM.conexao
+    Active = True
     SQL.Strings = (
       ''
       'select id,'
@@ -629,9 +629,6 @@ object frmCadastroPalavras: TfrmCadastroPalavras
       FieldName = 'FRASE_INTUITIVA_PORTUGUES'
       Size = 100
     end
-    object QRYCATEGORIA: TSmallintField
-      FieldName = 'CATEGORIA'
-    end
   end
   object DTS: TDataSource
     AutoEdit = False
@@ -692,9 +689,6 @@ object frmCadastroPalavras: TfrmCadastroPalavras
     end
     object CDSMP3: TBlobField
       FieldName = 'MP3'
-    end
-    object CDSCATEGORIA: TSmallintField
-      FieldName = 'CATEGORIA'
     end
   end
   object DSP: TDataSetProvider

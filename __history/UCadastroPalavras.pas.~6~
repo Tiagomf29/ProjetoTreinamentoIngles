@@ -54,9 +54,9 @@ type
     cbFrase: TCheckBox;
     edtPalavraPortugues: TEdit;
     Label1: TLabel;
-    Edit1: TEdit;
+    edtFraseIngles: TEdit;
     Label2: TLabel;
-    Edit2: TEdit;
+    edtFrasePortugues: TEdit;
     Label3: TLabel;
     QRYFRASE_INTUITIVA_INGLES: TWideStringField;
     QRYFRASE_INTUITIVA_PORTUGUES: TWideStringField;
@@ -295,6 +295,8 @@ begin
   cbAtivo.Checked := True;
   edtPalavraIngles.Text := '';
   edtPalavraPortugues.Text := '';
+  edtFraseIngles.Text := '';
+  edtFrasePortugues.Text := '';
   statusInsercao := true;
 end;
 
@@ -325,8 +327,8 @@ begin
     palavras.palavraPortugues := edtPalavraPortugues.Text;
     palavras.ativo := (cbAtivo.Checked = True);
     palavras.frase := (cbFrase.Checked = True);
-    palavras.fraseIntuitivaIngles := Edit1.Text;
-    palavras.fraseIntuitivaPortugues := Edit2.Text;
+    palavras.fraseIntuitivaIngles := edtFraseIngles.Text;
+    palavras.fraseIntuitivaPortugues := edtFrasePortugues.Text;
 
     if statusInsercao then
       palavras.recordObjectInsercao()
@@ -383,8 +385,8 @@ procedure TfrmCadastroPalavras.CDSAfterScroll(DataSet: TDataSet);
 begin
   edtPalavraIngles.Text    := CDSPALAVRAINGLES.Value;
   edtPalavraPortugues.Text := CDSPALAVRAPORTUGUES.Value;
-  Edit1.Text               := CDSFRASE_INTUITIVA_INGLES.Value;
-  Edit2.Text               := CDSFRASE_INTUITIVA_PORTUGUES.Value;
+  edtFraseIngles.Text      := CDSFRASE_INTUITIVA_INGLES.Value;
+  edtFrasePortugues.Text   := CDSFRASE_INTUITIVA_PORTUGUES.Value;
   
   if CDSATIVO.Value = 'T' then  
     cbAtivo.Checked := True
@@ -543,8 +545,8 @@ begin
   btnFechar.Enabled := False;
   edtPalavraIngles.Enabled := True;
   edtPalavraPortugues.Enabled := True;
-  Edit1.Enabled := True;
-  Edit2.Enabled := True;
+  edtFraseIngles.Enabled := True;
+  edtFrasePortugues.Enabled := True;
   cbAtivo.Enabled := True;
   cbFrase.Enabled := True;
   edtPalavraIngles.SetFocus;
@@ -560,8 +562,8 @@ begin
   btnFechar.Enabled := True;
   edtPalavraIngles.Enabled := False;
   edtPalavraPortugues.Enabled := False;
-  Edit1.Enabled :=False;
-  Edit2.Enabled := False;
+  edtFraseIngles.Enabled :=False;
+  edtFrasePortugues.Enabled := False;
   cbAtivo.Enabled := False;
   cbFrase.Enabled := False;
 end;

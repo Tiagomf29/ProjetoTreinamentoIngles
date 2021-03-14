@@ -64,11 +64,6 @@ type
     CDSFRASE_INTUITIVA_PORTUGUES: TWideStringField;
     cbxTipo: TComboBox;
     Label4: TLabel;
-    QRYCATEGORIA: TSmallintField;
-    CDSQTDESEQACERTOS: TSmallintField;
-    CDSDATA_SEQ_ACERTOS: TDateField;
-    CDSMP3: TBlobField;
-    CDSCATEGORIA: TSmallintField;
     procedure FormShow(Sender: TObject);
     procedure btnInserirClick(Sender: TObject);
     procedure btnSalvarClick(Sender: TObject);
@@ -337,7 +332,6 @@ begin
     palavras.frase := (cbFrase.Checked = True);
     palavras.fraseIntuitivaIngles := edtFraseIngles.Text;
     palavras.fraseIntuitivaPortugues := edtFrasePortugues.Text;
-    palavras.categoria := Integer(cbxTipo.Items.Objects[cbxTipo.ItemIndex]);
 
     if statusInsercao then
       palavras.recordObjectInsercao()
@@ -396,9 +390,8 @@ begin
   edtPalavraPortugues.Text := CDSPALAVRAPORTUGUES.Value;
   edtFraseIngles.Text      := CDSFRASE_INTUITIVA_INGLES.Value;
   edtFrasePortugues.Text   := CDSFRASE_INTUITIVA_PORTUGUES.Value;
-  cbxTipo.ItemIndex        := cbxTipo.Items.IndexOfObject(TObject(CDSCATEGORIA.Value));
-
-  if CDSATIVO.Value = 'T' then
+  
+  if CDSATIVO.Value = 'T' then  
     cbAtivo.Checked := True
   else
     cbAtivo.Checked := False;

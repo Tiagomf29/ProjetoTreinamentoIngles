@@ -62,7 +62,7 @@ type
     property fraseIntuitivaPortugues : string read getFraseIntuitivaPortugues write setFraseIntuitivaPortugues;
     property categoria : SmallInt read getCategoria write setCategoria;
 
-    function listaPalavrasIngles(AParam1,AParam2 : SmallInt; ordenarPalavra : Boolean = false; dividirPalavrasDia : Boolean = false; categorias : String = ''): TObjectList<TPalavras>;
+    function listaPalavrasIngles(AParam1,AParam2 : SmallInt; ordenarPalavra : Boolean = false; dividirPalavrasDia : Boolean = false): TObjectList<TPalavras>;
     function listaTodasPalavras(): TObjectList<TPalavras>;
     function estatistica1 : TList<string>;
     function estatistica2 : TList<string>;
@@ -411,7 +411,7 @@ begin
   Result := FQtdeSeqAcertos;
 end;
 
-function TPalavras.listaPalavrasIngles(AParam1,AParam2 : SmallInt; ordenarPalavra : Boolean; dividirPalavrasDia : Boolean; categorias : String): TObjectList<TPalavras>;
+function TPalavras.listaPalavrasIngles(AParam1,AParam2 : SmallInt; ordenarPalavra : Boolean; dividirPalavrasDia : Boolean): TObjectList<TPalavras>;
 var  
   palavraIngles : TPalavras;
   dia,mes,ano : string;
@@ -425,16 +425,13 @@ begin
 
   try
     FQry.Connection := DM.conexao;
-
+  
     FQry.Close;
     FQry.SQL.Clear;
     FQry.SQL.Add('select * from palavras ');
     FQry.SQL.Add('where ativo = ''T''');
     if dividirPalavrasDia then  
       FQry.SQL.Add('and data_seq_acertos <='+QuotedStr(mes+'/'+dia+'/'+ano));
-
-    FQry.SQL.Add('and categoria in ('+categorias+')');
-
     if (AParam1 > 0) or (AParam2 > 0) then
     begin
       FQry.SQL.Add(' and id between '+IntToStr(AParam1)+' and '+IntToStr(AParam2));
@@ -446,7 +443,7 @@ begin
     else
       FQry.SQL.Add(' order by 1');      
      
-    FQry.Open;
+    FQry.Open;  
   
     while not FQry.Eof do
     begin

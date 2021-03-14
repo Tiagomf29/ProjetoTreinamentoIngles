@@ -6,7 +6,7 @@ uses
   Winapi.Windows,System.SysUtils,parametros,System.Types,UParametros,UPalavras,
   System.Generics.Collections,Vcl.Forms, Vcl.Dialogs,StrUtils,RDprint,Vcl.ExtCtrls,
   Vcl.Buttons, System.Classes, Vcl.Controls,Vcl.StdCtrls, Vcl.Menus, Vcl.ComCtrls, 
-  Vcl.MPlayer, ZDataset, UDM;
+  Vcl.MPlayer ;
 type
   TfrmPrincipal = class(TForm)
     Label1: TLabel;
@@ -62,7 +62,6 @@ type
     
     function palavraConcatenada(Apalavra1, APalavra2 : String; AQtdePalavras,AContador: Integer): String;
     function removerEspacosNoMeio( palavra : String):String;
-    function categoriasParametrizadas():String;
     
     var
       lista: TObjectList<TPalavras>;
@@ -82,7 +81,7 @@ var
 implementation
 
 uses
-  UCadastroPalavras, ComObj, UParamCategorias;
+  UCadastroPalavras, ComObj;
 
 {$R *.dfm}
 
@@ -214,38 +213,6 @@ begin
 end;
 
 
-
-function TfrmPrincipal.categoriasParametrizadas: String;
-var
-  i : Integer;
-  lQry : TZQuery;
-begin
-  Result := '';
-  lQry := TZQuery.Create(nil);
-  try
-    lQry.Connection := DM.conexao;
-    lQry.Close;
-    lQry.SQL.Clear;
-    lQry.SQL.Add(TParam_Categorias.getConsulta);
-    lQry.Open;
-    i := 1;
-    while not lQry.Eof do
-    begin
-
-      if i = 1 then
-        Result := lQry.FieldByName('id_categoria').AsString
-      else
-        Result := Result +','+lQry.FieldByName('id_categoria').AsString;
-
-      Inc(i);
-      lQry.Next;
-    end;
-
-  finally
-    FreeAndNil(lQry);
-  end;
-
-end;
 
 function TfrmPrincipal.contagemPontos(AMsg: String): String;
 begin
@@ -491,7 +458,7 @@ begin
   par := TParametros.Create(); 
   par.setObject();
   palavras := TPalavras.Create;
-  lista := palavras.listaPalavrasIngles(par.filtroInicial,par.filtroFinal,(par.ordenarPalavras),(par.dividePalavrasDia),categoriasParametrizadas);
+  lista := palavras.listaPalavrasIngles(par.filtroInicial,par.filtroFinal,(par.ordenarPalavras),(par.dividePalavrasDia));
   if lista.Count = 0 then
   begin
     MessageDlg('Nenhum registro a ser exibido.',mtInformation,[mbOK],0);

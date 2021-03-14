@@ -65,10 +65,6 @@ type
     cbxTipo: TComboBox;
     Label4: TLabel;
     QRYCATEGORIA: TSmallintField;
-    CDSQTDESEQACERTOS: TSmallintField;
-    CDSDATA_SEQ_ACERTOS: TDateField;
-    CDSMP3: TBlobField;
-    CDSCATEGORIA: TSmallintField;
     procedure FormShow(Sender: TObject);
     procedure btnInserirClick(Sender: TObject);
     procedure btnSalvarClick(Sender: TObject);
@@ -396,9 +392,8 @@ begin
   edtPalavraPortugues.Text := CDSPALAVRAPORTUGUES.Value;
   edtFraseIngles.Text      := CDSFRASE_INTUITIVA_INGLES.Value;
   edtFrasePortugues.Text   := CDSFRASE_INTUITIVA_PORTUGUES.Value;
-  cbxTipo.ItemIndex        := cbxTipo.Items.IndexOfObject(TObject(CDSCATEGORIA.Value));
-
-  if CDSATIVO.Value = 'T' then
+  
+  if CDSATIVO.Value = 'T' then  
     cbAtivo.Checked := True
   else
     cbAtivo.Checked := False;

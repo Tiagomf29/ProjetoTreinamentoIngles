@@ -62,13 +62,8 @@ type
     QRYFRASE_INTUITIVA_PORTUGUES: TWideStringField;
     CDSFRASE_INTUITIVA_INGLES: TWideStringField;
     CDSFRASE_INTUITIVA_PORTUGUES: TWideStringField;
-    cbxTipo: TComboBox;
+    ComboBox1: TComboBox;
     Label4: TLabel;
-    QRYCATEGORIA: TSmallintField;
-    CDSQTDESEQACERTOS: TSmallintField;
-    CDSDATA_SEQ_ACERTOS: TDateField;
-    CDSMP3: TBlobField;
-    CDSCATEGORIA: TSmallintField;
     procedure FormShow(Sender: TObject);
     procedure btnInserirClick(Sender: TObject);
     procedure btnSalvarClick(Sender: TObject);
@@ -87,7 +82,6 @@ type
   private
     procedure statusBotaoInserir();
     procedure statusBotaoNaoInserir();
-    procedure popularComboboxCategorias();
     var
       statusInsercao : Boolean;
       
@@ -100,7 +94,7 @@ var
 
 implementation
 uses
- UPalavras, Ucategorias;
+ UPalavras;
 
 {$R *.dfm}
 
@@ -337,7 +331,6 @@ begin
     palavras.frase := (cbFrase.Checked = True);
     palavras.fraseIntuitivaIngles := edtFraseIngles.Text;
     palavras.fraseIntuitivaPortugues := edtFrasePortugues.Text;
-    palavras.categoria := Integer(cbxTipo.Items.Objects[cbxTipo.ItemIndex]);
 
     if statusInsercao then
       palavras.recordObjectInsercao()
@@ -396,9 +389,8 @@ begin
   edtPalavraPortugues.Text := CDSPALAVRAPORTUGUES.Value;
   edtFraseIngles.Text      := CDSFRASE_INTUITIVA_INGLES.Value;
   edtFrasePortugues.Text   := CDSFRASE_INTUITIVA_PORTUGUES.Value;
-  cbxTipo.ItemIndex        := cbxTipo.Items.IndexOfObject(TObject(CDSCATEGORIA.Value));
-
-  if CDSATIVO.Value = 'T' then
+  
+  if CDSATIVO.Value = 'T' then  
     cbAtivo.Checked := True
   else
     cbAtivo.Checked := False;
@@ -543,32 +535,6 @@ begin
   QRY.Active := True;
   CDS.Active := True;
   statusBotaoNaoInserir();
-  popularComboboxCategorias();
-end;
-
-procedure TfrmCadastroPalavras.popularComboboxCategorias;
-var
-  lQry : TZQuery;
-  i    : Integer;
-begin
-  lQry := TZQuery.Create(nil);
-  try
-
-    lQry.Connection := dm.conexao;
-    lQry.Close;
-    lQry.SQL.Clear;
-    lQry.SQL.Add(TCategorias.getConsulta);
-    lQry.Open;
-
-    while not lQry.Eof do
-    begin
-      cbxTipo.Items.AddObject(lQry.FieldByName('descricao').AsString, TObject(lQry.FieldByName('id').AsInteger));
-      lQry.Next;
-    end;
-
-  finally
-    FreeAndNil(lQry);
-  end;
 end;
 
 procedure TfrmCadastroPalavras.statusBotaoInserir;
@@ -585,7 +551,6 @@ begin
   edtFrasePortugues.Enabled := True;
   cbAtivo.Enabled := True;
   cbFrase.Enabled := True;
-  cbxTipo.Enabled := True;
   edtPalavraIngles.SetFocus;
 end;
 
@@ -603,7 +568,6 @@ begin
   edtFrasePortugues.Enabled := False;
   cbAtivo.Enabled := False;
   cbFrase.Enabled := False;
-  cbxTipo.Enabled := False;
 end;
 
 end.

@@ -58,6 +58,13 @@ object frmCadastroPalavras: TfrmCadastroPalavras
         Height = 13
         Caption = 'Portugu'#234's'
       end
+      object Label4: TLabel
+        Left = 528
+        Top = 56
+        Width = 20
+        Height = 13
+        Caption = 'Tipo'
+      end
       object edtPalavraIngles: TEdit
         Left = 8
         Top = 27
@@ -82,6 +89,7 @@ object frmCadastroPalavras: TfrmCadastroPalavras
         Height = 17
         Caption = 'Frase'
         TabOrder = 2
+        Visible = False
       end
       object edtPalavraPortugues: TEdit
         Left = 8
@@ -92,7 +100,7 @@ object frmCadastroPalavras: TfrmCadastroPalavras
         MaxLength = 60
         TabOrder = 3
       end
-      object Edit1: TEdit
+      object edtFraseIngles: TEdit
         Left = 8
         Top = 126
         Width = 637
@@ -102,7 +110,7 @@ object frmCadastroPalavras: TfrmCadastroPalavras
         MaxLength = 100
         TabOrder = 4
       end
-      object Edit2: TEdit
+      object edtFrasePortugues: TEdit
         Left = 8
         Top = 176
         Width = 640
@@ -111,6 +119,14 @@ object frmCadastroPalavras: TfrmCadastroPalavras
         Color = clScrollBar
         MaxLength = 100
         TabOrder = 5
+      end
+      object cbxTipo: TComboBox
+        Left = 527
+        Top = 75
+        Width = 187
+        Height = 22
+        Style = csOwnerDrawFixed
+        TabOrder = 6
       end
     end
   end
@@ -548,7 +564,6 @@ object frmCadastroPalavras: TfrmCadastroPalavras
   end
   object QRY: TZQuery
     Connection = DM.conexao
-    Active = True
     SQL.Strings = (
       'select * from palavras order by 1 desc')
     Params = <>

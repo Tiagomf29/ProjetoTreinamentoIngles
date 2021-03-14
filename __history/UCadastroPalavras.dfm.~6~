@@ -120,12 +120,11 @@ object frmCadastroPalavras: TfrmCadastroPalavras
         MaxLength = 100
         TabOrder = 5
       end
-      object cbxTipo: TComboBox
+      object ComboBox1: TComboBox
         Left = 527
         Top = 75
         Width = 187
-        Height = 22
-        Style = csOwnerDrawFixed
+        Height = 21
         TabOrder = 6
       end
     end
@@ -137,7 +136,6 @@ object frmCadastroPalavras: TfrmCadastroPalavras
     Height = 48
     Align = alBottom
     TabOrder = 1
-    ExplicitTop = 216
     object btnInserir: TBitBtn
       Left = 126
       Top = 10
@@ -383,8 +381,8 @@ object frmCadastroPalavras: TfrmCadastroPalavras
       ParentFont = False
     end
     object edtPesquisa: TEdit
-      Left = 215
-      Top = 61
+      Left = 89
+      Top = 21
       Width = 497
       Height = 21
       CharCase = ecUpperCase
@@ -566,19 +564,7 @@ object frmCadastroPalavras: TfrmCadastroPalavras
   object QRY: TZQuery
     Connection = DM.conexao
     SQL.Strings = (
-      ''
-      'select id,'
-      '       palavraingles,'
-      '       palavraportugues,'
-      '       ativo,'
-      '       frase,'
-      '       qtdeseqacertos,'
-      '       data_seq_acertos,'
-      '       mp3,'
-      '       frase_intuitiva_ingles,'
-      '       frase_intuitiva_portugues,'
-      '       categoria'
-      '        from palavras order by 1 desc')
+      'select * from palavras order by 1 desc')
     Params = <>
     Left = 328
     Top = 312
@@ -628,9 +614,6 @@ object frmCadastroPalavras: TfrmCadastroPalavras
     object QRYFRASE_INTUITIVA_PORTUGUES: TWideStringField
       FieldName = 'FRASE_INTUITIVA_PORTUGUES'
       Size = 100
-    end
-    object QRYCATEGORIA: TSmallintField
-      FieldName = 'CATEGORIA'
     end
   end
   object DTS: TDataSource
@@ -683,18 +666,6 @@ object frmCadastroPalavras: TfrmCadastroPalavras
     object CDSFRASE_INTUITIVA_PORTUGUES: TWideStringField
       FieldName = 'FRASE_INTUITIVA_PORTUGUES'
       Size = 100
-    end
-    object CDSQTDESEQACERTOS: TSmallintField
-      FieldName = 'QTDESEQACERTOS'
-    end
-    object CDSDATA_SEQ_ACERTOS: TDateField
-      FieldName = 'DATA_SEQ_ACERTOS'
-    end
-    object CDSMP3: TBlobField
-      FieldName = 'MP3'
-    end
-    object CDSCATEGORIA: TSmallintField
-      FieldName = 'CATEGORIA'
     end
   end
   object DSP: TDataSetProvider

@@ -82,7 +82,7 @@ var
 implementation
 
 uses
-  UCadastroPalavras, ComObj, UParamCategorias;
+  UCadastroPalavras, ComObj, UCategorias;
 
 {$R *.dfm}
 
@@ -226,18 +226,17 @@ begin
     lQry.Connection := DM.conexao;
     lQry.Close;
     lQry.SQL.Clear;
-    lQry.SQL.Add(TParam_Categorias.getConsulta);
+    lQry.SQL.Add(TCategorias.getConsulta);
     lQry.Open;
     i := 1;
     while not lQry.Eof do
     begin
 
       if i = 1 then
-        Result := lQry.FieldByName('id_categoria').AsString
+        Result := lQry.FieldByName('id').AsString
       else
-        Result := Result +','+lQry.FieldByName('id_categoria').AsString;
+        Result := Result +','+lQry.FieldByName('id').AsString;
 
-      Inc(i);
       lQry.Next;
     end;
 
@@ -491,7 +490,7 @@ begin
   par := TParametros.Create(); 
   par.setObject();
   palavras := TPalavras.Create;
-  lista := palavras.listaPalavrasIngles(par.filtroInicial,par.filtroFinal,(par.ordenarPalavras),(par.dividePalavrasDia),categoriasParametrizadas);
+  lista := palavras.listaPalavrasIngles(par.filtroInicial,par.filtroFinal,(par.ordenarPalavras),(par.dividePalavrasDia));
   if lista.Count = 0 then
   begin
     MessageDlg('Nenhum registro a ser exibido.',mtInformation,[mbOK],0);

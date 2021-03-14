@@ -19,7 +19,6 @@ type
     FDataSeqAcertos : TDate;
     FFraseIntuitivaIngles : string;
     FFraseIntuitivaPortugues : string;
-    FCategoria : SmallInt;
     FMp3 : TBlobData;
     FQry : TZQuery;
     Flista : TObjectList<TPalavras>;
@@ -46,8 +45,6 @@ type
     function getFraseIntuitivaPortugues: string;
     procedure setFraseIntuitivaIngles(const Value: string);
     procedure setFraseIntuitivaPortugues(const Value: string);
-    function getCategoria: SmallInt;
-    procedure setCategoria(const Value: SmallInt);
   public
     property id : Integer read getId write setId;
     property palavraIngles : String read getPalavraIngles write setPalavrasIngles;
@@ -60,9 +57,8 @@ type
     property lista : TObjectList<TPalavras> read getLista write setLista;
     property fraseIntuitivaIngles : string read getFraseIntuitivaIngles write setFraseIntuitivaIngles;
     property fraseIntuitivaPortugues : string read getFraseIntuitivaPortugues write setFraseIntuitivaPortugues;
-    property categoria : SmallInt read getCategoria write setCategoria;
 
-    function listaPalavrasIngles(AParam1,AParam2 : SmallInt; ordenarPalavra : Boolean = false; dividirPalavrasDia : Boolean = false; categorias : String = ''): TObjectList<TPalavras>;
+    function listaPalavrasIngles(AParam1,AParam2 : SmallInt; ordenarPalavra : Boolean = false; dividirPalavrasDia : Boolean = false): TObjectList<TPalavras>;
     function listaTodasPalavras(): TObjectList<TPalavras>;
     function estatistica1 : TList<string>;
     function estatistica2 : TList<string>;
@@ -346,11 +342,6 @@ begin
  
 end;
 
-function TPalavras.getCategoria: SmallInt;
-begin
-  Result := FCategoria;
-end;
-
 class function TPalavras.getConsulta: String;
 begin
   Result := 'select * from palavras order by 1 desc';
@@ -411,7 +402,7 @@ begin
   Result := FQtdeSeqAcertos;
 end;
 
-function TPalavras.listaPalavrasIngles(AParam1,AParam2 : SmallInt; ordenarPalavra : Boolean; dividirPalavrasDia : Boolean; categorias : String): TObjectList<TPalavras>;
+function TPalavras.listaPalavrasIngles(AParam1,AParam2 : SmallInt; ordenarPalavra : Boolean; dividirPalavrasDia : Boolean): TObjectList<TPalavras>;
 var  
   palavraIngles : TPalavras;
   dia,mes,ano : string;
@@ -425,16 +416,13 @@ begin
 
   try
     FQry.Connection := DM.conexao;
-
+  
     FQry.Close;
     FQry.SQL.Clear;
     FQry.SQL.Add('select * from palavras ');
     FQry.SQL.Add('where ativo = ''T''');
     if dividirPalavrasDia then  
       FQry.SQL.Add('and data_seq_acertos <='+QuotedStr(mes+'/'+dia+'/'+ano));
-
-    FQry.SQL.Add('and categoria in ('+categorias+')');
-
     if (AParam1 > 0) or (AParam2 > 0) then
     begin
       FQry.SQL.Add(' and id between '+IntToStr(AParam1)+' and '+IntToStr(AParam2));
@@ -446,7 +434,7 @@ begin
     else
       FQry.SQL.Add(' order by 1');      
      
-    FQry.Open;
+    FQry.Open;  
   
     while not FQry.Eof do
     begin
@@ -531,7 +519,7 @@ begin
     qryTemp.close;
     qryTemp.SQL.Add('update palavras set');
     qryTemp.SQL.Add('palavraingles =:ingles,palavraportugues =:portugues,ativo =:ativo,frase =:frase, ');
-    qryTemp.SQL.Add('frase_intuitiva_portugues =:fip, frase_intuitiva_ingles =:fii, categoria =:categoria');
+    qryTemp.SQL.Add('frase_intuitiva_portugues =:fip, frase_intuitiva_ingles =:fii ');
     qryTemp.SQL.Add('where id =:id');
     qryTemp.ParamByName('id').AsInteger := FId;
     qryTemp.ParamByName('ingles').AsString:= FPalavraIngles;
@@ -540,7 +528,7 @@ begin
     qryTemp.ParamByName('frase').AsString := FFrase;
     qryTemp.ParamByName('fip').AsString := FFraseIntuitivaPortugues;
     qryTemp.ParamByName('fii').AsString := FFraseIntuitivaIngles;
-    qryTemp.ParamByName('categoria').AsInteger := FCategoria;
+
 
     qryTemp.ExecSQL;
 
@@ -586,9 +574,9 @@ begin
     
     qryTemp.close;
     qryTemp.SQL.Add('insert into palavras');
-    qryTemp.SQL.Add('(id,palavraingles,palavraportugues,ativo,frase,qtdeseqacertos,data_seq_acertos,frase_intuitiva_portugues,frase_intuitiva_ingles,categoria)');
+    qryTemp.SQL.Add('(id,palavraingles,palavraportugues,ativo,frase,qtdeseqacertos,data_seq_acertos,frase_intuitiva_portugues,frase_intuitiva_ingles)');
     qryTemp.SQL.Add('values');
-    qryTemp.SQL.Add('(:id,:ingles,:portugues,:ativo,:frase,:qtdeAcertos,:dataAcertos,:fip,:fii,:categoria)');
+    qryTemp.SQL.Add('(:id,:ingles,:portugues,:ativo,:frase,:qtdeAcertos,:dataAcertos,:fip,:fii)');
     qryTemp.ParamByName('id').AsInteger :=FId;
     qryTemp.ParamByName('ingles').AsString:= FPalavraIngles;
     qryTemp.ParamByName('portugues').AsString := FPalavraPortugues;
@@ -596,8 +584,7 @@ begin
     qryTemp.ParamByName('frase').AsString := FFrase;
     qryTemp.ParamByName('qtdeAcertos').AsInteger := 0;
     qryTemp.ParamByName('fip').AsString := FFraseIntuitivaPortugues;
-    qryTemp.ParamByName('fii').AsString := FFraseIntuitivaIngles;
-    qryTemp.ParamByName('categoria').AsInteger := FCategoria;
+    qryTemp.ParamByName('fii').AsString := FFraseIntuitivaIngles;    
     
 
     if FDataSeqAcertos > StrToDate('30/12/1899') then
@@ -625,11 +612,6 @@ begin
   else
     FAtivo := 'F';  
   
-end;
-
-procedure TPalavras.setCategoria(const Value: SmallInt);
-begin
-  FCategoria := Value;
 end;
 
 procedure TPalavras.setdataSeqAcertos(const Value: TDate);
