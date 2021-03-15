@@ -682,7 +682,6 @@ begin
     FQry.SQL.Clear;
     FQry.SQL.Add('select * from palavras');
     FQry.SQL.Add('where palavraingles =:palavraIngles');
-    FQry.SQL.Add('and ativo =''T''');
     FQry.ParamByName('palavraIngles').AsString := APalavraIngles;
     FQry.Open; 
 
