@@ -412,8 +412,8 @@ begin
      
        try
 
-         img.Picture := nil;
-         //img.Picture.LoadFromFile('C:\Ingles\imagem\'+Label1.Caption+'.jpg');
+         img.Picture := nil;       
+         img.Picture.LoadFromFile('C:\Ingles\imagem\'+Label1.Caption+'.jpg');
 
        except on e: Exception do
          mmo.SetFocus;
