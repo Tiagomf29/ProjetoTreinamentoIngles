@@ -40,3 +40,7 @@ Para rodar o projeto apenas para ver sua execução é necessário:
   <li>Instalar o Firebird 3.0.</li>
   <li>Executar o arquivo Principal.exe</li>
 </ul>
+
+## Imagem tela principal
+
+<img src="img/img1.JPG" />
