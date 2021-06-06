@@ -44,3 +44,13 @@ Para rodar o projeto apenas para ver sua execução é necessário:
 ## Imagem tela principal
 
 <img src="img/img1.JPG" />
+
+## Funções do Programa
+
+<li>Permitir o cadastro de palavras em inglês e suas respectivas traduções em português</li>
+<li>Permitir o cadastro de frases em inglês e suas respectivas traduções</li>
+<li>Validar se a palavras exibida aleatoriamente em tela representa sua tradução conforme palavras digitadas pelo usuário</li>
+<li>Transmitir som atraves de voz do programa (SAPI.SpVoice) as palavras em inglês exibidas em tela</li>
+<li>Permitir diversas configurações para flexibilizar a forma de estudo</li>
+<li>Permitir que o usuário verifique o tempo que o mesmo demorou para acertar todas as palavras/frases do estudo proposto</li>
+<li>Permitir a impressão de relatórios que auxiliam no entedimento de como estão os estudos do momento</li>
